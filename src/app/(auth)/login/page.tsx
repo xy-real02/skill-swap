@@ -1,63 +1,69 @@
-// src/app/login/page.tsx
+import Link from 'next/link'
 import { login, signup } from './actions'
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: { message: string }
+  searchParams: Promise<{ message?: string }>
 }) {
-  return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2 mx-auto mt-20">
-      <form className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground">
-        <label className="text-md" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        
-        <label className="text-md" htmlFor="full_name">
-          Full Name (Required for Sign Up)
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          name="full_name"
-          placeholder="Jane Doe"
-        />
+  const { message } = await searchParams
 
-        <label className="text-md" htmlFor="password">
-          Password
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
-        
+  return (
+    <div className="w-full max-w-sm space-y-6 p-8">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Welcome back</h1>
+        <p className="text-sm text-slate-500 mt-1">Sign in to your SkillSwap account.</p>
+      </div>
+
+      <form className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="email">
+            Email
+          </label>
+          <input
+            id="email"
+            className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1" htmlFor="password">
+            Password
+          </label>
+          <input
+            id="password"
+            className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="password"
+            type="password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
         <button
           formAction={login}
-          className="bg-blue-600 text-white rounded-md px-4 py-2 mb-2 hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white rounded-md px-4 py-2 text-sm font-semibold hover:bg-blue-700 transition"
         >
           Sign In
         </button>
-        <button
-          formAction={signup}
-          className="border border-foreground/20 rounded-md px-4 py-2 mb-2 hover:bg-slate-100 transition"
-        >
-          Sign Up
-        </button>
-        
-        {searchParams?.message && (
-          <p className="mt-4 p-4 bg-red-100 text-red-700 text-center rounded-md">
-            {searchParams.message}
-          </p>
-        )}
       </form>
+
+      {message && (
+        <p className="p-4 bg-red-100 text-red-700 text-center rounded-md text-sm">
+          {message}
+        </p>
+      )}
+
+      <p className="text-center text-sm text-slate-500">
+        Don&apos;t have an account?{' '}
+        <Link href="/register" className="text-blue-600 hover:underline">
+          Sign up
+        </Link>
+      </p>
     </div>
   )
 }
