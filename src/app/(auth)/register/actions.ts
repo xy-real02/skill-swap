@@ -15,6 +15,9 @@ export async function register(formData: FormData) {
   const fullName = sanitize(formData.get('full_name'))
   const email = sanitize(formData.get('email'))
   const password = formData.get('password') as string
+  const bio = sanitize(formData.get('bio'))
+  const communityZone = sanitize(formData.get('community_zone'))
+  const phoneNumber = sanitize(formData.get('phone_number'))
 
   // --- Input validation (server-side; client validates too but never trust it)
   if (!fullName) {
@@ -45,6 +48,9 @@ export async function register(formData: FormData) {
     options: {
       data: {
         full_name: fullName,
+        bio,
+        community_zone: communityZone,
+        phone_number: phoneNumber,
       },
     },
   })
