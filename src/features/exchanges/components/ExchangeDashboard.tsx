@@ -80,7 +80,7 @@ export function ExchangeDashboard({
                       <h3 className="font-headline-sm text-headline-sm text-primary m-0">{otherUser?.full_name}</h3>
                       <p className="font-body-md text-body-md text-on-surface-variant flex items-center gap-1">
                         <span className="material-symbols-outlined text-[16px]">location_on</span> 
-                        {otherUser?.location || 'Local Neighbor'}
+                        {otherUser?.community_zone || 'Local Neighbor'}
                       </p>
                     </div>
                   </div>

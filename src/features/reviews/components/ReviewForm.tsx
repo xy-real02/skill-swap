@@ -124,11 +124,12 @@ export function ReviewForm({
         <Button 
           type="submit" 
           variant="primary" 
-          className="w-full sm:w-auto min-w-[140px]"
+          className="w-full sm:w-auto min-w-[140px] flex items-center justify-center gap-2"
           disabled={isPending || rating === 0 || comment.length > 500}
-          icon={isPending ? 'sync' : 'send'}
-          iconClassName={isPending ? 'animate-spin' : ''}
         >
+          <span className={`material-symbols-outlined ${isPending ? 'animate-spin' : ''}`}>
+            {isPending ? 'sync' : 'send'}
+          </span>
           {isPending ? 'Submitting...' : 'Submit Review'}
         </Button>
       </div>

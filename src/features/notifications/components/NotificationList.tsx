@@ -1,9 +1,8 @@
 'use client'
 
 import { Notification } from '@/features/notifications/queries/getNotifications'
-import { markNotificationRead, markAllNotificationsRead } from '@/features/notifications/actions/markNotificationRead'
-// We need to import markAllNotificationsRead correctly since we split them, or we can just import from their respective files
-import { markAllNotificationsRead as markAll } from '@/features/notifications/actions/markAllNotificationsRead'
+import { markNotificationRead } from '@/features/notifications/actions/markNotificationRead'
+import { markAllNotificationsRead } from '@/features/notifications/actions/markAllNotificationsRead'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -28,7 +27,7 @@ export function NotificationList({ notifications }: { notifications: Notificatio
 
   const handleMarkAllRead = async () => {
     setIsMarkingAll(true)
-    await markAll()
+    await markAllNotificationsRead()
     setIsMarkingAll(false)
   }
 

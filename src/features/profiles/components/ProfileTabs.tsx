@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ListingWithProfile } from '@/features/listings/queries/getActiveListings'
+import { ListingWithProfile } from '@/features/listings/components/ListingCard'
 import { ReviewWithReviewer } from '@/features/reviews/queries/getPublishedReviews'
 import { ExchangeHistoryItem } from '@/features/exchanges/queries/getUserExchangeHistory'
 import { ListingCard } from '@/features/listings/components/ListingCard'

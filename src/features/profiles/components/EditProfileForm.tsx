@@ -133,11 +133,12 @@ export function EditProfileForm({
           <Button 
             type="submit" 
             variant="primary" 
-            className="w-full sm:w-auto min-w-[140px]"
+            className="w-full sm:w-auto min-w-[140px] flex items-center justify-center gap-2"
             disabled={isPending}
-            icon={isPending ? 'sync' : 'save'}
-            iconClassName={isPending ? 'animate-spin' : ''}
           >
+            <span className={`material-symbols-outlined ${isPending ? 'animate-spin' : ''}`}>
+              {isPending ? 'sync' : 'save'}
+            </span>
             {isPending ? 'Saving...' : 'Save Profile'}
           </Button>
         </div>

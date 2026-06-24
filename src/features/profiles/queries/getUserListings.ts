@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { ListingWithProfile } from '@/features/listings/queries/getActiveListings'
+import { ListingWithProfile } from '@/features/listings/components/ListingCard'
 
 export async function getUserListings(userId: string): Promise<ListingWithProfile[]> {
   const supabase = await createClient()
