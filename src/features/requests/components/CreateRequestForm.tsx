@@ -59,9 +59,10 @@ export function CreateRequestForm() {
             id="category" 
             name="category" 
             required 
+            defaultValue=""
             className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl py-3 px-4 appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-body-md text-on-surface"
           >
-            <option value="" disabled selected>Select a category</option>
+            <option value="" disabled>Select a category</option>
             {categories.map(cat => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
