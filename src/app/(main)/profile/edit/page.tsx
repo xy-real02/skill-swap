@@ -17,7 +17,7 @@ export default async function EditProfilePage() {
     redirect('/login')
   }
 
-  const profile = await getProfile('me')
+  const profile = await getProfile(authData.user.id)
   if (!profile) {
     redirect('/login')
   }
