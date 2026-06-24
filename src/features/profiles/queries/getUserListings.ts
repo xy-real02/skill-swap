@@ -8,7 +8,14 @@ export async function getUserListings(userId: string): Promise<ListingWithProfil
     .from('listings')
     .select(`
       *,
-      owner:profiles!listings_owner_id_fkey(*)
+      profiles:owner_id (
+        id,
+        full_name,
+        avatar_url,
+        community_zone,
+        reputation_score,
+        exchange_count
+      )
     `)
     .eq('owner_id', userId)
     .eq('status', 'Active')
