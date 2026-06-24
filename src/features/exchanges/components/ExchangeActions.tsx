@@ -6,11 +6,13 @@ import { updateExchangeStatus } from '@/features/exchanges/actions/updateExchang
 export function ExchangeActions({
   exchangeId,
   status,
-  isProvider
+  isProvider,
+  hasReviewed
 }: {
   exchangeId: string
   status: string | null
   isProvider: boolean
+  hasReviewed?: boolean
 }) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -78,6 +80,16 @@ export function ExchangeActions({
           Cancel Exchange
         </button>
       </>
+    )
+  } else if (status === 'Completed' && !hasReviewed) {
+    actions = (
+      <a 
+        href={`/exchanges/${exchangeId}/review`}
+        className="w-full bg-tertiary text-on-tertiary font-label-md text-label-md py-3 rounded-lg font-bold hover:bg-tertiary-container hover:text-on-tertiary-container transition-colors flex items-center justify-center gap-2"
+      >
+        <span className="material-symbols-outlined text-[18px]">rate_review</span>
+        Leave a Review
+      </a>
     )
   }
 
