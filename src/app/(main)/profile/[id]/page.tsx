@@ -51,7 +51,7 @@ export default async function ProfilePage({
   const isOwner = authData.user.id === targetId
 
   return (
-    <div className="flex-1 md:ml-64 w-full max-w-container-max mx-auto px-margin-mobile md:px-lg py-md md:py-lg">
+    <div className="w-full">
       <ProfileBento profile={profile} isOwner={isOwner} />
 
       <ProfileTabs 
