@@ -16,7 +16,7 @@ export function ExchangeDashboard({
   const tabs = ['Pending', 'Active', 'Scheduled', 'Completed', 'Cancelled']
 
   const filteredExchanges = exchanges.filter((ex) => {
-    if (activeTab === 'Pending') return ex.status === 'Proposed'
+    if (activeTab === 'Pending') return ex.status === 'Pending'
     if (activeTab === 'Active') return ex.status === 'Accepted'
     if (activeTab === 'Completed') return ex.status === 'Completed'
     if (activeTab === 'Cancelled') return ex.status === 'Cancelled'

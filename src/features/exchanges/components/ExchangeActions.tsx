@@ -23,7 +23,8 @@ export function ExchangeActions({
   // Determine what actions are available
   let actions = null
 
-  if (status === 'Proposed') {
+  // Pending Status (Provider sees Accept/Decline, Requester sees Waiting)
+  if (status === 'Pending') {
     if (isProvider) {
       actions = (
         <>
