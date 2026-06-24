@@ -78,7 +78,7 @@ export default async function ExplorePage({
               className="hidden md:flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-4 py-2 rounded-full font-label-sm font-bold transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
-              {activeTab === 'listings' ? 'Post a Listing' : 'Post a Request'}
+              {activeTab === 'listings' ? 'Share a Skill' : 'Post a Request'}
             </Link>
           </div>
         </div>
