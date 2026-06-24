@@ -1,6 +1,7 @@
 import { getListingById } from '@/features/listings/queries/getListingById'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 import { ProposeExchangeModal } from '@/features/exchanges/components/ProposeExchangeModal'
 
 export default async function ListingDetailsPage({
