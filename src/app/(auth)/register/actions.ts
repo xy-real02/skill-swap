@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import type { AuthError } from '@supabase/supabase-js'
 
 // Per spec: all text inputs must be trimmed and HTML-stripped before saving.
 function sanitize(value: FormDataEntryValue | null): string {
@@ -38,7 +39,7 @@ export async function register(formData: FormData) {
   // `raw_user_meta_data->>'full_name'` and writes it to the `profiles` table.
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -49,19 +50,29 @@ export async function register(formData: FormData) {
   })
 
   if (error) {
-    // Map Supabase errors to user-friendly codes.
-    // Never expose the raw Supabase message to the client (per spec).
-    if (error.message.toLowerCase().includes('already registered') ||
-        error.message.toLowerCase().includes('already exists') ||
-        error.code === 'user_already_exists') {
+    // TEMPORARY: log the raw error so we can diagnose the issue
+    const authError = error as AuthError
+    console.error('[register] Supabase signUp error:', {
+      message: authError.message,
+      code: authError.code,
+      status: authError.status,
+    })
+
+    if (authError.message.toLowerCase().includes('already registered') ||
+        authError.message.toLowerCase().includes('already exists') ||
+        authError.code === 'user_already_exists') {
       redirect('/register?error=email_taken')
     }
     redirect('/register?error=signup_failed')
   }
 
-  // If Supabase email confirmation is enabled, the user lands on a
-  // "check your email" page. If it is disabled (dev mode), they are
-  // immediately signed in and can go to /explore.
   revalidatePath('/', 'layout')
-  redirect('/register?success=check_email')
+  
+  if (data.session) {
+    // Email confirmation disabled -> auto logged in
+    redirect('/explore')
+  } else {
+    // Email confirmation enabled -> requires verification
+    redirect('/register?success=check_email')
+  }
 }
