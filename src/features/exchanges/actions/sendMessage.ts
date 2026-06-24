@@ -18,6 +18,10 @@ export async function sendMessage(formData: FormData) {
     return { error: 'Message cannot be empty.' }
   }
 
+  if (content.length > 1000) {
+    return { error: 'Message exceeds the 1000 character limit.' }
+  }
+
   // Insert message
   const { error: insertError } = await supabase
     .from('messages')

@@ -8,12 +8,14 @@ export function ChatWindow({
   exchangeId,
   messages,
   currentUserId,
-  otherUser
+  otherUser,
+  exchangeStatus
 }: {
   exchangeId: string
   messages: Message[]
   currentUserId: string
   otherUser: any
+  exchangeStatus: string | null
 }) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
@@ -115,7 +117,12 @@ export function ChatWindow({
       </div>
 
       {/* Input Area */}
-      <form ref={formRef} onSubmit={handleSubmit} className="p-4 bg-surface-container-lowest border-t border-surface-variant z-10">
+      {exchangeStatus === 'Cancelled' || exchangeStatus === 'Completed' || exchangeStatus === 'Disputed' ? (
+        <div className="p-4 bg-surface-container-lowest border-t border-surface-variant z-10 text-center">
+          <p className="text-on-surface-variant font-body-md py-4">This exchange is closed. Messaging is disabled.</p>
+        </div>
+      ) : (
+        <form ref={formRef} onSubmit={handleSubmit} className="p-4 bg-surface-container-lowest border-t border-surface-variant z-10">
         <input type="hidden" name="exchange_id" value={exchangeId} />
         <div className="flex items-end gap-3 bg-surface-container-low rounded-xl border-[1.5px] border-outline-variant focus-within:border-primary focus-within:ring-4 focus-within:ring-tertiary-container/10 transition-all p-2">
           <button type="button" className="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-secondary-container/50 rounded-full shrink-0 mb-0.5">
@@ -142,6 +149,7 @@ export function ChatWindow({
           </button>
         </div>
       </form>
+      )}
     </div>
   )
 }

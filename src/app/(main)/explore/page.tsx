@@ -1,19 +1,33 @@
 import { getActiveListings } from '@/features/listings/queries/getActiveListings'
+import { getActiveRequests, type RequestWithProfile } from '@/features/requests/queries/getActiveRequests'
 import { ListingCard, type ListingWithProfile } from '@/features/listings/components/ListingCard'
+import { RequestCard } from '@/features/requests/components/RequestCard'
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; q?: string }>
+  searchParams: Promise<{ category?: string; q?: string; tab?: string }>
 }) {
   const resolvedSearchParams = await searchParams
   const category = resolvedSearchParams.category || 'All Categories'
-  const listings = await getActiveListings({ 
-    category: category === 'All Categories' ? undefined : category 
-  })
+  const activeTab = resolvedSearchParams.tab === 'requests' ? 'requests' : 'listings'
+  
+  let listings: ListingWithProfile[] = []
+  let requests: RequestWithProfile[] = []
+  
+  if (activeTab === 'listings') {
+    listings = await getActiveListings({ 
+      category: category === 'All Categories' ? undefined : category 
+    })
+  } else {
+    requests = await getActiveRequests({ 
+      category: category === 'All Categories' ? undefined : category 
+    })
+  }
 
-  // Static list for now based on the HTML
+  // Static list for now
   const categories = ['All Categories', 'Home Repair', 'Education', 'Gardening', 'Tech Support', 'Culinary']
 
   const supabase = await createClient()
@@ -40,9 +54,33 @@ export default async function ExplorePage({
         </div>
         
         {/* Tabs */}
-        <div className="flex gap-6 border-b border-surface-variant mb-6">
-          <button className="pb-3 border-b-2 border-primary text-primary font-label-md text-label-md transition-colors">Skills Offered</button>
-          <button className="pb-3 border-b-2 border-transparent text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Skill Requests</button>
+        <div className="flex gap-6 border-b border-surface-variant mb-6 relative">
+          <Link 
+            href={`/explore?tab=listings&category=${category}`}
+            className={`pb-3 border-b-2 font-label-md text-label-md transition-colors ${
+              activeTab === 'listings' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'
+            }`}
+          >
+            Skills Offered
+          </Link>
+          <Link 
+            href={`/explore?tab=requests&category=${category}`}
+            className={`pb-3 border-b-2 font-label-md text-label-md transition-colors ${
+              activeTab === 'requests' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'
+            }`}
+          >
+            Skill Requests
+          </Link>
+          
+          <div className="ml-auto flex items-center mb-2">
+             <Link 
+              href={activeTab === 'listings' ? '/listings/create' : '/requests/create'} 
+              className="hidden md:flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-4 py-2 rounded-full font-label-sm font-bold transition-colors"
+            >
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              {activeTab === 'listings' ? 'Share a Skill' : 'Post a Request'}
+            </Link>
+          </div>
         </div>
         
         {/* Categories */}
@@ -52,7 +90,7 @@ export default async function ExplorePage({
             return (
               <a 
                 key={cat}
-                href={`/explore?category=${cat}`}
+                href={`/explore?tab=${activeTab}&category=${cat}`}
                 className={`whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm transition-colors ${
                   isActive 
                     ? 'bg-primary text-on-primary' 
@@ -68,15 +106,30 @@ export default async function ExplorePage({
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter pb-24">
-        {listings && listings.length > 0 ? (
-          listings.map((listing: ListingWithProfile) => (
-            <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
-          ))
-        ) : (
-          <div className="col-span-full py-12 text-center text-on-surface-variant">
-            <p className="font-body-lg">No listings found for this category yet.</p>
-            <p className="mt-2">Be the first to share a skill!</p>
-          </div>
+        {activeTab === 'listings' && (
+          listings && listings.length > 0 ? (
+            listings.map((listing: ListingWithProfile) => (
+              <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
+            ))
+          ) : (
+            <div className="col-span-full py-12 text-center text-on-surface-variant">
+              <p className="font-body-lg">No listings found for this category yet.</p>
+              <p className="mt-2">Be the first to share a skill!</p>
+            </div>
+          )
+        )}
+
+        {activeTab === 'requests' && (
+          requests && requests.length > 0 ? (
+            requests.map(request => (
+              <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
+            ))
+          ) : (
+            <div className="col-span-full py-12 text-center text-on-surface-variant">
+              <p className="font-body-lg">No skill requests found for this category.</p>
+              <p className="mt-2">Need help with something? Post a request!</p>
+            </div>
+          )
         )}
       </div>
     </>

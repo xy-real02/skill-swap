@@ -43,6 +43,16 @@ export default async function ExchangeDetailPage({
     steps.push({ id: 'Cancelled', label: 'Cancelled', icon: 'cancel', past: true, current: true })
   }
 
+  // Check if they already reviewed
+  const { data: existingReview } = await supabase
+    .from('reviews')
+    .select('id')
+    .eq('exchange_id', exchange.id)
+    .eq('reviewer_id', currentUserId)
+    .single()
+
+  const hasReviewed = !!existingReview
+
   return (
     <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full">
       {/* Header */}
@@ -105,7 +115,7 @@ export default async function ExchangeDetailPage({
             </div>
           </div>
 
-          <ExchangeActions exchangeId={exchange.id} status={exchange.status} isProvider={isProvider} />
+          <ExchangeActions exchangeId={exchange.id} status={exchange.status} isProvider={isProvider} hasReviewed={hasReviewed} />
         </div>
 
         {/* Right Column: Messaging Thread */}
@@ -114,6 +124,7 @@ export default async function ExchangeDetailPage({
           messages={messages} 
           currentUserId={currentUserId} 
           otherUser={otherUser} 
+          exchangeStatus={exchange.status}
         />
       </div>
     </div>
