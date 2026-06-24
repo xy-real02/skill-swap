@@ -6,9 +6,11 @@ import { proposeExchange } from '@/features/exchanges/actions/proposeExchange'
 
 export function ProposeExchangeForm({
   listingId,
+  sourceRequestId,
   providerId,
 }: {
-  listingId: string
+  listingId?: string
+  sourceRequestId?: string
   providerId: string
 }) {
   const [isLoading, setIsLoading] = useState(false)
@@ -21,7 +23,8 @@ export function ProposeExchangeForm({
     setError('')
 
     const formData = new FormData(e.currentTarget)
-    formData.append('listing_id', listingId)
+    if (listingId) formData.append('listing_id', listingId)
+    if (sourceRequestId) formData.append('source_request_id', sourceRequestId)
     formData.append('provider_id', providerId)
 
     const result = await proposeExchange(formData)
@@ -36,7 +39,11 @@ export function ProposeExchangeForm({
   }
 
   const handleCancel = () => {
-    router.push(`/listings/${listingId}`)
+    if (listingId) {
+      router.push(`/listings/${listingId}`)
+    } else {
+      router.push('/explore?tab=requests')
+    }
   }
 
   return (
