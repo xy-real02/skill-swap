@@ -9,7 +9,7 @@ export default function LoginPage({
   const errorMessage = searchParams?.message || searchParams?.error
 
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden font-body-md text-on-background">
+    <main className="min-h-screen py-12 bg-background flex flex-col items-center justify-center relative overflow-hidden font-body-md text-on-background">
       {/* Ambient Watermark */}
       <div className="fixed inset-0 pointer-events-none flex items-center justify-center select-none z-0 overflow-hidden">
         <span 

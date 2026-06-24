@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { register } from './actions'
 
-export default function RegisterForm() {
+export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isPending, setIsPending] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
@@ -100,10 +100,11 @@ export default function RegisterForm() {
               <label className="font-label-md text-label-md text-on-surface">Community Zone</label>
               <select name="community_zone" className="input-field" required defaultValue="">
                 <option disabled value="">Select your neighborhood...</option>
-                <option value="north">Northside Hub</option>
-                <option value="south">South Market</option>
-                <option value="east">East Village</option>
-                <option value="west">West End</option>
+                {zones.map((zone) => (
+                  <option key={zone} value={zone.toLowerCase().replace(/\s+/g, '-')}>
+                    {zone}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="flex flex-col gap-2">

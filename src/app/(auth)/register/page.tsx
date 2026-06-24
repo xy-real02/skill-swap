@@ -1,12 +1,22 @@
 import RegisterForm from './RegisterForm'
 
-export default function RegisterPage({
+import { createClient } from '@/lib/supabase/server'
+
+export default async function RegisterPage({
   searchParams,
 }: {
   searchParams: { error?: string; success?: string }
 }) {
+  const supabase = await createClient()
+  
+  // Try to fetch zones from settings, fallback to defaults if table is empty or errored
+  const { data } = await supabase.from('community_settings').select('community_zone_list').maybeSingle()
+  const zones = data?.community_zone_list?.length 
+    ? data.community_zone_list 
+    : ['Northside Hub', 'South Market', 'East Village', 'West End']
+
   return (
-    <main className="min-h-screen bg-surface flex flex-col items-center justify-center relative overflow-hidden font-body-md text-body-md text-on-surface">
+    <main className="min-h-screen bg-surface py-12 flex flex-col items-center justify-center relative overflow-hidden font-body-md text-body-md text-on-surface">
       {/* Watermark Motif */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <span className="text-[400px] text-primary opacity-5 font-bold leading-none select-none">↺</span>
@@ -34,7 +44,7 @@ export default function RegisterPage({
         )}
       </div>
 
-      {searchParams?.success !== 'check_email' && <RegisterForm />}
+      {searchParams?.success !== 'check_email' && <RegisterForm zones={zones} />}
     </main>
   )
 }
