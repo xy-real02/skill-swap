@@ -44,18 +44,19 @@ export function ProfileBento({
           )}
         </div>
 
-        {/* Info */}
-        <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left z-10 mt-4 md:mt-0 md:pr-40">
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
-            <h2 className="font-headline-md text-[32px] text-on-surface font-bold leading-tight break-words">{profile.full_name}</h2>
-            {isOwner && (
-              <span className="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-[11px] uppercase tracking-wider font-bold">You</span>
-            )}
-          </div>
-          <div className="flex items-center gap-2 text-on-surface-variant font-body-md mb-6">
-            <span className="material-symbols-outlined text-secondary text-[18px]">location_on</span>
-            <span>{profile.community_zone}</span>
-          </div>
+        {/* Info & Actions */}
+        <div className="flex-1 flex flex-col md:flex-row justify-between w-full z-10 mt-4 md:mt-0 gap-6">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
+              <h2 className="font-headline-md text-[32px] text-on-surface font-bold leading-tight break-words">{profile.full_name}</h2>
+              {isOwner && (
+                <span className="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-[11px] uppercase tracking-wider font-bold">You</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 text-on-surface-variant font-body-md mb-6">
+              <span className="material-symbols-outlined text-secondary text-[18px]">location_on</span>
+              <span>{profile.community_zone}</span>
+            </div>
           
           <div className="flex flex-wrap gap-6 justify-center md:justify-start">
             {/* Rep */}
@@ -69,7 +70,6 @@ export function ProfileBento({
             
             <div className="w-px h-12 bg-outline-variant hidden md:block"></div>
             
-            {/* Stats */}
             <div className="flex flex-col gap-1 justify-center">
               <div className="flex items-center gap-2 text-primary">
                 <span className="material-symbols-outlined text-[24px]">handshake</span>
@@ -78,20 +78,21 @@ export function ProfileBento({
               <span className="font-label-sm text-label-sm text-on-surface-variant">Exchanges</span>
             </div>
           </div>
-        </div>
-
-        {/* Actions */}
-        {isOwner && (
-          <div className="absolute top-6 right-6 z-20 hidden md:block">
-            <Link 
-              href="/profile/edit"
-              className="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 border-[1.5px] border-primary rounded-lg hover:bg-secondary-container/50 transition-colors flex items-center gap-2"
-            >
-              <span className="material-symbols-outlined text-[18px]">edit</span>
-              Edit Profile
-            </Link>
           </div>
-        )}
+
+          {/* Actions */}
+          {isOwner && (
+            <div className="shrink-0 flex justify-center md:justify-end">
+              <Link 
+                href="/profile/edit"
+                className="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 border-[1.5px] border-primary rounded-lg hover:bg-secondary-container/50 transition-colors flex items-center gap-2 h-fit whitespace-nowrap"
+              >
+                <span className="material-symbols-outlined text-[18px]">edit</span>
+                Edit Profile
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Intro / Bio Card */}
