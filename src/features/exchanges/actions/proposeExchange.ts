@@ -30,7 +30,20 @@ export async function proposeExchange(formData: FormData) {
     return { error: 'Please describe the skill you are offering in a bit more detail (min 5 characters).' }
   }
 
-  // 3. Insert into exchanges table
+  // 3. Check for duplicate proposals
+  const { data: existingExchange } = await supabase
+    .from('exchanges')
+    .select('id')
+    .eq('listing_id', listing_id)
+    .eq('requester_id', authData.user.id)
+    .in('status', ['Pending', 'Accepted'])
+    .maybeSingle()
+
+  if (existingExchange) {
+    return { error: 'You already have an active proposal for this listing.' }
+  }
+
+  // 4. Insert into exchanges table
   const { data: exchange, error: exchangeError } = await supabase
     .from('exchanges')
     .insert({
@@ -48,7 +61,7 @@ export async function proposeExchange(formData: FormData) {
     return { error: 'Failed to propose exchange. Please try again.' }
   }
 
-  // 4. Optionally insert initial message into messages table
+  // 5. Optionally insert initial message into messages table
   if (initial_message && initial_message.trim() !== '') {
     const { error: messageError } = await supabase
       .from('messages')
@@ -66,7 +79,7 @@ export async function proposeExchange(formData: FormData) {
     }
   }
 
-  // 5. Revalidate and return success
+  // 6. Revalidate and return success
   revalidatePath('/exchanges')
   revalidatePath(`/listings/${listing_id}`)
   
