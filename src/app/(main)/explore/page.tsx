@@ -4,9 +4,10 @@ import { ListingCard, type ListingWithProfile } from '@/features/listings/compon
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: { category?: string; q?: string }
+  searchParams: Promise<{ category?: string; q?: string }>
 }) {
-  const category = searchParams.category || 'All Categories'
+  const resolvedSearchParams = await searchParams
+  const category = resolvedSearchParams.category || 'All Categories'
   const listings = await getActiveListings({ 
     category: category === 'All Categories' ? undefined : category 
   })

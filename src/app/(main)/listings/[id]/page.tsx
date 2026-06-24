@@ -5,9 +5,10 @@ import Link from 'next/link'
 export default async function ListingDetailsPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const listing = await getListingById(params.id)
+  const resolvedParams = await params
+  const listing = await getListingById(resolvedParams.id)
 
   if (!listing) {
     notFound()

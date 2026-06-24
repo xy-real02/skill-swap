@@ -24,7 +24,7 @@ export default async function MainLayout({
     .single()
 
   return (
-    <div className="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row">
+    <div className="light bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row">
       {/* TopNavBar (Mobile Only) */}
       <nav className="md:hidden w-full flex justify-between items-center px-margin-mobile h-16 bg-surface shadow-[0_4px_20px_0_rgba(45,106,79,0.08)] fixed top-0 left-0 z-50">
         <div className="font-headline-md text-headline-md text-primary">SkillSwap</div>
