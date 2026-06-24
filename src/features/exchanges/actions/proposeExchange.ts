@@ -38,7 +38,7 @@ export async function proposeExchange(formData: FormData) {
       provider_id,
       requester_id: authData.user.id,
       offered_skill,
-      status: 'Proposed'
+      status: 'Pending'
     })
     .select('id')
     .single()
