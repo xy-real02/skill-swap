@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { signOut } from '@/app/actions/auth'
 
 export default async function MainLayout({
   children,
@@ -68,10 +69,12 @@ export default async function MainLayout({
             <span className="material-symbols-outlined">chat</span>
             <span className="font-label-md text-label-md">Messages</span>
           </Link>
-          <Link href="/profile" className="flex items-center gap-3 px-md py-3 text-on-surface-variant hover:bg-secondary-container/30 transition-all duration-200 mt-auto mb-4">
-            <span className="material-symbols-outlined">person</span>
-            <span className="font-label-md text-label-md">Profile</span>
-          </Link>
+          <form action={signOut} className="mt-auto mb-4 w-full">
+            <button type="submit" className="w-full flex items-center gap-3 px-md py-3 text-on-surface-variant hover:bg-error-container/30 hover:text-error transition-all duration-200">
+              <span className="material-symbols-outlined">logout</span>
+              <span className="font-label-md text-label-md">Sign Out</span>
+            </button>
+          </form>
         </nav>
         <div className="px-md mt-auto">
           <Link href="/listings/create" className="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center">
