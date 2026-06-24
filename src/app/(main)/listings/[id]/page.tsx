@@ -1,13 +1,18 @@
 import { getListingById } from '@/features/listings/queries/getListingById'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-
+import { createClient } from '@/lib/supabase/server'
 export default async function ListingDetailsPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
   const resolvedParams = await params
+  
+  const supabase = await createClient()
+  const { data: authData } = await supabase.auth.getUser()
+  const currentUserId = authData.user?.id
+
   const listing = await getListingById(resolvedParams.id)
 
   if (!listing) {
@@ -142,12 +147,25 @@ export default async function ListingDetailsPage({
               </div>
 
               <div className="w-full space-y-3">
-                <button className="w-full bg-[#2D6A4F] text-on-primary font-label-md text-label-md font-bold py-3 px-4 rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-sm">
-                  <span className="material-symbols-outlined">handshake</span> Propose Exchange
-                </button>
-                <button className="w-full bg-transparent text-[#2D6A4F] font-label-md text-label-md font-bold py-3 px-4 rounded-lg border-[1.5px] border-[#2D6A4F] hover:bg-secondary-container/20 transition-colors flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined">chat</span> Message Neighbor
-                </button>
+                {listing.owner_id === currentUserId ? (
+                  <div className="bg-tertiary-container/20 text-tertiary p-4 rounded-lg border border-tertiary/20 text-center flex flex-col gap-2">
+                    <span className="material-symbols-outlined text-3xl">home</span>
+                    <p className="font-label-md text-label-md font-bold">This is your listing</p>
+                    <p className="font-body-sm text-body-sm opacity-80">You will receive proposals here.</p>
+                  </div>
+                ) : (
+                  <>
+                    <Link 
+                      href={`/listings/${listing.id}/propose`}
+                      className="w-full bg-[#2D6A4F] text-on-primary font-label-md text-label-md font-bold py-3 px-4 rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <span className="material-symbols-outlined">handshake</span> Propose Exchange
+                    </Link>
+                    <button className="w-full bg-transparent text-[#2D6A4F] font-label-md text-label-md font-bold py-3 px-4 rounded-lg border-[1.5px] border-[#2D6A4F] hover:bg-secondary-container/20 transition-colors flex items-center justify-center gap-2">
+                      <span className="material-symbols-outlined">chat</span> Message Neighbor
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
