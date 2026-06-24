@@ -1,5 +1,6 @@
 import { getActiveListings } from '@/features/listings/queries/getActiveListings'
 import { ListingCard, type ListingWithProfile } from '@/features/listings/components/ListingCard'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function ExplorePage({
   searchParams,
@@ -14,6 +15,10 @@ export default async function ExplorePage({
 
   // Static list for now based on the HTML
   const categories = ['All Categories', 'Home Repair', 'Education', 'Gardening', 'Tech Support', 'Culinary']
+
+  const supabase = await createClient()
+  const { data: authData } = await supabase.auth.getUser()
+  const currentUserId = authData.user?.id
 
   return (
     <>
@@ -65,7 +70,7 @@ export default async function ExplorePage({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter pb-24">
         {listings && listings.length > 0 ? (
           listings.map((listing: ListingWithProfile) => (
-            <ListingCard key={listing.id} listing={listing} />
+            <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
           ))
         ) : (
           <div className="col-span-full py-12 text-center text-on-surface-variant">

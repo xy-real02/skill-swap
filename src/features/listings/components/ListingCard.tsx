@@ -8,7 +8,7 @@ export type ListingWithProfile = ListingRow & {
   profiles: Pick<ProfileRow, 'id' | 'full_name' | 'avatar_url' | 'community_zone' | 'reputation_score' | 'exchange_count'> | null
 }
 
-export function ListingCard({ listing }: { listing: ListingWithProfile }) {
+export function ListingCard({ listing, currentUserId }: { listing: ListingWithProfile, currentUserId?: string }) {
   const profile = listing.profiles
   const avatar = profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + (profile?.id || 'default')
   
@@ -49,9 +49,15 @@ export function ListingCard({ listing }: { listing: ListingWithProfile }) {
           )}
         </div>
         
-        <button className="w-full py-2.5 bg-transparent border-[1.5px] border-primary text-primary font-label-md text-label-md rounded-lg group-hover:bg-primary group-hover:text-on-primary transition-colors flex justify-center items-center gap-2">
-          Propose Exchange <span className="material-symbols-outlined text-[18px]">sync</span>
-        </button>
+        {listing.owner_id === currentUserId ? (
+          <button className="w-full py-2.5 bg-transparent border-[1.5px] border-tertiary text-tertiary font-label-md text-label-md rounded-lg group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex justify-center items-center gap-2">
+            View My Listing <span className="material-symbols-outlined text-[18px]">visibility</span>
+          </button>
+        ) : (
+          <button className="w-full py-2.5 bg-transparent border-[1.5px] border-primary text-primary font-label-md text-label-md rounded-lg group-hover:bg-primary group-hover:text-on-primary transition-colors flex justify-center items-center gap-2">
+            Propose Exchange <span className="material-symbols-outlined text-[18px]">sync</span>
+          </button>
+        )}
       </div>
     </Link>
   )
