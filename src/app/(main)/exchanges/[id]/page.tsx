@@ -124,6 +124,7 @@ export default async function ExchangeDetailPage({
           messages={messages} 
           currentUserId={currentUserId} 
           otherUser={otherUser} 
+          exchangeStatus={exchange.status}
         />
       </div>
     </div>
