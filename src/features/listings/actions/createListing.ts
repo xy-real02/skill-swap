@@ -54,7 +54,21 @@ export async function createListing(formData: FormData) {
     return { error: `You have reached the maximum allowed listings (${maxListings}). Please pause or archive an existing listing to create a new one.` }
   }
 
-  // 4. Insert the new listing
+  // 4. Prevent duplicate listings
+  const { data: existingListing } = await supabase
+    .from('listings')
+    .select('id')
+    .eq('owner_id', userId)
+    .eq('title', title)
+    .eq('category', category)
+    .eq('status', 'Active')
+    .maybeSingle()
+
+  if (existingListing) {
+    return { error: 'You already have an active listing with this title in this category.' }
+  }
+
+  // 5. Insert the new listing
   const { data, error } = await supabase
     .from('listings')
     .insert({
@@ -74,7 +88,7 @@ export async function createListing(formData: FormData) {
     return { error: 'Failed to create listing. Please try again.' }
   }
 
-  // 5. Revalidate explore page to show new listing
+  // 6. Revalidate explore page to show new listing
   revalidatePath('/explore')
 
   return { data }
