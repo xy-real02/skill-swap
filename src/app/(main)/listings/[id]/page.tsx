@@ -1,6 +1,7 @@
 import { getListingById } from '@/features/listings/queries/getListingById'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ProposeExchangeModal } from '@/features/exchanges/components/ProposeExchangeModal'
 
 export default async function ListingDetailsPage({
   params,
@@ -142,9 +143,7 @@ export default async function ListingDetailsPage({
               </div>
 
               <div className="w-full space-y-3">
-                <button className="w-full bg-[#2D6A4F] text-on-primary font-label-md text-label-md font-bold py-3 px-4 rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-sm">
-                  <span className="material-symbols-outlined">handshake</span> Propose Exchange
-                </button>
+                <ProposeExchangeModal listingId={listing.id} providerId={listing.owner_id} />
                 <button className="w-full bg-transparent text-[#2D6A4F] font-label-md text-label-md font-bold py-3 px-4 rounded-lg border-[1.5px] border-[#2D6A4F] hover:bg-secondary-container/20 transition-colors flex items-center justify-center gap-2">
                   <span className="material-symbols-outlined">chat</span> Message Neighbor
                 </button>
