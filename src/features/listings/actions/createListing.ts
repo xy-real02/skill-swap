@@ -9,7 +9,7 @@ export async function createListing(formData: FormData) {
   // 1. Authenticate user
   const { data: authData, error: authError } = await supabase.auth.getUser()
   if (authError || !authData.user) {
-    throw new Error('You must be logged in to create a listing.')
+    return { error: 'You must be logged in to create a listing.' }
   }
   const userId = authData.user.id
 
@@ -22,13 +22,13 @@ export async function createListing(formData: FormData) {
   const location_note = formData.get('location_note') as string | null
 
   if (!title || title.length > 80) {
-    throw new Error('Title must be between 1 and 80 characters.')
+    return { error: 'Title must be between 1 and 80 characters.' }
   }
   if (!description || description.length > 500) {
-    throw new Error('Description must be between 1 and 500 characters.')
+    return { error: 'Description must be between 1 and 500 characters.' }
   }
   if (!category) {
-    throw new Error('Category is required.')
+    return { error: 'Category is required.' }
   }
 
   // 3. Enforce max listings per user
@@ -47,11 +47,11 @@ export async function createListing(formData: FormData) {
     .neq('status', 'Archived')
 
   if (countError) {
-    throw new Error('Failed to verify listing limit.')
+    return { error: 'Failed to verify listing limit.' }
   }
 
   if (count !== null && count >= maxListings) {
-    throw new Error(`You have reached the maximum allowed listings (${maxListings}). Please pause or archive an existing listing to create a new one.`)
+    return { error: `You have reached the maximum allowed listings (${maxListings}). Please pause or archive an existing listing to create a new one.` }
   }
 
   // 4. Insert the new listing
@@ -71,11 +71,11 @@ export async function createListing(formData: FormData) {
     .single()
 
   if (error) {
-    throw new Error('Failed to create listing. Please try again.')
+    return { error: 'Failed to create listing. Please try again.' }
   }
 
   // 5. Revalidate explore page to show new listing
   revalidatePath('/explore')
 
-  return data
+  return { data }
 }
