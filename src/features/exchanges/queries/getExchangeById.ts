@@ -9,8 +9,8 @@ export async function getExchangeById(id: string): Promise<UserExchange | null> 
     .select(`
       *,
       listing:listings(title, category),
-      provider:profiles!exchanges_provider_id_fkey(id, full_name, avatar_url, location, reputation_score),
-      requester:profiles!exchanges_requester_id_fkey(id, full_name, avatar_url, location, reputation_score)
+      provider:profiles!exchanges_provider_id_fkey(id, full_name, avatar_url, community_zone, reputation_score),
+      requester:profiles!exchanges_requester_id_fkey(id, full_name, avatar_url, community_zone, reputation_score)
     `)
     .eq('id', id)
     .single()
