@@ -31,6 +31,7 @@ export default async function MainLayout({
     { href: '/exchanges', icon: 'swap_horiz', label: 'My Exchanges', matchPattern: '/exchanges' },
     { href: '/messages', icon: 'chat', label: 'Messages', matchPattern: '/messages' },
     { href: '/notifications', icon: 'notifications', label: 'Notifications', matchPattern: '/notifications' },
+    { href: '/profile/me', icon: 'person', label: 'My Profile', matchPattern: '/profile' },
   ]
 
   return (
