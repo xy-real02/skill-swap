@@ -216,14 +216,15 @@ export function ModeratorDashboardView({
 
       {/* Report Cards List */}
       {displayedReports.length === 0 ? (
-        <div className="relative isolate overflow-hidden flex flex-col items-center justify-center w-full min-h-[340px] bg-gradient-to-b from-surface-container-lowest to-surface-container-low dark:from-surface-container dark:to-surface-container-high rounded-3xl border border-outline-variant/60 p-8 my-8 text-center shadow-sm">
-          <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary-fixed-dim mb-4 animate-bounce shadow-inner border border-primary/20">
-            {searchQuery ? <Search className="w-10 h-10" /> : <Sparkles className="w-10 h-10" />}
+        <div className="relative isolate overflow-hidden flex flex-col items-center justify-center w-full min-h-[360px] bg-gradient-to-b from-surface-container-lowest to-surface-container-low dark:from-surface-container dark:to-surface-container-high rounded-3xl border border-outline-variant/60 p-8 my-8 text-center shadow-sm">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="w-20 h-20 rounded-3xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 flex items-center justify-center mb-6 shadow-sm relative z-10 border border-emerald-300 dark:border-emerald-800 animate-bounce">
+            {searchQuery ? <Search className="w-10 h-10" /> : <ShieldCheck className="w-10 h-10" />}
           </div>
-          <h3 className="text-2xl font-bold text-on-surface mb-2 w-full text-center">
+          <h3 className="text-2xl md:text-3xl font-black text-on-surface mb-3 w-full text-center relative z-10 font-headline-md tracking-tight">
             {searchQuery ? 'No Results Found' : 'Queue Complete!'}
           </h3>
-          <p className="text-base text-on-surface-variant max-w-md mx-auto text-center leading-relaxed">
+          <p className="text-base md:text-lg text-on-surface-variant w-full max-w-[540px] mx-auto text-center leading-relaxed relative z-10 font-medium px-4">
             {searchQuery
               ? `No reports matched "${searchQuery}". Try searching with different keywords.`
               : activeTab === 'Open'
