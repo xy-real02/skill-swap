@@ -7,16 +7,16 @@ export function RequestTableView({ requests, currentUserId }: { requests: Reques
   if (requests.length === 0) return null
 
   return (
-    <div className="col-span-full overflow-x-auto bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm">
-      <table className="w-full text-left border-collapse min-w-[800px]">
+    <div className="col-span-full overflow-x-auto bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-sm w-full">
+      <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-surface-variant bg-surface-container-low text-on-surface-variant font-label-sm text-xs uppercase tracking-wider">
-            <th className="py-3.5 px-4 font-bold">Neighbor</th>
-            <th className="py-3.5 px-4 font-bold">Category</th>
-            <th className="py-3.5 px-4 font-bold">Skill Requested</th>
-            <th className="py-3.5 px-4 font-bold">Offering in Return</th>
-            <th className="py-3.5 px-4 font-bold">Timeframe</th>
-            <th className="py-3.5 px-4 text-right font-bold">Action</th>
+          <tr className="border-b border-surface-variant bg-surface-container-low text-on-surface-variant font-label-sm text-[11px] sm:text-xs uppercase tracking-wider">
+            <th className="py-3 px-3 sm:px-4 font-bold">Neighbor</th>
+            <th className="py-3 px-3 sm:px-4 font-bold hidden md:table-cell">Category</th>
+            <th className="py-3 px-3 sm:px-4 font-bold">Skill Requested</th>
+            <th className="py-3 px-3 sm:px-4 font-bold hidden lg:table-cell">Offering in Return</th>
+            <th className="py-3 px-3 sm:px-4 font-bold hidden sm:table-cell">Timeframe</th>
+            <th className="py-3 px-3 sm:px-4 text-right font-bold">Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-surface-variant/60 font-body-sm text-sm">
@@ -27,11 +27,11 @@ export function RequestTableView({ requests, currentUserId }: { requests: Reques
 
             return (
               <tr key={request.id} className="hover:bg-surface-container-low/50 transition-colors group">
-                <td className="py-3.5 px-4 whitespace-nowrap">
-                  <Link href={`/profile/${request.owner_id}`} className="flex items-center gap-2.5 group/profile">
+                <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap align-top sm:align-middle">
+                  <Link href={`/profile/${request.owner_id}`} className="flex items-center gap-2 sm:gap-2.5 group/profile">
                     <img src={avatar} alt={profile?.full_name || 'User'} className="w-8 h-8 rounded-full object-cover shrink-0" />
                     <div>
-                      <p className="font-label-md font-bold text-on-surface group-hover/profile:text-primary transition-colors">
+                      <p className="font-label-md font-bold text-on-surface group-hover/profile:text-primary transition-colors max-w-[90px] sm:max-w-[140px] truncate">
                         {profile?.full_name || 'Anonymous'}
                       </p>
                       <div className="flex items-center gap-1 text-on-surface-variant text-[11px]">
@@ -41,28 +41,42 @@ export function RequestTableView({ requests, currentUserId }: { requests: Reques
                     </div>
                   </Link>
                 </td>
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap hidden md:table-cell align-middle">
                   <span className="bg-primary-container text-on-primary-container font-label-sm text-xs px-2.5 py-1 rounded-full font-bold">
                     {request.category}
                   </span>
                 </td>
-                <td className="py-3.5 px-4 max-w-[240px]">
-                  <p className="font-label-md font-bold text-on-surface truncate" title={request.title}>{request.title}</p>
-                  <p className="text-on-surface-variant text-xs line-clamp-1 truncate" title={request.description}>{request.description}</p>
+                <td className="py-3.5 px-3 sm:px-4 min-w-[160px] align-top sm:align-middle">
+                  {/* Mobile category badge */}
+                  <div className="mb-1 md:hidden">
+                    <span className="bg-primary-container text-on-primary-container text-[10px] px-2 py-0.5 rounded-full font-bold">
+                      {request.category}
+                    </span>
+                  </div>
+                  
+                  <p className="font-label-md font-bold text-on-surface line-clamp-1" title={request.title}>{request.title}</p>
+                  <p className="text-on-surface-variant text-xs line-clamp-1 mt-0.5" title={request.description}>{request.description}</p>
+                  
+                  {/* Offering / Timeframe on mobile */}
+                  <div className="text-on-surface-variant text-[11px] mt-1.5 space-y-0.5 lg:hidden">
+                    <p className="line-clamp-1"><span className="font-bold text-on-surface/80">Offering:</span> {request.offered_in_return || 'Open to offers'}</p>
+                    <p className="line-clamp-1 sm:hidden text-xs text-primary/80 font-bold">{request.desired_timeframe || 'Flexible'}</p>
+                  </div>
                 </td>
-                <td className="py-3.5 px-4 text-on-surface-variant max-w-[180px] truncate" title={request.offered_in_return || 'Open to offers'}>
+                <td className="py-3.5 px-3 sm:px-4 text-on-surface-variant max-w-[180px] truncate hidden lg:table-cell align-middle" title={request.offered_in_return || 'Open to offers'}>
                   {request.offered_in_return || 'Open to offers'}
                 </td>
-                <td className="py-3.5 px-4 whitespace-nowrap text-on-surface-variant text-xs font-bold">
+                <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap text-on-surface-variant text-xs font-bold hidden sm:table-cell align-middle">
                   {request.desired_timeframe || 'Flexible'}
                 </td>
-                <td className="py-3.5 px-4 whitespace-nowrap text-right">
+                <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap text-right align-top sm:align-middle">
                   {!isOwner && currentUserId ? (
                     <Link
                       href={`?tab=requests&modal=propose-request&requestId=${request.id}&seekerId=${request.owner_id}&title=${encodeURIComponent(request.title)}`}
-                      className="inline-flex items-center gap-1 bg-primary text-on-primary hover:bg-primary/90 font-label-sm text-xs py-1.5 px-3 rounded-full transition-colors shadow-sm font-bold"
+                      className="inline-flex items-center gap-1 bg-primary text-on-primary hover:bg-primary/90 font-label-sm text-xs py-1.5 px-3 rounded-full transition-colors shadow-sm font-bold mt-0.5 sm:mt-0"
                     >
-                      <span className="material-symbols-outlined text-[14px]">handshake</span> I Can Help
+                      <span className="material-symbols-outlined text-[14px]">handshake</span>
+                      <span>I Can Help</span>
                     </Link>
                   ) : !currentUserId ? (
                     <Link href="/login" className="text-xs text-primary font-bold hover:underline">Log in</Link>
