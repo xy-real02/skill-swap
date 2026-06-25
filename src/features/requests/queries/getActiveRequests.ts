@@ -12,7 +12,7 @@ export type RequestWithProfile = Database['public']['Tables']['requests']['Row']
   }
 }
 
-export async function getActiveRequests(options?: { category?: string; limit?: number }) {
+export async function getActiveRequests(options?: { category?: string; q?: string; limit?: number }) {
   const supabase = await createClient()
 
   let query = supabase
@@ -33,6 +33,10 @@ export async function getActiveRequests(options?: { category?: string; limit?: n
 
   if (options?.category && options.category !== 'All') {
     query = query.eq('category', options.category)
+  }
+
+  if (options?.q) {
+    query = query.or(`title.ilike.%${options.q}%,description.ilike.%${options.q}%`)
   }
 
   if (options?.limit) {

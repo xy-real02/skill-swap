@@ -3,7 +3,9 @@ import { getActiveRequests, type RequestWithProfile } from '@/features/requests/
 import { ListingCard, type ListingWithProfile } from '@/features/listings/components/ListingCard'
 import { RequestCard } from '@/features/requests/components/RequestCard'
 import { createClient } from '@/lib/supabase/server'
+import { SearchBar } from '@/components/ui/SearchBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 export default async function ExplorePage({
   searchParams,
@@ -13,17 +15,20 @@ export default async function ExplorePage({
   const resolvedSearchParams = await searchParams
   const category = resolvedSearchParams.category || 'All Categories'
   const activeTab = resolvedSearchParams.tab === 'requests' ? 'requests' : 'listings'
+  const q = resolvedSearchParams.q
   
   let listings: ListingWithProfile[] = []
   let requests: RequestWithProfile[] = []
   
   if (activeTab === 'listings') {
     listings = await getActiveListings({ 
-      category: category === 'All Categories' ? undefined : category 
+      category: category === 'All Categories' ? undefined : category,
+      q
     })
   } else {
     requests = await getActiveRequests({ 
-      category: category === 'All Categories' ? undefined : category 
+      category: category === 'All Categories' ? undefined : category,
+      q
     })
   }
 
@@ -44,14 +49,9 @@ export default async function ExplorePage({
     <>
       {/* Search Bar (Not sticky, scrolls away) */}
       <div className="pt-2 pb-6 w-full">
-        <div className="relative w-full group">
-          <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors text-[24px]">search</span>
-          <input 
-            className="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-2xl py-4 pl-14 pr-4 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-body-lg text-body-lg placeholder:text-outline-variant shadow-sm hover:shadow-md" 
-            placeholder="Search skills, people, or topics..." 
-            type="text" 
-          />
-        </div>
+        <Suspense fallback={<div className="h-14 bg-surface-container-lowest animate-pulse rounded-2xl w-full"></div>}>
+          <SearchBar />
+        </Suspense>
       </div>
 
       {/* Sticky Section: Tabs & Categories */}
