@@ -66,10 +66,10 @@ export function ReportForm({
 
   if (success) {
     return (
-      <div className="py-12 text-center space-y-3 animate-fade-in">
+      <div className="py-12 px-4 text-center space-y-3 animate-fade-in w-full">
         <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto animate-bounce" />
         <h4 className="text-lg font-bold text-on-surface">Report Submitted</h4>
-        <p className="text-sm text-on-surface-variant max-w-sm mx-auto">
+        <p className="text-sm text-on-surface-variant leading-relaxed max-w-md mx-auto">
           Thank you for helping keep the SkillSwap community safe. Our moderation team will review this report shortly.
         </p>
       </div>
