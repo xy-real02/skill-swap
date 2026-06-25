@@ -20,6 +20,29 @@ export async function getProfile(profileId: string): Promise<Profile | null> {
     return null
   }
 
+  // Calculate live exchange count to guarantee accuracy even before migrations run
+  const { count: liveExchangeCount } = await supabase
+    .from('exchanges')
+    .select('*', { count: 'exact', head: true })
+    .or(`provider_id.eq.${profileId},requester_id.eq.${profileId}`)
+    .neq('status', 'Cancelled')
+    .neq('status', 'Declined')
+
+  if (liveExchangeCount !== null) {
+    data.exchange_count = liveExchangeCount
+  }
+
+  // Calculate live reputation score to guarantee instant accuracy
+  const { data: reviews } = await supabase
+    .from('reviews')
+    .select('rating')
+    .eq('target_id', profileId)
+
+  if (reviews && reviews.length > 0) {
+    const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    data.reputation_score = Number(avg.toFixed(2))
+  }
+
   // Enforce privacy: clear sensitive fields if not the owner
   if (!isOwner) {
     data.phone_number = null

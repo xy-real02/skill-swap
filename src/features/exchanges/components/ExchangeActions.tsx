@@ -30,7 +30,7 @@ export function ExchangeActions({
   let actions: React.ReactNode = null
 
   // Pending Status (Provider sees Accept/Decline, Requester sees Waiting)
-  if (status === 'Proposed') {
+  if (status === 'Proposed' || status === 'Pending') {
     if (isProvider) {
       actions = (
         <>

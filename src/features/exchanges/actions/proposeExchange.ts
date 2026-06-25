@@ -88,8 +88,9 @@ export async function proposeExchange(formData: FormData) {
   }
 
   // 6. Revalidate and return success
+  revalidatePath('/', 'layout')
   revalidatePath('/exchanges')
-  revalidatePath(`/listings/${listing_id}`)
+  if (listing_id) revalidatePath(`/listings/${listing_id}`)
   
   return { success: true, exchangeId: exchange.id }
 }

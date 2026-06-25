@@ -34,7 +34,7 @@ export default async function ExchangeDetailPage({
 
   // Status mapping for stepper
   const steps = [
-    { id: 'Proposed', label: 'Proposed', icon: 'check', past: true, current: exchange.status === 'Proposed' },
+    { id: 'Proposed', label: 'Proposed', icon: 'check', past: true, current: exchange.status === 'Proposed' || exchange.status === 'Pending' },
     { id: 'Accepted', label: 'Accepted', icon: 'handshake', past: exchange.status === 'Completed' || exchange.status === 'Accepted', current: exchange.status === 'Accepted' },
     { id: 'Completed', label: 'Completed', icon: 'task_alt', past: exchange.status === 'Completed', current: exchange.status === 'Completed' }
   ]
