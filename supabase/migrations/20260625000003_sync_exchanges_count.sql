@@ -82,35 +82,47 @@ CREATE TRIGGER tr_update_profile_exchange_counts
   AFTER INSERT OR UPDATE OR DELETE ON exchanges
   FOR EACH ROW EXECUTE FUNCTION update_profile_exchange_counts();
 
--- Modify handle_review_publish() so it only updates reputation_score, avoiding double counting exchange_count
-CREATE OR REPLACE FUNCTION handle_review_publish()
+-- Trigger function to automatically maintain profiles.reputation_score
+CREATE OR REPLACE FUNCTION update_profile_reputation()
 RETURNS TRIGGER AS $$
 DECLARE
-  review_count INT;
-  new_score    DECIMAL(3,2);
+  t_id UUID;
+  new_score DECIMAL(3,2);
 BEGIN
-  SELECT COUNT(*) INTO review_count
-  FROM reviews
-  WHERE exchange_id = NEW.exchange_id;
+  IF TG_OP = 'DELETE' THEN
+    t_id := OLD.target_id;
+  ELSE
+    t_id := NEW.target_id;
+    -- Auto publish inserted/updated review
+    NEW.is_published := TRUE;
+  END IF;
 
-  IF review_count = 2 THEN
-    UPDATE reviews
-    SET is_published = TRUE
-    WHERE exchange_id = NEW.exchange_id;
-
+  IF t_id IS NOT NULL THEN
     SELECT AVG(rating) INTO new_score
     FROM reviews
-    WHERE target_id = NEW.target_id AND is_published = TRUE;
+    WHERE target_id = t_id;
 
     UPDATE profiles
-    SET reputation_score = new_score
-    WHERE id = NEW.target_id;
+    SET reputation_score = COALESCE(ROUND(new_score::numeric, 2), 0)
+    WHERE id = t_id;
   END IF;
-  RETURN NEW;
+
+  IF TG_OP = 'DELETE' THEN
+    RETURN OLD;
+  ELSE
+    RETURN NEW;
+  END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Immediately backfill all profiles in the DB right now!
+DROP TRIGGER IF EXISTS on_review_inserted ON reviews;
+DROP TRIGGER IF EXISTS tr_update_profile_reputation ON reviews;
+
+CREATE TRIGGER tr_update_profile_reputation
+  BEFORE INSERT OR UPDATE OR DELETE ON reviews
+  FOR EACH ROW EXECUTE FUNCTION update_profile_reputation();
+
+-- Immediately backfill all exchange counts in the DB right now!
 UPDATE profiles p
 SET exchange_count = (
   SELECT COUNT(*)
@@ -118,3 +130,11 @@ SET exchange_count = (
   WHERE (e.provider_id = p.id OR e.requester_id = p.id)
     AND e.status NOT IN ('Cancelled', 'Declined')
 );
+
+-- Immediately backfill all reputation scores in the DB right now!
+UPDATE profiles p
+SET reputation_score = COALESCE((
+  SELECT ROUND(AVG(rating)::numeric, 2)
+  FROM reviews r
+  WHERE r.target_id = p.id
+), 0);
