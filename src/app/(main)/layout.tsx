@@ -48,9 +48,6 @@ export default async function MainLayout({
       <nav className="md:hidden w-full flex justify-between items-center px-margin-mobile h-16 bg-surface shadow-[0_4px_20px_0_rgba(45,106,79,0.08)] fixed top-0 left-0 z-50">
         <div className="font-headline-md text-headline-md text-primary">SkillSwap</div>
         <div className="flex items-center gap-4">
-          <Link href="/notifications" className="text-on-surface-variant hover:text-primary transition-colors">
-            <span className="material-symbols-outlined">notifications</span>
-          </Link>
           <img 
             alt="User avatar" 
             src={profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.id}
