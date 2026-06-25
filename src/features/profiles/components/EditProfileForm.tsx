@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Profile } from '@/features/profiles/queries/getProfile'
 import { updateProfile } from '@/features/profiles/actions/updateProfile'
+import { uploadAvatar } from '@/features/profiles/actions/uploadAvatar'
 import { Button } from '@/components/ui/Button'
 import { useRouter } from 'next/navigation'
 
@@ -16,13 +17,29 @@ export function EditProfileForm({
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [isPending, setIsPending] = useState(false)
+  const [avatarPreview, setAvatarPreview] = useState<string>(
+    profile.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + profile.id
+  )
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const formElement = e.currentTarget
     setIsPending(true)
     setError(null)
 
-    const formData = new FormData(e.currentTarget)
+    if (avatarFile) {
+      const avatarData = new FormData()
+      avatarData.append('avatar', avatarFile)
+      const uploadRes = await uploadAvatar(avatarData)
+      if (uploadRes.error) {
+        setError(uploadRes.error)
+        setIsPending(false)
+        return
+      }
+    }
+
+    const formData = new FormData(formElement)
     const result = await updateProfile(formData)
 
     if (result.error) {
@@ -43,6 +60,46 @@ export function EditProfileForm({
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        {/* Avatar Upload */}
+        <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-outline-variant/30">
+          <img
+            src={avatarPreview}
+            alt="Avatar preview"
+            className="w-24 h-24 rounded-full object-cover border-4 border-primary/20 shadow-sm shrink-0"
+          />
+          <div className="flex flex-col gap-2 text-center sm:text-left">
+            <label className="font-label-md text-label-md font-bold text-on-surface">
+              Profile Picture
+            </label>
+            <p className="font-label-sm text-xs text-on-surface-variant">
+              Upload a PNG, JPG, or WEBP image under 5MB.
+            </p>
+            <div>
+              <label htmlFor="avatar-upload" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-container text-on-primary-container font-label-md font-bold hover:bg-primary hover:text-on-primary transition-all cursor-pointer text-xs">
+                <span className="material-symbols-outlined text-[16px]">upload</span>
+                Choose Image
+              </label>
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    setAvatarFile(file)
+                    const reader = new FileReader()
+                    reader.onloadend = () => {
+                      setAvatarPreview(reader.result as string)
+                    }
+                    reader.readAsDataURL(file)
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Full Name */}
         <div className="flex flex-col gap-2">
           <label htmlFor="full_name" className="font-label-md text-label-md font-bold text-on-surface">
