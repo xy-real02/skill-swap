@@ -39,7 +39,7 @@ export default async function MyListingsPage({
             className={`px-5 py-2.5 rounded-full font-label-md font-bold transition-all flex items-center gap-2 ${tab === 'listings' ? 'bg-primary text-on-primary shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'}`}
           >
             <span className="material-symbols-outlined text-[18px]">inventory_2</span>
-            My Listings
+            My Skill Offers
             <span className={`px-2 py-0.5 rounded-full text-xs ${tab === 'listings' ? 'bg-on-primary/20 text-on-primary' : 'bg-on-surface-variant/15 text-on-surface-variant'}`}>
               {listings.length}
             </span>
