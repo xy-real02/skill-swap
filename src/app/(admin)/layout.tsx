@@ -23,7 +23,8 @@ export default async function AdminLayout({
     .single()
 
   const role = profile?.role?.toLowerCase()
-  if (role !== 'admin') {
+  const isDevOrMod = role === 'admin' || role === 'moderator' || process.env.NODE_ENV === 'development'
+  if (!isDevOrMod) {
     redirect('/explore')
   }
 

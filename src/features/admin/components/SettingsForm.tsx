@@ -154,18 +154,18 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
         </div>
 
         {/* Add Zone */}
-        <div className="flex gap-2 max-w-md">
+        <div className="flex gap-2 max-w-md w-full">
           <input
             type="text"
             value={newZone}
             onChange={(e) => setNewZone(e.target.value)}
             placeholder="New neighborhood zone name..."
-            className="flex-1 px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-emerald-500 placeholder:text-slate-600"
+            className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-emerald-500 placeholder:text-slate-600 shadow-inner"
           />
           <button
             type="button"
             onClick={handleAddZone}
-            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold text-xs rounded-xl border border-slate-700 flex items-center gap-1 transition-all"
+            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl border border-emerald-500 shadow-lg shadow-emerald-600/20 flex items-center gap-1 transition-all"
           >
             <Plus className="w-4 h-4" />
             Add

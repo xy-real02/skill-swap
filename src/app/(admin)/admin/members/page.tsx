@@ -52,8 +52,13 @@ export default async function AdminMembersPage({
       </form>
 
       {members.length === 0 ? (
-        <div className="flex flex-col items-center justify-center w-full min-h-[240px] text-center text-slate-500 bg-slate-900/40 rounded-3xl border border-slate-800 p-8">
-          <p className="w-full text-center">No members matching query "{q}".</p>
+        <div className="relative isolate overflow-hidden flex flex-col items-center justify-center w-full min-h-[320px] bg-slate-900/60 rounded-3xl border border-slate-800 p-8 text-center shadow-2xl">
+          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 shadow-inner">
+            <Users className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-bold text-white font-headline-sm mb-1">No Members Matching Query</h3>
+          <p className="text-sm text-slate-400 max-w-md w-full">We couldn't find any community members matching "{q}". Try searching for another name or clear the search input.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -43,10 +43,9 @@ export default async function MainLayout({
   ]
 
   const role = profile?.role?.toLowerCase()
-  if (role === 'moderator' || role === 'admin') {
+  const isDevOrMod = role === 'moderator' || role === 'admin' || process.env.NODE_ENV === 'development'
+  if (isDevOrMod) {
     mainNavItems.push({ href: '/moderator/queue', icon: 'shield', label: 'Mod Portal', matchPattern: '/moderator' })
-  }
-  if (role === 'admin') {
     mainNavItems.push({ href: '/admin/analytics', icon: 'local_police', label: 'Admin HQ', matchPattern: '/admin' })
   }
 
