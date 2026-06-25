@@ -77,6 +77,19 @@ export async function register(formData: FormData) {
     redirect('/register?error=signup_failed')
   }
 
+  if (data.user) {
+    const file = formData.get('avatar_file') as File
+    if (file && file.size > 0) {
+      const fileExt = file.name.split('.').pop() || 'png'
+      const filePath = `${data.user.id}/${Date.now()}.${fileExt}`
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true })
+      if (!uploadError) {
+        const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath)
+        await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', data.user.id)
+      }
+    }
+  }
+
   revalidatePath('/', 'layout')
   
   if (data.session) {
