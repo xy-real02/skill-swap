@@ -25,10 +25,10 @@ export default async function ModeratorQueuePage() {
       </div>
 
       {pendingReports.length === 0 ? (
-        <div className="py-20 text-center bg-slate-900/40 border border-slate-800/60 rounded-3xl p-8 max-w-lg mx-auto">
+        <div className="w-full max-w-lg mx-auto py-16 px-6 text-center bg-slate-900/40 border border-slate-800/60 rounded-3xl shadow-xl">
           <ShieldCheck className="w-16 h-16 mx-auto text-emerald-500 mb-4 animate-bounce" />
           <h2 className="text-xl font-bold text-white mb-2">All Clear!</h2>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-slate-400 leading-relaxed max-w-sm mx-auto">
             There are currently no pending moderation reports. Great job keeping SkillSwap safe!
           </p>
         </div>
