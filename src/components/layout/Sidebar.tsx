@@ -90,8 +90,12 @@ export function Sidebar({
             />
             <div className="min-w-0 flex-1">
               <div className="font-label-md text-label-md text-on-surface font-bold truncate">{profile?.full_name || 'User'}</div>
-              <div className="font-label-sm text-[11px] text-on-surface-variant truncate">
-                {profile?.role === 'admin' ? 'Community Admin' : profile?.role === 'moderator' ? 'Community Mod' : 'Member'}
+              <div className="font-label-sm text-[11px] text-on-surface-variant truncate font-semibold">
+                {profile?.role?.toLowerCase() === 'admin'
+                  ? 'Community Admin'
+                  : profile?.role?.toLowerCase() === 'moderator'
+                    ? 'Community Mod'
+                    : 'Member'}
               </div>
             </div>
           </div>

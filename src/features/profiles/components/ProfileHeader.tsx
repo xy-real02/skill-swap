@@ -20,7 +20,7 @@ export function ProfileHeader({
           alt={profile.full_name}
           className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-surface shadow-md"
         />
-        {profile.role === 'admin' || profile.role === 'moderator' ? (
+        {profile.role?.toLowerCase() === 'admin' || profile.role?.toLowerCase() === 'moderator' ? (
           <div className="absolute -bottom-2 -right-2 bg-primary text-on-primary rounded-full p-1.5 border-4 border-surface shadow-sm" title="Community Moderator">
             <span className="material-symbols-outlined text-[18px]">shield</span>
           </div>

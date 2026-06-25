@@ -37,7 +37,7 @@ export function ProfileBento({
               <span className="font-label-sm text-label-sm font-bold">Trusted Member</span>
             </div>
           )}
-          {(profile.role === 'admin' || profile.role === 'moderator') && !isTrusted && (
+          {(profile.role?.toLowerCase() === 'admin' || profile.role?.toLowerCase() === 'moderator') && !isTrusted && (
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-primary text-on-primary border border-surface-container-lowest px-3 py-1 rounded-full whitespace-nowrap z-20 flex items-center gap-1 shadow-sm">
               <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
               <span className="font-label-sm text-label-sm font-bold">Moderator</span>
