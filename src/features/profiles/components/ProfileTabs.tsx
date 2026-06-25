@@ -26,36 +26,51 @@ export function ProfileTabs({
   return (
     <>
       {/* Tabs */}
-      <div className="flex gap-8 border-b border-surface-variant mb-8 overflow-x-auto no-scrollbar">
+      <div className="flex bg-surface-container-low rounded-xl p-1.5 border border-outline-variant/30 mb-8 w-fit overflow-x-auto no-scrollbar shadow-sm">
         <button 
           onClick={() => setActiveTab('skills')}
-          className={`font-label-md text-label-md pb-3 px-2 whitespace-nowrap transition-colors ${
+          className={`px-5 py-2 rounded-lg font-label-md transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'skills' 
-              ? 'text-primary font-bold border-b-2 border-primary' 
-              : 'text-on-surface-variant hover:text-primary'
+              ? 'bg-surface shadow-sm text-primary font-bold' 
+              : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50'
           }`}
         >
           Skills Offered
+          <span className={`flex items-center justify-center rounded-full text-[11px] font-bold px-2 py-0.5 ${
+            activeTab === 'skills' ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant'
+          }`}>
+            {listings.length}
+          </span>
         </button>
         <button 
           onClick={() => setActiveTab('reviews')}
-          className={`font-label-md text-label-md pb-3 px-2 whitespace-nowrap transition-colors ${
+          className={`px-5 py-2 rounded-lg font-label-md transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'reviews' 
-              ? 'text-primary font-bold border-b-2 border-primary' 
-              : 'text-on-surface-variant hover:text-primary'
+              ? 'bg-surface shadow-sm text-primary font-bold' 
+              : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50'
           }`}
         >
           Reviews
+          <span className={`flex items-center justify-center rounded-full text-[11px] font-bold px-2 py-0.5 ${
+            activeTab === 'reviews' ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant'
+          }`}>
+            {reviews.length}
+          </span>
         </button>
         <button 
           onClick={() => setActiveTab('history')}
-          className={`font-label-md text-label-md pb-3 px-2 whitespace-nowrap transition-colors ${
+          className={`px-5 py-2 rounded-lg font-label-md transition-all flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'history' 
-              ? 'text-primary font-bold border-b-2 border-primary' 
-              : 'text-on-surface-variant hover:text-primary'
+              ? 'bg-surface shadow-sm text-primary font-bold' 
+              : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container/50'
           }`}
         >
           Exchange History
+          <span className={`flex items-center justify-center rounded-full text-[11px] font-bold px-2 py-0.5 ${
+            activeTab === 'history' ? 'bg-primary text-on-primary' : 'bg-surface-variant text-on-surface-variant'
+          }`}>
+            {history.length}
+          </span>
         </button>
       </div>
 
@@ -80,8 +95,15 @@ export function ProfileTabs({
           )}
 
           {!isOwner && listings.length === 0 && (
-            <div className="col-span-full py-12 text-center text-on-surface-variant">
-              This member doesn't have any active listings right now.
+            <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                <span className="material-symbols-outlined text-[40px]">architecture</span>
+              </div>
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No active listings</h3>
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10">
+                This member doesn&apos;t have any active listings right now.
+              </p>
             </div>
           )}
         </section>
@@ -96,8 +118,15 @@ export function ProfileTabs({
       {activeTab === 'history' && (
         <section className="flex flex-col gap-4 max-w-3xl">
           {history.length === 0 ? (
-            <div className="py-12 text-center text-on-surface-variant bg-surface-container-lowest rounded-2xl border border-outline-variant/30">
-              No completed exchanges yet.
+            <div className="bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                <span className="material-symbols-outlined text-[40px]">handshake</span>
+              </div>
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No completed exchanges</h3>
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10">
+                {isOwner ? "You haven't completed any exchanges yet." : "This member hasn't completed any exchanges yet."}
+              </p>
             </div>
           ) : (
             history.map(exchange => {

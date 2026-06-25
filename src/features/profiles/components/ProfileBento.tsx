@@ -105,8 +105,8 @@ export function ProfileBento({
           {profile.bio || "This member hasn't added a bio yet."}
         </p>
         <div className="mt-4 flex items-center gap-2 text-primary font-label-sm text-label-sm">
-          <span className="material-symbols-outlined text-[16px]">cycle</span>
-          <span>Active recently</span>
+          <span className="material-symbols-outlined text-[16px]">calendar_today</span>
+          <span>Joined {profile.created_at ? new Date(profile.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'recently'}</span>
         </div>
       </div>
     </section>
