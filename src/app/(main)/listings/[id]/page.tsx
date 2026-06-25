@@ -2,6 +2,7 @@ import { getListingById } from '@/features/listings/queries/getListingById'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { DeleteListingButton } from '@/features/listings/components/DeleteListingButton'
 export default async function ListingDetailsPage({
   params,
 }: {
@@ -148,11 +149,14 @@ export default async function ListingDetailsPage({
 
               <div className="w-full space-y-3">
                 {listing.owner_id === currentUserId ? (
-                  <div className="bg-tertiary-container/20 text-tertiary p-4 rounded-lg border border-tertiary/20 text-center flex flex-col gap-2">
-                    <span className="material-symbols-outlined text-3xl">home</span>
-                    <p className="font-label-md text-label-md font-bold">This is your listing</p>
-                    <p className="font-body-sm text-body-sm opacity-80">You will receive proposals here.</p>
-                  </div>
+                  <>
+                    <div className="bg-tertiary-container/20 text-tertiary p-4 rounded-lg border border-tertiary/20 text-center flex flex-col gap-2">
+                      <span className="material-symbols-outlined text-3xl">home</span>
+                      <p className="font-label-md text-label-md font-bold">This is your listing</p>
+                      <p className="font-body-sm text-body-sm opacity-80">You will receive proposals here.</p>
+                    </div>
+                    <DeleteListingButton listingId={listing.id} />
+                  </>
                 ) : (
                   <>
                     <Link 
