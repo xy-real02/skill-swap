@@ -37,6 +37,20 @@ function formatReasonBadge(reason: string) {
   return { label: reason || 'Violation', bg: 'bg-secondary-container text-on-secondary-container', border: 'border-secondary' }
 }
 
+function formatTargetBadge(type: string) {
+  const t = type.toLowerCase()
+  if (t === 'listing') {
+    return 'bg-blue-100 text-blue-900 border-blue-300 dark:bg-blue-950 dark:text-blue-200 dark:border-blue-700'
+  }
+  if (t === 'request') {
+    return 'bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-950 dark:text-purple-200 dark:border-purple-700'
+  }
+  if (t === 'profile') {
+    return 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950 dark:text-amber-200 dark:border-amber-700'
+  }
+  return 'bg-surface-variant text-on-surface-variant border-outline-variant'
+}
+
 export function ModeratorDashboardView({
   initialReports,
   defaultTab = 'Open',
@@ -122,9 +136,9 @@ export function ModeratorDashboardView({
         <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-5 border border-outline-variant/60 shadow-sm flex items-center justify-between">
           <div className="space-y-1">
             <p className="text-xs font-bold font-label-sm uppercase tracking-wider text-on-surface-variant">Resolved Cases</p>
-            <p className="text-2xl font-black font-headline-md text-primary dark:text-primary-fixed-dim">{resolvedCount}</p>
+            <p className="text-2xl font-black font-headline-md text-emerald-700 dark:text-emerald-400">{resolvedCount}</p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary-fixed-dim">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-600/15 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
             <CheckCircle2 className="w-6 h-6" />
           </div>
         </div>
@@ -221,6 +235,7 @@ export function ModeratorDashboardView({
         <div className="grid grid-cols-1 gap-6 w-full">
           {displayedReports.map((report) => {
             const badge = formatReasonBadge(report.reason)
+            const targetBadge = formatTargetBadge(report.target_type)
             const isProcessing = resolvingId === report.id
             const isResolved = report.status !== 'Pending'
 
@@ -250,16 +265,16 @@ export function ModeratorDashboardView({
                     </span>
                   </div>
 
-                  <div className="text-base md:text-lg text-on-surface flex items-center gap-1.5 flex-wrap">
+                  <div className="text-base md:text-lg text-on-surface flex items-center gap-2 flex-wrap">
                     <span className="font-bold">{report.reporter_name || 'Member'}</span> reported this{' '}
-                    <span className="inline-flex items-center gap-1 font-bold text-primary dark:text-primary-fixed-dim bg-primary/10 px-2.5 py-0.5 rounded-md border border-primary/20 text-sm">
+                    <span className={`inline-flex items-center gap-1.5 font-bold px-2.5 py-0.5 rounded-md border text-xs shadow-sm uppercase tracking-wide ${targetBadge}`}>
                       {report.target_type === 'Listing' && <FileText className="w-3.5 h-3.5 shrink-0" />}
                       {report.target_type === 'Request' && <HelpCircle className="w-3.5 h-3.5 shrink-0" />}
                       {report.target_type === 'Profile' && <User className="w-3.5 h-3.5 shrink-0" />}
                       {report.target_type}
                     </span>
                     {report.target_title && report.target_title !== 'Unknown Content' && (
-                      <strong className="text-on-surface"> "{report.target_title}"</strong>
+                      <strong className="text-on-surface font-extrabold"> "{report.target_title}"</strong>
                     )}
                   </div>
 
