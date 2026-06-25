@@ -5,11 +5,24 @@ import React from 'react'
 export function TrustedMemberBadge({
   score,
   exchanges,
+  variant = 'pill',
 }: {
   score?: number | null
   exchanges?: number | null
+  variant?: 'pill' | 'compact'
 }) {
   if ((score || 0) < 4.5) return null
+
+  if (variant === 'compact') {
+    return (
+      <span
+        className="absolute -bottom-1 -right-1 bg-amber-500 text-white rounded-full flex items-center justify-center p-0.5 border-2 border-surface shadow-xs cursor-help select-none shrink-0"
+        title="Trusted Member: High community reputation (≥4.5 ★)"
+      >
+        <span className="material-symbols-outlined text-[12px] leading-none">verified</span>
+      </span>
+    )
+  }
 
   return (
     <span

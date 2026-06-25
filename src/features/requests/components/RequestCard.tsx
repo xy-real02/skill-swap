@@ -86,24 +86,24 @@ export function RequestCard({ request, currentUserId, isModal = false }: { reque
         </div>
         
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant">
-          <Link href={`/profile/${request.owner_id}`} className="flex items-center gap-3 group/profile">
-            <img 
-              src={request.profiles.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + request.owner_id} 
-              alt={request.profiles.full_name} 
-              className="w-10 h-10 rounded-full object-cover border-2 border-transparent group-hover/profile:border-primary transition-colors"
-            />
+          <Link href={`/profile/${request.owner_id}`} className="flex items-center gap-3 group/profile min-w-0">
+            <div className="relative shrink-0">
+              <img 
+                src={request.profiles.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + request.owner_id} 
+                alt={request.profiles.full_name} 
+                className="w-10 h-10 rounded-full object-cover border-2 border-transparent group-hover/profile:border-primary transition-colors"
+              />
+              <TrustedMemberBadge score={request.profiles.reputation_score} variant="compact" />
+            </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <p className="font-label-md text-label-md text-on-surface font-bold truncate group-hover/profile:text-primary transition-colors">
-                  {request.profiles.full_name}
-                </p>
-                <TrustedMemberBadge score={request.profiles.reputation_score} exchanges={request.profiles.exchange_count} />
-              </div>
+              <p className="font-label-md text-label-md text-on-surface font-bold truncate group-hover/profile:text-primary transition-colors">
+                {request.profiles.full_name}
+              </p>
               <div className="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px]">
                 <span className="material-symbols-outlined text-[14px]">star</span>
                 {request.profiles.reputation_score?.toFixed(1) || 'New'}
                 <span className="mx-1">•</span>
-                {request.profiles.community_zone}
+                <span className="truncate">{request.profiles.community_zone}</span>
               </div>
             </div>
           </Link>

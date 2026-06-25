@@ -94,18 +94,18 @@ export function ListingCard({ listing, currentUserId, isModal = false }: { listi
         
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant gap-4">
           <Link href={`/profile/${listing.owner_id}`} className="flex items-center gap-3 group/profile min-w-0">
-            <img 
-              src={profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + listing.owner_id} 
-              alt={profile?.full_name || 'Member'} 
-              className="w-10 h-10 rounded-full object-cover shrink-0 border-2 border-transparent group-hover/profile:border-primary transition-colors"
-            />
+            <div className="relative shrink-0">
+              <img 
+                src={profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + listing.owner_id} 
+                alt={profile?.full_name || 'Member'} 
+                className="w-10 h-10 rounded-full object-cover shrink-0 border-2 border-transparent group-hover/profile:border-primary transition-colors"
+              />
+              <TrustedMemberBadge score={profile?.reputation_score} variant="compact" />
+            </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <p className="font-label-md text-label-md text-on-surface font-bold truncate group-hover/profile:text-primary transition-colors">
-                  {profile?.full_name || 'Anonymous Member'}
-                </p>
-                <TrustedMemberBadge score={profile?.reputation_score} exchanges={profile?.exchange_count} />
-              </div>
+              <p className="font-label-md text-label-md text-on-surface font-bold truncate group-hover/profile:text-primary transition-colors">
+                {profile?.full_name || 'Anonymous Member'}
+              </p>
               <div className="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px]">
                 <span className="material-symbols-outlined text-[14px]">star</span>
                 <span>{profile?.reputation_score?.toFixed(1) || 'New'}</span>
