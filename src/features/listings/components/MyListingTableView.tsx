@@ -1,14 +1,35 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
+import { useSearchParams } from 'next/navigation'
 import { deleteListing } from '@/features/listings/actions/deleteListing'
 import { batchDeleteListings } from '@/features/listings/actions/batchDeleteListings'
-import type { ListingWithProfile } from './ListingCard'
+import { ListingCard, type ListingWithProfile } from './ListingCard'
 
 export function MyListingTableView({ listings }: { listings: ListingWithProfile[] }) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isDeleting, setIsDeleting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [activeModalItem, setActiveModalItem] = useState<ListingWithProfile | null>(null)
+  const [mounted, setMounted] = useState(false)
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    setActiveModalItem(null)
+  }, [searchParams])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveModalItem(null)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeModalItem])
 
   if (listings.length === 0) return null
 
@@ -63,6 +84,51 @@ export function MyListingTableView({ listings }: { listings: ListingWithProfile[
 
   return (
     <div className="col-span-full space-y-4 w-full min-w-0">
+      {/* Detail Modal Dialog via Portal */}
+      {activeModalItem && mounted && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 md:p-10 overflow-y-auto animate-in fade-in duration-200">
+          {/* Backdrop Scrim */}
+          <div
+            className="fixed inset-0 bg-scrim/60 backdrop-blur-sm transition-opacity cursor-pointer"
+            onClick={() => setActiveModalItem(null)}
+            aria-hidden="true"
+          />
+
+          {/* Modal Box */}
+          <div
+            className="relative w-full max-w-2xl bg-surface-container-lowest border border-outline-variant/30 rounded-3xl shadow-2xl overflow-hidden z-10 max-h-[90vh] flex flex-col my-auto"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header Bar */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-outline-variant/20 bg-surface/80 backdrop-blur-md shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                  <span className="material-symbols-outlined text-[18px]">inventory_2</span>
+                </div>
+                <h3 className="font-headline-sm text-[18px] font-bold text-on-surface line-clamp-1">
+                  My Listing Details
+                </h3>
+              </div>
+              <button
+                onClick={() => setActiveModalItem(null)}
+                className="w-10 h-10 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors focus:outline-none cursor-pointer"
+                aria-label="Close modal"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1 w-full">
+              <ListingCard listing={activeModalItem} currentUserId={activeModalItem.owner_id} />
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
       {/* Batch Action Bar */}
       {selectedIds.size > 0 && (
         <div className="bg-primary-container text-on-primary-container px-4 sm:px-6 py-3 rounded-2xl flex items-center justify-between shadow-md transition-all animate-fade-in gap-2 flex-wrap">
@@ -73,7 +139,7 @@ export function MyListingTableView({ listings }: { listings: ListingWithProfile[
           <button
             onClick={handleBatchDelete}
             disabled={isDeleting}
-            className="bg-error text-on-error hover:bg-error/90 font-label-md py-2 px-4 sm:px-5 rounded-full font-bold flex items-center gap-1.5 shadow transition-all disabled:opacity-50 text-xs sm:text-sm whitespace-nowrap"
+            className="bg-error text-on-error hover:bg-error/90 font-label-md py-2 px-4 sm:px-5 rounded-full font-bold flex items-center gap-1.5 shadow transition-all disabled:opacity-50 text-xs sm:text-sm whitespace-nowrap cursor-pointer"
           >
             <span className="material-symbols-outlined text-[16px] sm:text-[18px]">{isDeleting ? 'hourglass_empty' : 'delete'}</span>
             {isDeleting ? 'Deleting...' : 'Delete Selected'}
@@ -110,9 +176,11 @@ export function MyListingTableView({ listings }: { listings: ListingWithProfile[
               return (
                 <tr
                   key={listing.id}
-                  className={`transition-colors ${isSelected ? 'bg-primary/5' : 'hover:bg-surface-container-low/50'}`}
+                  onClick={() => setActiveModalItem(listing)}
+                  className={`transition-colors cursor-pointer ${isSelected ? 'bg-primary/5' : 'hover:bg-surface-container-low/60 active:bg-surface-container-low'}`}
+                  title="Click to view full details"
                 >
-                  <td className="py-3.5 px-3 sm:px-4 text-center align-top sm:align-middle">
+                  <td className="py-3.5 px-3 sm:px-4 text-center align-top sm:align-middle" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -136,7 +204,7 @@ export function MyListingTableView({ listings }: { listings: ListingWithProfile[
                       </span>
                     </div>
                     
-                    <p className="font-label-md font-bold text-on-surface line-clamp-1" title={listing.title}>{listing.title}</p>
+                    <p className="font-label-md font-bold text-on-surface line-clamp-1 group-hover:text-primary transition-colors" title={listing.title}>{listing.title}</p>
                     <p className="text-on-surface-variant text-xs line-clamp-1 mt-0.5" title={listing.description}>{listing.description}</p>
                     
                     {/* Looking for meta on small screens */}
@@ -155,11 +223,11 @@ export function MyListingTableView({ listings }: { listings: ListingWithProfile[
                       {listing.status || 'Active'}
                     </span>
                   </td>
-                  <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap text-right align-top sm:align-middle">
+                  <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap text-right align-top sm:align-middle" onClick={(e) => e.stopPropagation()}>
                     <button
                       onClick={() => handleSingleDelete(listing.id)}
                       disabled={isItemDeleting || isDeleting}
-                      className="inline-flex items-center gap-1 bg-error/10 text-error hover:bg-error hover:text-on-error font-label-sm text-xs py-1.5 px-3 rounded-full transition-colors font-bold disabled:opacity-50 mt-0.5 sm:mt-0"
+                      className="inline-flex items-center gap-1 bg-error/10 text-error hover:bg-error hover:text-on-error font-label-sm text-xs py-1.5 px-3 rounded-full transition-colors font-bold disabled:opacity-50 mt-0.5 sm:mt-0 cursor-pointer"
                     >
                       <span className="material-symbols-outlined text-[14px]">{isItemDeleting ? 'hourglass_empty' : 'delete'}</span>
                       <span className="hidden xs:inline">{isItemDeleting ? '...' : 'Delete'}</span>
