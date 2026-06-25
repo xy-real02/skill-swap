@@ -37,6 +37,9 @@ export function GlobalTopBar() {
   } else if (pathname === '/notifications') {
     title = 'Notifications'
     description = 'Stay up to date with your community activity.'
+  } else if (pathname.startsWith('/moderator')) {
+    title = 'Mod Portal'
+    description = 'Review community reports and maintain town square safety.'
   } else {
     // Dynamic Routes
     const exchangeMatch = pathname.match(/^\/exchanges\/([^/]+)$/)

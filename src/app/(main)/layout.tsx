@@ -42,6 +42,14 @@ export default async function MainLayout({
     { href: '/profile/me', icon: 'person', label: 'My Profile', matchPattern: '/profile' },
   ]
 
+  const role = profile?.role?.toLowerCase()
+  if (role === 'moderator' || role === 'admin') {
+    mainNavItems.push({ href: '/moderator/queue', icon: 'shield', label: 'Mod Portal', matchPattern: '/moderator' })
+  }
+  if (role === 'admin') {
+    mainNavItems.push({ href: '/admin/analytics', icon: 'local_police', label: 'Admin HQ', matchPattern: '/admin' })
+  }
+
   return (
     <div className="light bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col md:flex-row">
       {/* TopNavBar (Mobile Only) */}

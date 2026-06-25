@@ -25,7 +25,7 @@ export async function getProfile(profileId: string): Promise<Profile | null> {
     .from('exchanges')
     .select('*', { count: 'exact', head: true })
     .or(`provider_id.eq.${profileId},requester_id.eq.${profileId}`)
-    .eq('status', 'Completed')
+    .in('status', ['Completed', 'completed', 'Verified', 'verified'])
 
   if (liveExchangeCount !== null) {
     data.exchange_count = liveExchangeCount

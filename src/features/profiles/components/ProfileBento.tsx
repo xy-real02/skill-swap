@@ -1,4 +1,5 @@
 import { Profile } from '@/features/profiles/queries/getProfile'
+import { ReportModal } from '@/features/moderation/components/ReportModal'
 import Link from 'next/link'
 
 export function ProfileBento({
@@ -36,7 +37,7 @@ export function ProfileBento({
               <span className="font-label-sm text-label-sm font-bold">Trusted Member</span>
             </div>
           )}
-          {(profile.role === 'admin' || profile.role === 'moderator') && !isTrusted && (
+          {(profile.role?.toLowerCase() === 'admin' || profile.role?.toLowerCase() === 'moderator') && !isTrusted && (
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-primary text-on-primary border border-surface-container-lowest px-3 py-1 rounded-full whitespace-nowrap z-20 flex items-center gap-1 shadow-sm">
               <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>shield</span>
               <span className="font-label-sm text-label-sm font-bold">Moderator</span>
@@ -81,8 +82,8 @@ export function ProfileBento({
           </div>
 
           {/* Actions */}
-          {isOwner && (
-            <div className="shrink-0 flex justify-center md:justify-end">
+          <div className="shrink-0 flex items-center justify-center md:justify-end gap-3">
+            {isOwner ? (
               <Link 
                 href="?modal=edit-profile"
                 className="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 border-[1.5px] border-primary rounded-lg hover:bg-secondary-container/50 transition-colors flex items-center gap-2 h-fit whitespace-nowrap"
@@ -90,8 +91,10 @@ export function ProfileBento({
                 <span className="material-symbols-outlined text-[18px]">edit</span>
                 Edit Profile
               </Link>
-            </div>
-          )}
+            ) : (
+              <ReportModal targetId={profile.id} targetType="Profile" targetTitle={profile.full_name} iconOnly={false} className="border border-outline-variant px-3 py-1.5 rounded-lg hover:bg-error/10 text-on-surface-variant" />
+            )}
+          </div>
         </div>
       </div>
 

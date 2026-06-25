@@ -16,7 +16,12 @@ export async function register(formData: FormData) {
   const email = sanitize(formData.get('email'))
   const password = formData.get('password') as string
   const bio = sanitize(formData.get('bio'))
-  const communityZone = sanitize(formData.get('community_zone'))
+  const rawZone = sanitize(formData.get('community_zone'))
+  const communityZone = rawZone
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
   const phoneNumber = sanitize(formData.get('phone_number'))
 
   // --- Input validation (server-side; client validates too but never trust it)
