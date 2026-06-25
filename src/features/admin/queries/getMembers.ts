@@ -33,8 +33,8 @@ export async function getMembers(searchQuery?: string): Promise<AdminMemberItem[
     community_zone: p.community_zone || 'Neighbor',
     reputation_score: p.reputation_score,
     exchange_count: p.exchange_count,
-    role: p.role || 'user',
-    status: p.status || 'active',
+    role: p.role || 'Member',
+    status: p.status || 'Active',
     created_at: p.created_at,
   }))
 }

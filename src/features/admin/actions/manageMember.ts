@@ -11,7 +11,7 @@ export async function manageMember({
 }: {
   targetUserId: string
   action: 'changeRole' | 'toggleBan'
-  newRole?: 'user' | 'moderator' | 'admin'
+  newRole?: 'Member' | 'Moderator' | 'Admin' | string
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -31,11 +31,13 @@ export async function manageMember({
     return { error: 'Member not found.' }
   }
 
-  const currentRole = target.role?.toLowerCase() || 'user'
+  const currentRole = target.role?.toLowerCase() || 'member'
 
   if (action === 'changeRole' && newRole) {
+    const formattedRole = newRole.toLowerCase() === 'admin' ? 'Admin' : newRole.toLowerCase() === 'moderator' ? 'Moderator' : 'Member'
+
     // ACTIVE-ADMIN SAFETY CHECK
-    if (currentRole === 'admin' && newRole !== 'admin') {
+    if (currentRole === 'admin' && formattedRole !== 'Admin') {
       const { count } = await adminClient
         .from('profiles')
         .select('*', { count: 'exact', head: true })
@@ -48,7 +50,7 @@ export async function manageMember({
 
     const { error: updateErr } = await adminClient
       .from('profiles')
-      .update({ role: newRole })
+      .update({ role: formattedRole })
       .eq('id', targetUserId)
 
     if (updateErr) {
@@ -56,33 +58,32 @@ export async function manageMember({
       return { error: 'Failed to update member role.' }
     }
 
-    // Log action
     await adminClient.from('moderation_log').insert({
       moderator_id: user.id,
       target_user_id: targetUserId,
-      action: `Role Changed to ${newRole.toUpperCase()}`,
+      action: `Role Changed to ${formattedRole}`,
       reason: `Admin updated role for ${target.full_name}`,
     })
   } else if (action === 'toggleBan') {
     if (currentRole === 'admin') {
-      return { error: 'Cannot ban an active platform administrator. Demote them first.' }
+      return { error: 'Cannot suspend an active platform administrator. Demote them first.' }
     }
 
-    const newStatus = target.status === 'banned' ? 'active' : 'banned'
+    const newStatus = target.status?.toLowerCase() === 'suspended' ? 'Active' : 'Suspended'
     const { error: banErr } = await adminClient
       .from('profiles')
       .update({ status: newStatus })
       .eq('id', targetUserId)
 
     if (banErr) {
-      return { error: 'Failed to update member ban status.' }
+      return { error: 'Failed to update member suspension status.' }
     }
 
     await adminClient.from('moderation_log').insert({
       moderator_id: user.id,
       target_user_id: targetUserId,
-      action: newStatus === 'banned' ? 'User Banned' : 'User Unbanned',
-      reason: `Admin toggled ban status for ${target.full_name}`,
+      action: newStatus === 'Suspended' ? 'User Suspended' : 'User Reinstated',
+      reason: `Admin toggled account status for ${target.full_name}`,
     })
   }
 

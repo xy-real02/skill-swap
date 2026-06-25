@@ -11,12 +11,12 @@ export function MemberCard({ member, currentAdminId }: { member: AdminMemberItem
   const [error, setError] = useState<string | null>(null)
 
   const isMe = member.id === currentAdminId
-  const isBanned = member.status === 'banned'
-  const role = member.role?.toLowerCase() || 'user'
+  const isSuspended = member.status?.toLowerCase() === 'suspended'
+  const role = member.role?.toLowerCase() || 'member'
 
-  const handleRoleChange = async (newRole: 'user' | 'moderator' | 'admin') => {
-    if (newRole === role) return
-    if (!window.confirm(`Change ${member.full_name}'s role to ${newRole.toUpperCase()}?`)) return
+  const handleRoleChange = async (newRole: 'Member' | 'Moderator' | 'Admin') => {
+    if (newRole.toLowerCase() === role) return
+    if (!window.confirm(`Change ${member.full_name}'s role to ${newRole}?`)) return
 
     setLoading(true)
     setError(null)
@@ -26,7 +26,7 @@ export function MemberCard({ member, currentAdminId }: { member: AdminMemberItem
   }
 
   const handleToggleBan = async () => {
-    const act = isBanned ? 'UNBAN' : 'BAN'
+    const act = isSuspended ? 'REINSTATE' : 'SUSPEND'
     if (!window.confirm(`Are you sure you want to ${act} ${member.full_name}?`)) return
 
     setLoading(true)
@@ -40,7 +40,7 @@ export function MemberCard({ member, currentAdminId }: { member: AdminMemberItem
 
   return (
     <div className={`bg-slate-900 border rounded-2xl p-5 shadow-xl transition-all flex flex-col justify-between gap-4 ${
-      isBanned ? 'border-red-900/80 bg-red-950/10 opacity-75' :
+      isSuspended ? 'border-red-900/80 bg-red-950/10 opacity-75' :
       role === 'admin' ? 'border-amber-500/50 bg-amber-950/10' :
       role === 'moderator' ? 'border-emerald-500/50 bg-emerald-950/10' :
       'border-slate-800'
@@ -53,12 +53,12 @@ export function MemberCard({ member, currentAdminId }: { member: AdminMemberItem
             'bg-slate-800 text-slate-300'
           }`}>
             {role === 'admin' ? <ShieldAlert className="w-3 h-3" /> : role === 'moderator' ? <Shield className="w-3 h-3" /> : <User className="w-3 h-3" />}
-            <span>{role}</span>
+            <span>{member.role || 'Member'}</span>
           </span>
 
-          {isBanned && (
+          {isSuspended && (
             <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-red-600 text-white animate-pulse">
-              Banned
+              Suspended
             </span>
           )}
           {isMe && (
@@ -68,62 +68,86 @@ export function MemberCard({ member, currentAdminId }: { member: AdminMemberItem
           )}
         </div>
 
-        <div className="flex items-center gap-3.5 mb-3">
-          <img src={avatar} alt={member.full_name} className="w-12 h-12 rounded-full object-cover border border-slate-700 shrink-0" />
-          <div className="min-w-0">
-            <Link href={`/profile/${member.id}`} target="_blank" className="text-base font-bold text-white hover:text-amber-400 truncate flex items-center gap-1 transition-colors">
-              <span className="truncate">{member.full_name}</span>
-              <ExternalLink className="w-3.5 h-3.5 shrink-0 text-slate-500" />
-            </Link>
-            <div className="text-xs text-slate-400 mt-0.5">{member.community_zone}</div>
+        <div className="flex items-center gap-3.5 mb-4">
+          <img src={avatar} alt={member.full_name} className="w-12 h-12 rounded-full border border-slate-700 bg-slate-800 shrink-0 object-cover" />
+          <div className="overflow-hidden">
+            <h3 className="text-base font-bold text-white truncate flex items-center gap-1.5">
+              <span>{member.full_name}</span>
+              <Link href={`/profile/${member.id}`} target="_blank" className="text-slate-500 hover:text-primary transition-colors">
+                <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+              </Link>
+            </h3>
+            <p className="text-xs text-slate-400 truncate">📍 {member.community_zone}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs text-slate-400 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80 mb-2">
-          <div className="flex items-center gap-1 text-amber-400 font-semibold">
-            <Star className="w-3.5 h-3.5 fill-current" />
-            <span>{member.reputation_score?.toFixed(1) || 'New'}</span>
+        <div className="grid grid-cols-2 gap-2 py-2.5 px-3 bg-slate-950/60 rounded-xl border border-slate-800/80 mb-3 text-center">
+          <div>
+            <span className="block text-[10px] uppercase font-bold text-slate-500">Reputation</span>
+            <span className="text-sm font-bold text-amber-400 inline-flex items-center gap-1">
+              <Star className="w-3 h-3 fill-amber-400" />
+              {Number(member.reputation_score || 0).toFixed(1)}
+            </span>
           </div>
-          <div>&bull;</div>
-          <div><strong className="text-slate-200">{member.exchange_count || 0}</strong> Exchanges</div>
+          <div className="border-l border-slate-800">
+            <span className="block text-[10px] uppercase font-bold text-slate-500">Exchanges</span>
+            <span className="text-sm font-bold text-slate-200">{member.exchange_count || 0}</span>
+          </div>
         </div>
-
-        {error && (
-          <div className="text-xs text-red-300 bg-red-950/80 p-2 rounded-lg border border-red-800 mb-2">
-            {error}
-          </div>
-        )}
       </div>
 
-      <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-1">
-          <label className="text-[11px] text-slate-400 mr-1 font-semibold">Role:</label>
-          <select
-            value={role}
-            onChange={(e) => handleRoleChange(e.target.value as any)}
-            disabled={loading || isMe}
-            className="bg-slate-800 border border-slate-700 text-xs text-white rounded-lg px-2 py-1 focus:outline-none focus:border-amber-500 font-semibold disabled:opacity-50"
-          >
-            <option value="user">User</option>
-            <option value="moderator">Moderator</option>
-            <option value="admin">Admin</option>
-          </select>
+      {error && <p className="text-xs text-red-400 text-center">{error}</p>}
+
+      <div className="space-y-2 pt-2 border-t border-slate-800/80">
+        <div className="flex items-center justify-between gap-2">
+          <label className="text-[11px] font-semibold text-slate-400">Assign Role:</label>
+          <div className="flex gap-1">
+            <button
+              type="button"
+              disabled={loading || role === 'member'}
+              onClick={() => handleRoleChange('Member')}
+              className={`px-2 py-1 rounded text-[10px] font-bold transition-colors ${
+                role === 'member' ? 'bg-slate-700 text-white cursor-default' : 'bg-slate-950 text-slate-400 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              Member
+            </button>
+            <button
+              type="button"
+              disabled={loading || role === 'moderator'}
+              onClick={() => handleRoleChange('Moderator')}
+              className={`px-2 py-1 rounded text-[10px] font-bold transition-colors ${
+                role === 'moderator' ? 'bg-emerald-600 text-white cursor-default shadow' : 'bg-slate-950 text-slate-400 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              Mod
+            </button>
+            <button
+              type="button"
+              disabled={loading || role === 'admin'}
+              onClick={() => handleRoleChange('Admin')}
+              className={`px-2 py-1 rounded text-[10px] font-bold transition-colors ${
+                role === 'admin' ? 'bg-amber-600 text-white cursor-default shadow' : 'bg-slate-950 text-slate-400 hover:bg-slate-800 border border-slate-800'
+              }`}
+            >
+              Admin
+            </button>
+          </div>
         </div>
 
         {!isMe && (
           <button
             type="button"
+            disabled={loading}
             onClick={handleToggleBan}
-            disabled={loading || role === 'admin'}
-            title={role === 'admin' ? 'Demote admin before banning' : ''}
-            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
-              isBanned
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow'
-                : 'bg-red-950/80 hover:bg-red-900 border border-red-800 text-red-300'
-            } disabled:opacity-30`}
+            className={`w-full py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 border shadow-sm ${
+              isSuspended
+                ? 'bg-emerald-950 border-emerald-800 text-emerald-300 hover:bg-emerald-900'
+                : 'bg-red-950/40 border-red-900/60 text-red-400 hover:bg-red-950'
+            }`}
           >
-            <Ban className="w-3 h-3" />
-            <span>{isBanned ? 'Unban' : 'Ban'}</span>
+            {isSuspended ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> : <Ban className="w-3.5 h-3.5 text-red-400 shrink-0" />}
+            <span>{loading ? 'Processing...' : isSuspended ? 'Reinstate Account' : 'Suspend Account'}</span>
           </button>
         )}
       </div>
