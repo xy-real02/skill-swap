@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { TrustedMemberBadge } from '@/components/ui/TrustedMemberBadge'
 import { ListingCard, type ListingWithProfile } from './ListingCard'
 
 export function ListingTableView({ listings, currentUserId }: { listings: ListingWithProfile[], currentUserId?: string }) {
@@ -118,9 +119,12 @@ export function ListingTableView({ listings, currentUserId }: { listings: Listin
                     >
                       <img src={avatar} alt={profile?.full_name || 'User'} className="w-8 h-8 rounded-full object-cover shrink-0" />
                       <div>
-                        <p className="font-label-md font-bold text-on-surface group-hover/profile:text-primary transition-colors max-w-[90px] sm:max-w-[140px] truncate">
-                          {profile?.full_name || 'Anonymous'}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-label-md font-bold text-on-surface group-hover/profile:text-primary transition-colors max-w-[90px] sm:max-w-[140px] truncate">
+                            {profile?.full_name || 'Anonymous'}
+                          </p>
+                          <TrustedMemberBadge score={profile?.reputation_score} exchanges={profile?.exchange_count} />
+                        </div>
                         <div className="flex items-center gap-1 text-on-surface-variant text-[11px]">
                           <span className="material-symbols-outlined text-[13px] text-amber-500">star</span>
                           <span>{profile?.reputation_score?.toFixed(1) || 'New'}</span>
