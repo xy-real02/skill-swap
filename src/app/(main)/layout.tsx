@@ -65,7 +65,7 @@ export default async function MainLayout({
         {children}
       </main>
 
-      <MobileNav navItems={mainNavItems} />
+      <MobileNav navItems={mainNavItems} currentUserId={user.id} />
     </div>
   )
 }

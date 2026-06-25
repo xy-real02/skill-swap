@@ -38,7 +38,9 @@ export function Sidebar({
       <nav className="flex-1 flex flex-col gap-1 px-3">
         {navItems.map((item) => {
           let isActive = false
-          if (item.matchPattern) {
+          if (item.label === 'My Profile') {
+            isActive = pathname === `/profile/${profile?.id}` || pathname === '/profile/me' || pathname?.startsWith('/profile/edit') || false
+          } else if (item.matchPattern) {
             isActive = pathname?.startsWith(item.matchPattern) || false
             if (item.href === '/listings' && pathname && pathname !== '/listings' && pathname !== '/listings/create') {
               isActive = false

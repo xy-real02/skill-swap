@@ -122,6 +122,12 @@ CREATE TRIGGER tr_update_profile_reputation
   BEFORE INSERT OR UPDATE OR DELETE ON reviews
   FOR EACH ROW EXECUTE FUNCTION update_profile_reputation();
 
+-- Allow everyone to view Completed exchanges so public profile histories can be loaded
+DROP POLICY IF EXISTS "Completed exchanges are readable by everyone" ON exchanges;
+CREATE POLICY "Completed exchanges are readable by everyone"
+  ON exchanges FOR SELECT
+  USING (status = 'Completed');
+
 -- Immediately backfill all exchange counts in the DB right now!
 UPDATE profiles p
 SET exchange_count = (

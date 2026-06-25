@@ -13,13 +13,15 @@ export function ProfileTabs({
   reviews,
   history,
   isOwner,
-  currentUserId
+  currentUserId,
+  profileId
 }: {
   listings: ListingWithProfile[]
   reviews: ReviewWithReviewer[]
   history: ExchangeHistoryItem[]
   isOwner: boolean
   currentUserId: string
+  profileId: string
 }) {
   const [activeTab, setActiveTab] = useState<'skills' | 'reviews' | 'history'>('skills')
 
@@ -130,7 +132,7 @@ export function ProfileTabs({
             </div>
           ) : (
             history.map(exchange => {
-              const otherUser = exchange.provider_id === currentUserId ? exchange.requester : exchange.provider
+              const otherUser = exchange.provider_id === profileId ? exchange.requester : exchange.provider
               const isDisputed = exchange.status === 'Disputed'
               return (
                 <div key={exchange.id} className="bg-surface-container-lowest rounded-xl p-6 border border-outline-variant/30 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">

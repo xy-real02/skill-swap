@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { signOut } from '@/app/actions/auth'
 import type { NavItem } from './Sidebar'
 
-export function MobileNav({ navItems }: { navItems: NavItem[] }) {
+export function MobileNav({ navItems, currentUserId }: { navItems: NavItem[], currentUserId?: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
@@ -29,6 +29,9 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
   }, [])
 
   const checkIsActive = (item: NavItem) => {
+    if (item.label === 'My Profile') {
+      return pathname === `/profile/${currentUserId}` || pathname === '/profile/me' || pathname?.startsWith('/profile/edit') || false
+    }
     if (item.matchPattern) {
       let active = pathname?.startsWith(item.matchPattern) || false
       if (item.href === '/listings' && pathname && pathname !== '/listings' && pathname !== '/listings/create') {
