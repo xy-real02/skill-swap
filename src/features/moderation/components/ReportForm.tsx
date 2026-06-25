@@ -69,7 +69,7 @@ export function ReportForm({
       <div className="flex flex-col items-center justify-center py-12 px-4 text-center space-y-3 animate-fade-in w-full">
         <CheckCircle2 className="w-12 h-12 text-emerald-500 animate-bounce" />
         <h4 className="text-lg font-bold text-on-surface w-full text-center">Report Submitted</h4>
-        <p className="text-sm text-on-surface-variant leading-relaxed w-full max-w-md mx-auto text-center">
+        <p className="text-sm text-on-surface-variant leading-relaxed w-full max-w-[480px] mx-auto text-center px-2">
           Thank you for helping keep the SkillSwap community safe. Our moderation team will review this report shortly.
         </p>
       </div>
