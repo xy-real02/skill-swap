@@ -86,7 +86,7 @@ export function ExchangeDashboard({
               <span className="material-symbols-outlined text-[40px]">handshake</span>
             </div>
             <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No {activeTab.toLowerCase()} exchanges</h3>
-            <p className="text-on-surface-variant font-body-lg max-w-md mx-auto mb-8 relative z-10">
+            <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto mb-8 relative z-10">
               {activeTab === 'Pending' ? "You don't have any pending exchange proposals. Check out Explore to find someone to swap skills with!" :
                activeTab === 'Active' ? "You don't have any active exchanges. Once a pending proposal is accepted, it will appear here." :
                "There's nothing here right now. Go explore and start swapping skills!"}
