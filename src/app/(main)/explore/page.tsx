@@ -4,6 +4,7 @@ import { ListingCard, type ListingWithProfile } from '@/features/listings/compon
 import { RequestCard } from '@/features/requests/components/RequestCard'
 import { ListingTableView } from '@/features/listings/components/ListingTableView'
 import { RequestTableView } from '@/features/requests/components/RequestTableView'
+import { ExploreFilterSidebar } from '@/features/listings/components/ExploreFilterSidebar'
 import { ViewModeToggle } from '@/components/ui/ViewModeToggle'
 import { createClient } from '@/lib/supabase/server'
 import { SearchBar } from '@/components/ui/SearchBar'
@@ -13,32 +14,49 @@ import { Suspense } from 'react'
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; q?: string; tab?: string; view?: string }>
+  searchParams: Promise<{ category?: string; q?: string; tab?: string; view?: string; zone?: string; minRep?: string }>
 }) {
   const resolvedSearchParams = await searchParams
   const category = resolvedSearchParams.category || 'All Categories'
   const activeTab = resolvedSearchParams.tab === 'requests' ? 'requests' : 'listings'
   const view = resolvedSearchParams.view === 'table' ? 'table' : 'grid'
+  const zone = resolvedSearchParams.zone
+  const minRep = resolvedSearchParams.minRep ? parseFloat(resolvedSearchParams.minRep) : undefined
   const q = resolvedSearchParams.q
-  
+
   const supabase = await createClient()
   const { data: authData } = await supabase.auth.getUser()
   const currentUserId = authData.user?.id
 
+  let userZone = ''
+  if (currentUserId) {
+    const { data: profile } = await supabase.from('profiles').select('community_zone').eq('id', currentUserId).maybeSingle()
+    if (profile?.community_zone) userZone = profile.community_zone
+  }
+
+  const { data: settings } = await supabase.from('community_settings').select('community_zone_list').maybeSingle()
+  const availableZones = settings?.community_zone_list?.length
+    ? settings.community_zone_list
+    : ['Northside Hub', 'South Market', 'East Village', 'West End']
+
   let listings: ListingWithProfile[] = []
   let requests: RequestWithProfile[] = []
-  
+
   if (activeTab === 'listings') {
-    listings = await getActiveListings({ 
+    listings = await getActiveListings({
       category: category === 'All Categories' ? undefined : category,
       q,
-      excludeOwnerId: currentUserId
+      excludeOwnerId: currentUserId,
+      zone,
+      minRep,
     })
   } else {
-    requests = await getActiveRequests({ 
+    requests = await getActiveRequests({
       category: category === 'All Categories' ? undefined : category,
       q,
-      excludeOwnerId: currentUserId
+      excludeOwnerId: currentUserId,
+      zone,
+      minRep,
     })
   }
 
@@ -131,65 +149,68 @@ export default async function ExplorePage({
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className={view === 'table' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter'}>
-        {activeTab === 'listings' && (
-          listings && listings.length > 0 ? (
-            view === 'table' ? (
-              <ListingTableView listings={listings} currentUserId={currentUserId} />
+      {/* Content Area with Filter Sidebar */}
+      <div className="flex flex-col md:flex-row gap-6 items-start w-full">
+        <ExploreFilterSidebar userZone={userZone} availableZones={availableZones} />
+        <div className={`flex-1 w-full min-w-0 ${view === 'table' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter'}`}>
+          {activeTab === 'listings' && (
+            listings && listings.length > 0 ? (
+              view === 'table' ? (
+                <ListingTableView listings={listings} currentUserId={currentUserId} />
+              ) : (
+                listings.map(listing => (
+                  <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
+                ))
+              )
             ) : (
-              listings.map(listing => (
-                <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
-              ))
-            )
-          ) : (
-            <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
-                <span className="material-symbols-outlined text-[40px]">explore_off</span>
+              <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                  <span className="material-symbols-outlined text-[40px]">explore_off</span>
+                </div>
+                <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No listings found</h3>
+                <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
+                  We couldn't find any listings matching your discovery filters. Try resetting them!
+                </p>
+                <Link 
+                  href="?tab=listings&modal=create-listing"
+                  className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
+                >
+                  <span className="material-symbols-outlined text-[18px]">add</span> Share a Skill
+                </Link>
               </div>
-              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No listings found</h3>
-              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
-                We couldn't find any listings for this category. Be the first to share a skill!
-              </p>
-              <Link 
-                href="?tab=listings&modal=create-listing"
-                className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
-              >
-                <span className="material-symbols-outlined text-[18px]">add</span> Share a Skill
-              </Link>
-            </div>
-          )
-        )}
+            )
+          )}
 
-        {activeTab === 'requests' && (
-          requests && requests.length > 0 ? (
-            view === 'table' ? (
-              <RequestTableView requests={requests} currentUserId={currentUserId} />
+          {activeTab === 'requests' && (
+            requests && requests.length > 0 ? (
+              view === 'table' ? (
+                <RequestTableView requests={requests} currentUserId={currentUserId} />
+              ) : (
+                requests.map(request => (
+                  <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
+                ))
+              )
             ) : (
-              requests.map(request => (
-                <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
-              ))
-            )
-          ) : (
-            <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
-                <span className="material-symbols-outlined text-[40px]">post_add</span>
+              <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                  <span className="material-symbols-outlined text-[40px]">post_add</span>
+                </div>
+                <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No requests found</h3>
+                <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
+                  We couldn't find any requests matching your discovery filters. Try resetting them!
+                </p>
+                <Link 
+                  href="?tab=requests&modal=create-request"
+                  className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
+                >
+                  <span className="material-symbols-outlined text-[18px]">add</span> Post a Request
+                </Link>
               </div>
-              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No requests found</h3>
-              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
-                There are no skill requests for this category yet. Need help with something? Post a request!
-              </p>
-              <Link 
-                href="?tab=requests&modal=create-request"
-                className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
-              >
-                <span className="material-symbols-outlined text-[18px]">add</span> Post a Request
-              </Link>
-            </div>
-          )
-        )}
+            )
+          )}
+        </div>
       </div>
     </>
   )

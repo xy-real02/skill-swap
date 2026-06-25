@@ -14,8 +14,8 @@ export function GlobalTopBar() {
     title = 'Explore Community Skills'
     description = 'Discover what your neighbors are sharing today.'
   } else if (pathname === '/listings') {
-    title = 'My Listings'
-    description = 'Manage the skills you are offering.'
+    title = 'My Offers/Requests'
+    description = 'Manage the skills you are offering or requesting.'
   } else if (pathname === '/listings/create') {
     title = 'Share a Skill'
     description = 'Offer your expertise to the community.'

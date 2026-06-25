@@ -35,7 +35,7 @@ export default async function MainLayout({
 
   const mainNavItems = [
     { href: '/explore', icon: 'explore', label: 'Explore', matchPattern: '/explore' },
-    { href: '/listings', icon: 'list_alt', label: 'My Listings', matchPattern: '/listings' },
+    { href: '/listings', icon: 'list_alt', label: 'My Offers/Requests', matchPattern: '/listings' },
     { href: '/exchanges', icon: 'swap_horiz', label: 'My Exchanges', matchPattern: '/exchanges' },
     { href: '/messages', icon: 'chat', label: 'Messages', matchPattern: '/messages' },
     { href: '/notifications', icon: 'notifications', label: 'Notifications', matchPattern: '/notifications' },

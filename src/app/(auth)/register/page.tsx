@@ -5,8 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: { error?: string; success?: string }
+  searchParams: Promise<{ error?: string; success?: string }>
 }) {
+  const resolvedSearchParams = await searchParams
   const supabase = await createClient()
   
   // Try to fetch zones from settings, fallback to defaults if table is empty or errored
@@ -23,28 +24,28 @@ export default async function RegisterPage({
       </div>
 
       <div className="relative z-20 mb-4 w-full max-w-[480px] px-margin-mobile">
-        {searchParams?.error && (
+        {resolvedSearchParams?.error && (
           <div className="p-4 bg-error-container text-on-error-container rounded mb-4">
-            {searchParams.error === 'email_taken'
+            {resolvedSearchParams.error === 'email_taken'
               ? 'That email is already registered. Try logging in.'
-              : searchParams.error === 'invalid_email'
+              : resolvedSearchParams.error === 'invalid_email'
               ? 'Please provide a valid email address.'
-              : searchParams.error === 'password_too_short'
+              : resolvedSearchParams.error === 'password_too_short'
               ? 'Password must be at least 8 characters long.'
-              : searchParams.error === 'full_name_required'
+              : resolvedSearchParams.error === 'full_name_required'
               ? 'Please provide your full name.'
               : 'An error occurred during registration. Please try again.'}
           </div>
         )}
 
-        {searchParams?.success === 'check_email' && (
+        {resolvedSearchParams?.success === 'check_email' && (
           <div className="p-4 bg-primary-container text-on-primary-container rounded mb-4 text-center">
             Registration successful! Please check your email to verify your account.
           </div>
         )}
       </div>
 
-      {searchParams?.success !== 'check_email' && <RegisterForm zones={zones} />}
+      {resolvedSearchParams?.success !== 'check_email' && <RegisterForm zones={zones} />}
     </main>
   )
 }

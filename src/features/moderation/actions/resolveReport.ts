@@ -54,6 +54,11 @@ export async function resolveReport({
     if (item?.owner_id) targetUserId = item.owner_id
   }
 
+  // Guardrail: Prevent conflict of interest
+  if (report.reporter_id === user.id || targetUserId === user.id) {
+    return { error: 'Conflict of Interest: You cannot resolve reports filed by or against your own account or content.' }
+  }
+
   const trimmedNote = resolutionNote.trim() || `Action taken: ${action}`
   let finalStatus = 'resolved'
 
@@ -94,7 +99,7 @@ export async function resolveReport({
     moderator_id: user.id,
     target_user_id: targetUserId,
     target_content_id: report.target_id,
-    action: action === 'Dismiss' ? 'Report Dismissed' : action === 'DeleteContent' ? 'Content Deleted' : 'User Banned',
+    action: action === 'Dismiss' ? 'report_dismissed' : action === 'DeleteContent' ? 'content_removed' : 'member_suspended',
     reason: trimmedNote,
   })
 

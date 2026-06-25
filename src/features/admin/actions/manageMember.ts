@@ -63,8 +63,8 @@ export async function manageMember({
     await adminClient.from('moderation_log').insert({
       moderator_id: user.id,
       target_user_id: targetUserId,
-      action: `Role Changed to ${formattedRole}`,
-      reason: `Admin updated role for ${target.full_name}`,
+      action: 'warning_issued',
+      reason: `Role updated to ${formattedRole} for ${target.full_name}`,
     })
   } else if (action === 'toggleBan') {
     if (currentRole === 'admin') {
@@ -84,7 +84,7 @@ export async function manageMember({
     await adminClient.from('moderation_log').insert({
       moderator_id: user.id,
       target_user_id: targetUserId,
-      action: newStatus === 'Suspended' ? 'User Suspended' : 'User Reinstated',
+      action: newStatus === 'Suspended' ? 'member_suspended' : 'member_reinstated',
       reason: `Admin toggled account status for ${target.full_name}`,
     })
   }

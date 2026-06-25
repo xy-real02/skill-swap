@@ -3,6 +3,8 @@
 import { useRef, useEffect, useState } from 'react'
 import { Message } from '@/features/exchanges/queries/getExchangeMessages'
 import { sendMessage } from '@/features/exchanges/actions/sendMessage'
+import { markMessagesRead } from '@/features/exchanges/actions/markMessagesRead'
+import { createClient } from '@/lib/supabase/client'
 
 export function ChatWindow({
   exchangeId,
@@ -20,11 +22,48 @@ export function ChatWindow({
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const [isSending, setIsSending] = useState(false)
+  const [liveMessages, setLiveMessages] = useState<Message[]>(messages)
+
+  useEffect(() => {
+    setLiveMessages(messages)
+  }, [messages])
+
+  useEffect(() => {
+    markMessagesRead(exchangeId)
+    const supabase = createClient()
+    const channel = supabase
+      .channel(`chat-${exchangeId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages', filter: `exchange_id=eq.${exchangeId}` },
+        (payload) => {
+          const newMsg = payload.new as any
+          setLiveMessages((prev) => {
+            if (prev.some((m) => m.id === newMsg.id)) return prev
+            return [
+              ...prev,
+              {
+                ...newMsg,
+                sender: newMsg.sender_id === currentUserId ? { id: currentUserId } : otherUser,
+              },
+            ]
+          })
+          if (newMsg.sender_id !== currentUserId) {
+            markMessagesRead(exchangeId)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [exchangeId, currentUserId, otherUser])
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [liveMessages])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -65,12 +104,12 @@ export function ChatWindow({
 
       {/* Chat Messages Area */}
       <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 bg-background/50">
-        {messages.length === 0 ? (
+        {liveMessages.length === 0 ? (
           <div className="text-center text-on-surface-variant font-body-md mt-10">
             No messages yet. Say hello!
           </div>
         ) : (
-          messages.map((msg) => {
+          liveMessages.map((msg) => {
             const isMe = msg.sender_id === currentUserId
             const timeStr = new Date(msg.created_at!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 

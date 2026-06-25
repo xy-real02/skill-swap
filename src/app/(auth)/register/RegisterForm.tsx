@@ -6,6 +6,7 @@ import { register } from './actions'
 export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isPending, setIsPending] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const totalSteps = 3
 
@@ -67,6 +68,15 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
         {/* Form */}
         <form 
           ref={formRef}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              if (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLButtonElement) return
+              e.preventDefault()
+              if (currentStep < totalSteps) {
+                handleNext()
+              }
+            }
+          }}
           action={async (formData) => {
             setIsPending(true)
             await register(formData)
@@ -113,17 +123,30 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
             </div>
           </div>
 
-          {/* Step 3: Photo (Mocked for now) */}
+          {/* Step 3: Photo */}
           <div id="step-3" className={`flex-col gap-6 items-center ${currentStep === 3 ? 'flex' : 'hidden'}`}>
             <div className="text-center mb-4">
               <h3 className="font-headline-sm text-headline-sm text-primary">Add a Face</h3>
               <p className="font-body-md text-body-md text-on-surface-variant mt-1">Trust starts with a friendly face.</p>
             </div>
             <div className="w-40 h-40 rounded-full border-[2px] border-dashed border-primary flex flex-col items-center justify-center bg-surface-container hover:bg-secondary-container/50 transition-colors cursor-pointer relative group overflow-hidden">
-              <span className="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform">add_a_photo</span>
-              <span className="font-label-sm text-label-sm text-primary mt-2">Upload Photo</span>
-              {/* Note: In a real implementation we would preview this and upload post-signup or use a signed url */}
-              <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" />
+              <span className="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform relative z-10">add_a_photo</span>
+              <span className="font-label-sm text-label-sm text-primary mt-2 relative z-10">Upload Photo</span>
+              <input 
+                type="file" 
+                name="avatar_file"
+                accept="image/*" 
+                className="absolute inset-0 opacity-0 cursor-pointer z-20" 
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) {
+                    setPreviewUrl(URL.createObjectURL(file))
+                  }
+                }}
+              />
+              {previewUrl && (
+                <img src={previewUrl} alt="Preview" className="absolute inset-0 w-full h-full object-cover z-0" />
+              )}
             </div>
           </div>
 

@@ -1,12 +1,13 @@
 import { login } from './actions'
 import Link from 'next/link'
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: { message?: string; error?: string }
+  searchParams: Promise<{ message?: string; error?: string }>
 }) {
-  const errorMessage = searchParams?.message || searchParams?.error
+  const resolvedSearchParams = await searchParams
+  const errorMessage = resolvedSearchParams?.message || resolvedSearchParams?.error
 
   return (
     <main className="min-h-screen py-12 bg-background flex flex-col items-center justify-center relative overflow-hidden font-body-md text-on-background">

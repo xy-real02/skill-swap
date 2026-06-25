@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { TrustedMemberBadge } from '@/components/ui/TrustedMemberBadge'
 import { ListingCard, type ListingWithProfile } from './ListingCard'
 
 export function ListingTableView({ listings, currentUserId }: { listings: ListingWithProfile[], currentUserId?: string }) {
   const [activeModalItem, setActiveModalItem] = useState<ListingWithProfile | null>(null)
+  const [menuPos, setMenuPos] = useState<{ id: string; style: React.CSSProperties } | null>(null)
   const [mounted, setMounted] = useState(false)
   const searchParams = useSearchParams()
 
@@ -26,6 +28,13 @@ export function ListingTableView({ listings, currentUserId }: { listings: Listin
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [activeModalItem])
+
+  useEffect(() => {
+    if (!menuPos) return
+    const handleScroll = () => setMenuPos(null)
+    window.addEventListener('scroll', handleScroll, true)
+    return () => window.removeEventListener('scroll', handleScroll, true)
+  }, [menuPos])
 
   if (listings.length === 0) return null
 
@@ -69,7 +78,7 @@ export function ListingTableView({ listings, currentUserId }: { listings: Listin
 
             {/* Modal Body */}
             <div className="p-4 sm:p-6 overflow-y-auto flex-1 w-full">
-              <ListingCard listing={activeModalItem} currentUserId={currentUserId} />
+              <ListingCard listing={activeModalItem} currentUserId={currentUserId} isModal={true} />
             </div>
           </div>
         </div>,
@@ -110,9 +119,12 @@ export function ListingTableView({ listings, currentUserId }: { listings: Listin
                     >
                       <img src={avatar} alt={profile?.full_name || 'User'} className="w-8 h-8 rounded-full object-cover shrink-0" />
                       <div>
-                        <p className="font-label-md font-bold text-on-surface group-hover/profile:text-primary transition-colors max-w-[90px] sm:max-w-[140px] truncate">
-                          {profile?.full_name || 'Anonymous'}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-label-md font-bold text-on-surface group-hover/profile:text-primary transition-colors max-w-[90px] sm:max-w-[140px] truncate">
+                            {profile?.full_name || 'Anonymous'}
+                          </p>
+                          <TrustedMemberBadge score={profile?.reputation_score} exchanges={profile?.exchange_count} />
+                        </div>
                         <div className="flex items-center gap-1 text-on-surface-variant text-[11px]">
                           <span className="material-symbols-outlined text-[13px] text-amber-500">star</span>
                           <span>{profile?.reputation_score?.toFixed(1) || 'New'}</span>
@@ -158,25 +170,26 @@ export function ListingTableView({ listings, currentUserId }: { listings: Listin
                       </span>
                     ) : '—'}
                   </td>
-                  <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap text-right align-top sm:align-middle">
-                    {!isOwner && currentUserId ? (
-                      <Link
-                        href={`?tab=listings&modal=propose-listing&listingId=${listing.id}&providerId=${listing.owner_id}&title=${encodeURIComponent(listing.title)}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-1 bg-primary text-on-primary hover:bg-primary/90 font-label-sm text-xs py-1.5 px-3 rounded-full transition-colors shadow-sm font-bold mt-0.5 sm:mt-0"
-                      >
-                        <span className="material-symbols-outlined text-[14px]">sync</span>
-                        <span>Propose</span>
-                      </Link>
-                    ) : !currentUserId ? (
-                      <Link
-                        href="/login"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-xs text-primary font-bold hover:underline"
-                      >
-                        Log in
-                      </Link>
-                    ) : null}
+                  <td className="py-3.5 px-3 sm:px-4 whitespace-nowrap text-right align-middle relative" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        if (menuPos?.id === listing.id) {
+                          setMenuPos(null)
+                        } else {
+                          const rect = e.currentTarget.getBoundingClientRect()
+                          const spaceBelow = window.innerHeight - rect.bottom
+                          const style: React.CSSProperties = spaceBelow < 160
+                            ? { bottom: window.innerHeight - rect.top + 4, right: window.innerWidth - rect.right }
+                            : { top: rect.bottom + 4, right: window.innerWidth - rect.right }
+                          setMenuPos({ id: listing.id, style })
+                        }
+                      }}
+                      className="w-8 h-8 rounded-full hover:bg-surface-container-high inline-flex items-center justify-center text-on-surface-variant transition-colors cursor-pointer border border-outline-variant/30 bg-surface shadow-sm"
+                      title="Actions"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">more_vert</span>
+                    </button>
                   </td>
                 </tr>
               )
@@ -184,6 +197,60 @@ export function ListingTableView({ listings, currentUserId }: { listings: Listin
           </tbody>
         </table>
       </div>
+
+      {/* Dropdown Menu Portal */}
+      {menuPos && mounted && typeof document !== 'undefined' && (() => {
+        const activeItem = listings.find(l => l.id === menuPos.id)
+        if (!activeItem) return null
+        const isOwner = currentUserId && activeItem.owner_id === currentUserId
+        return createPortal(
+          <>
+            <div 
+              className="fixed inset-0 z-[9998]" 
+              onClick={() => setMenuPos(null)} 
+            />
+            <div 
+              style={menuPos.style}
+              className="fixed z-[9999] w-48 bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-xl py-1 animate-in fade-in zoom-in-95 duration-150 divide-y divide-outline-variant/20 text-left font-body-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="py-1">
+                <button
+                  onClick={() => {
+                    setMenuPos(null)
+                    setActiveModalItem(activeItem)
+                  }}
+                  className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-on-surface hover:bg-surface-container-low transition-colors w-full text-left cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-[16px] text-primary">visibility</span>
+                  View Details
+                </button>
+                {!isOwner && currentUserId && (
+                  <Link
+                    href={`?tab=listings&modal=propose-listing&listingId=${activeItem.id}&providerId=${activeItem.owner_id}&title=${encodeURIComponent(activeItem.title)}`}
+                    onClick={() => setMenuPos(null)}
+                    className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-primary hover:bg-surface-container-low transition-colors w-full cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">sync</span>
+                    Propose Exchange
+                  </Link>
+                )}
+                {!currentUserId && (
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuPos(null)}
+                    className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-primary hover:bg-surface-container-low transition-colors w-full cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">login</span>
+                    Log in to Propose
+                  </Link>
+                )}
+              </div>
+            </div>
+          </>,
+          document.body
+        )
+      })()}
     </>
   )
 }

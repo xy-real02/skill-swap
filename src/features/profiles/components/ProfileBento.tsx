@@ -1,5 +1,6 @@
 import { Profile } from '@/features/profiles/queries/getProfile'
 import { ReportModal } from '@/features/moderation/components/ReportModal'
+import { TrustedMemberBadge } from '@/components/ui/TrustedMemberBadge'
 import Link from 'next/link'
 
 export function ProfileBento({
@@ -11,7 +12,7 @@ export function ProfileBento({
 }) {
   const avatar = profile.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + profile.id
   const totalExchanges = profile.exchange_count || 0
-  const isTrusted = Boolean(profile.reputation_score && profile.reputation_score >= 4.5 && totalExchanges >= 5)
+  const isTrusted = Boolean(profile.reputation_score && profile.reputation_score >= 4.5)
 
   return (
     <section className="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-xl">
@@ -50,6 +51,7 @@ export function ProfileBento({
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
               <h2 className="font-headline-md text-[32px] text-on-surface font-bold leading-tight break-words">{profile.full_name}</h2>
+              <TrustedMemberBadge score={profile.reputation_score} />
               {isOwner && (
                 <span className="bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded text-[11px] uppercase tracking-wider font-bold">You</span>
               )}

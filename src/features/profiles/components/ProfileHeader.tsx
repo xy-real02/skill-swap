@@ -1,4 +1,5 @@
 import { Profile } from '@/features/profiles/queries/getProfile'
+import { TrustedMemberBadge } from '@/components/ui/TrustedMemberBadge'
 import Link from 'next/link'
 
 export function ProfileHeader({
@@ -29,10 +30,11 @@ export function ProfileHeader({
 
       {/* Profile Info */}
       <div className="flex-1 min-w-0">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2">
-          <h1 className="font-display-sm text-[28px] sm:text-[32px] text-on-surface font-bold truncate">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-2 flex-wrap">
+          <h1 className="font-display-sm text-[28px] sm:text-[32px] text-on-surface font-bold truncate max-w-full">
             {profile.full_name}
           </h1>
+          <TrustedMemberBadge score={profile.reputation_score} exchanges={profile.exchange_count} />
           {isOwner && (
             <span className="inline-flex items-center gap-1 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm text-label-sm">
               <span className="material-symbols-outlined text-[14px]">person</span>
