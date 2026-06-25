@@ -64,40 +64,40 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl animate-fade-in">
       {error && (
-        <div className="flex items-center gap-2 p-4 text-sm text-red-300 bg-red-950/80 border border-red-800 rounded-2xl shadow">
-          <AlertCircle className="w-5 h-5 shrink-0 text-red-400" />
+        <div className="flex items-center gap-2 p-4 text-sm font-bold text-error bg-error-container/40 border border-error/40 rounded-2xl shadow-sm">
+          <AlertCircle className="w-5 h-5 shrink-0 text-error" />
           <span>{error}</span>
         </div>
       )}
 
       {success && (
-        <div className="flex items-center gap-2 p-4 text-sm text-emerald-300 bg-emerald-950/80 border border-emerald-800 rounded-2xl shadow animate-scale-up">
-          <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+        <div className="flex items-center gap-2 p-4 text-sm font-bold text-primary bg-secondary-container border border-secondary/40 rounded-2xl shadow-sm animate-scale-up">
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-primary" />
           <span>Platform settings and neighborhood zones updated successfully!</span>
         </div>
       )}
 
       {/* General Settings */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
-        <div className="flex items-center gap-3 text-amber-400 pb-4 border-b border-slate-800">
+      <div className="bg-surface border border-outline-variant/40 rounded-3xl p-6 md:p-8 shadow-[0_4px_24px_rgba(45,106,79,0.05)] space-y-6">
+        <div className="flex items-center gap-3 text-primary pb-4 border-b border-outline-variant/30">
           <Settings className="w-6 h-6" />
-          <h2 className="text-lg font-bold text-white">General Platform Configuration</h2>
+          <h2 className="text-lg font-bold text-on-surface font-headline-sm">General Platform Configuration</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-3">
-            <label className="block text-xs font-semibold uppercase text-slate-300 mb-2">Platform Community Name</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2">Platform Community Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500 font-medium"
+              className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary font-bold shadow-sm"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-300 mb-2">Max Listings Per Member</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2">Max Listings Per Member</label>
             <input
               type="number"
               min={1}
@@ -105,13 +105,13 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
               value={maxListings}
               onChange={(e) => setMaxListings(Number(e.target.value))}
               required
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500 font-bold"
+              className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary font-bold shadow-sm"
             />
-            <p className="text-[11px] text-slate-500 mt-1">Prevents marketplace spam</p>
+            <p className="text-[11px] font-semibold text-on-surface-variant mt-1.5">Prevents marketplace spam</p>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-300 mb-2">Request Expiry (Days)</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2">Request Expiry (Days)</label>
             <input
               type="number"
               min={1}
@@ -119,13 +119,13 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
               value={expiryDays}
               onChange={(e) => setExpiryDays(Number(e.target.value))}
               required
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500 font-bold"
+              className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary font-bold shadow-sm"
             />
-            <p className="text-[11px] text-slate-500 mt-1">Auto-expires old requests</p>
+            <p className="text-[11px] font-semibold text-on-surface-variant mt-1.5">Auto-expires old requests</p>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-300 mb-2">Manual Approval</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-2">Manual Approval</label>
             <label className="relative inline-flex items-center cursor-pointer mt-2">
               <input
                 type="checkbox"
@@ -133,23 +133,23 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
                 onChange={(e) => setRequireApproval(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
-              <span className="ml-3 text-xs font-semibold text-slate-300">
+              <div className="w-11 h-6 bg-surface-container-high peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-outline after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary shadow-inner"></div>
+              <span className="ml-3 text-xs font-bold text-on-surface">
                 {requireApproval ? 'Required for New Members' : 'Auto-Approve'}
               </span>
             </label>
-            <p className="text-[11px] text-slate-500 mt-1">Gated community mode</p>
+            <p className="text-[11px] font-semibold text-on-surface-variant mt-1.5">Gated community mode</p>
           </div>
         </div>
       </div>
 
       {/* Zone Management */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
-        <div className="flex items-center gap-3 text-emerald-400 pb-4 border-b border-slate-800">
+      <div className="bg-surface border border-outline-variant/40 rounded-3xl p-6 md:p-8 shadow-[0_4px_24px_rgba(45,106,79,0.05)] space-y-6">
+        <div className="flex items-center gap-3 text-primary pb-4 border-b border-outline-variant/30">
           <MapPin className="w-6 h-6" />
           <div>
-            <h2 className="text-lg font-bold text-white">Neighborhood Zones</h2>
-            <p className="text-xs text-slate-400 mt-0.5">Members select their active zone during onboarding and exploration.</p>
+            <h2 className="text-lg font-bold text-on-surface font-headline-sm">Neighborhood Zones</h2>
+            <p className="text-xs font-semibold text-on-surface-variant mt-0.5">Members select their active zone during onboarding and exploration.</p>
           </div>
         </div>
 
@@ -160,12 +160,12 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
             value={newZone}
             onChange={(e) => setNewZone(e.target.value)}
             placeholder="New neighborhood zone name..."
-            className="flex-1 px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-emerald-500 placeholder:text-slate-600 shadow-inner"
+            className="flex-1 px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary placeholder:text-outline shadow-sm font-semibold"
           />
           <button
             type="button"
             onClick={handleAddZone}
-            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl border border-emerald-500 shadow-lg shadow-emerald-600/20 flex items-center gap-1 transition-all"
+            className="px-6 py-3 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-xs rounded-xl shadow-sm flex items-center gap-1 transition-all"
           >
             <Plus className="w-4 h-4" />
             Add
@@ -175,16 +175,16 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
         {/* Zone Chips */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
           {zones.map((zone, idx) => (
-            <div key={zone} className="flex items-center justify-between p-3 bg-slate-950 border border-slate-800/80 rounded-xl group hover:border-slate-700 transition-all">
-              <div className="flex items-center gap-2 truncate">
-                <MapPin className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="text-sm font-semibold text-slate-200 truncate">{zone}</span>
+            <div key={zone} className="flex items-center justify-between p-3.5 bg-surface-container-low border border-outline-variant/40 rounded-2xl group hover:border-primary/40 transition-all shadow-sm">
+              <div className="flex items-center gap-2.5 truncate">
+                <MapPin className="w-4 h-4 text-primary shrink-0" />
+                <span className="text-sm font-bold text-on-surface truncate">{zone}</span>
               </div>
               <button
                 type="button"
                 onClick={() => handleRemoveZone(idx)}
                 title="Remove zone"
-                className="text-slate-500 hover:text-red-400 p-1 rounded transition-colors"
+                className="text-on-surface-variant hover:text-error p-1 rounded-lg transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -197,7 +197,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
         <button
           type="submit"
           disabled={loading}
-          className="px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm rounded-2xl shadow-xl shadow-amber-500/10 transition-all flex items-center gap-2 disabled:opacity-50"
+          className="px-8 py-3.5 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-sm rounded-2xl shadow-md transition-all flex items-center gap-2 disabled:opacity-50 hover:-translate-y-0.5"
         >
           <Save className="w-5 h-5" />
           <span>{loading ? 'Saving Changes...' : 'Save Configuration'}</span>
