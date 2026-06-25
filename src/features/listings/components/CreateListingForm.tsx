@@ -32,7 +32,7 @@ export function CreateListingForm() {
       if (result.error) {
         setError(result.error)
       } else {
-        router.replace(`/listings/${result.data?.id}`)
+        router.replace('/listings')
       }
     } catch (err) {
       setError('An unexpected error occurred.')

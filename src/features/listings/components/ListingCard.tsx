@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
+import { deleteListing } from '@/features/listings/actions/deleteListing'
 import type { Database } from '@/types/database.types'
 
 type ListingRow = Database['public']['Tables']['listings']['Row']
@@ -11,6 +13,7 @@ export type ListingWithProfile = ListingRow & {
 }
 
 export function ListingCard({ listing, currentUserId }: { listing: ListingWithProfile, currentUserId?: string }) {
+  const [isDeleting, setIsDeleting] = useState(false)
   const profile = listing.profiles
   const avatar = profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + (profile?.id || 'default')
   const isOwner = listing.owner_id === currentUserId
@@ -29,11 +32,9 @@ export function ListingCard({ listing, currentUserId }: { listing: ListingWithPr
         ) : null}
       </div>
       
-      <Link href={`/listings/${listing.id}`} className="block mb-2">
-        <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold line-clamp-2 hover:text-primary transition-colors">
-          {listing.title}
-        </h3>
-      </Link>
+      <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold line-clamp-2 mb-2">
+        {listing.title}
+      </h3>
       
       <p className="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3 flex-grow">
         {listing.description}
@@ -71,21 +72,39 @@ export function ListingCard({ listing, currentUserId }: { listing: ListingWithPr
           </div>
         </Link>
         
-        {!isOwner && currentUserId && (
+        {isOwner ? (
+          <button
+            onClick={async () => {
+              if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+                setIsDeleting(true)
+                try {
+                  await deleteListing(listing.id)
+                } catch (e) {
+                  console.error(e)
+                  alert('Failed to delete listing.')
+                  setIsDeleting(false)
+                }
+              }
+            }}
+            disabled={isDeleting}
+            className="bg-error/10 text-error hover:bg-error hover:text-on-error font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0 flex items-center gap-1 font-bold shadow-sm disabled:opacity-50"
+          >
+            <span className="material-symbols-outlined text-[16px]">{isDeleting ? 'hourglass_empty' : 'delete'}</span>
+            {isDeleting ? 'Deleting...' : 'Delete'}
+          </button>
+        ) : currentUserId ? (
           <Link 
             href={`?tab=listings&modal=propose-listing&listingId=${listing.id}&providerId=${listing.owner_id}&title=${encodeURIComponent(listing.title)}`}
-            className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0"
+            className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0 shadow-sm"
           >
             Propose Exchange
           </Link>
-        )}
-        
-        {(!currentUserId || isOwner) && (
+        ) : (
           <Link 
-            href={`/listings/${listing.id}`}
-            className="text-primary hover:bg-primary-container font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0"
+            href="/login"
+            className="bg-surface-variant text-on-surface-variant hover:bg-primary hover:text-on-primary font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0"
           >
-            View Details
+            Log in to Propose
           </Link>
         )}
       </div>
