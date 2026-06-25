@@ -61,7 +61,7 @@ export default async function MyListingsPage({
           <div className="flex items-center gap-2 text-on-surface-variant">
             <span className="material-symbols-outlined text-[20px]">{tab === 'listings' ? 'inventory_2' : 'live_help'}</span>
             <p className="font-body-md">
-              You have <span className="font-bold text-on-surface">{tab === 'listings' ? listings.length : requests.length}</span> {tab === 'listings' ? 'listing' : 'request'}{tab === 'listings' ? (listings.length === 1 ? '' : 's') : (requests.length === 1 ? '' : 's')}
+              You have <span className="font-bold text-on-surface">{tab === 'listings' ? listings.length : requests.length}</span> {tab === 'listings' ? 'offer' : 'request'}{tab === 'listings' ? (listings.length === 1 ? '' : 's') : (requests.length === 1 ? '' : 's')}
             </p>
           </div>
           
