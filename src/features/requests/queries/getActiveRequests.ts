@@ -12,7 +12,7 @@ export type RequestWithProfile = Database['public']['Tables']['requests']['Row']
   }
 }
 
-export async function getActiveRequests(options?: { category?: string; q?: string; limit?: number }) {
+export async function getActiveRequests(options?: { category?: string; q?: string; limit?: number; excludeOwnerId?: string }) {
   const supabase = await createClient()
 
   let query = supabase
@@ -30,6 +30,10 @@ export async function getActiveRequests(options?: { category?: string; q?: strin
     `)
     .eq('status', 'Active')
     .order('created_at', { ascending: false })
+
+  if (options?.excludeOwnerId) {
+    query = query.neq('owner_id', options.excludeOwnerId)
+  }
 
   if (options?.category && options.category !== 'All') {
     query = query.eq('category', options.category)

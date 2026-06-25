@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 
-export async function getActiveListings(options?: { category?: string; q?: string; limit?: number }) {
+export async function getActiveListings(options?: { category?: string; q?: string; limit?: number; excludeOwnerId?: string }) {
   const supabase = await createClient()
 
   // Query listings joined with the owner's profile data
@@ -19,6 +19,11 @@ export async function getActiveListings(options?: { category?: string; q?: strin
     `)
     .eq('status', 'Active')
     .order('created_at', { ascending: false })
+
+  // Exclude current user's listings if specified
+  if (options?.excludeOwnerId) {
+    query = query.neq('owner_id', options.excludeOwnerId)
+  }
 
   // Apply optional category filter
   if (options?.category && options.category !== 'All') {

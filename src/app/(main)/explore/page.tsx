@@ -17,18 +17,24 @@ export default async function ExplorePage({
   const activeTab = resolvedSearchParams.tab === 'requests' ? 'requests' : 'listings'
   const q = resolvedSearchParams.q
   
+  const supabase = await createClient()
+  const { data: authData } = await supabase.auth.getUser()
+  const currentUserId = authData.user?.id
+
   let listings: ListingWithProfile[] = []
   let requests: RequestWithProfile[] = []
   
   if (activeTab === 'listings') {
     listings = await getActiveListings({ 
       category: category === 'All Categories' ? undefined : category,
-      q
+      q,
+      excludeOwnerId: currentUserId
     })
   } else {
     requests = await getActiveRequests({ 
       category: category === 'All Categories' ? undefined : category,
-      q
+      q,
+      excludeOwnerId: currentUserId
     })
   }
 
@@ -40,10 +46,6 @@ export default async function ExplorePage({
     { name: 'Tech Support', icon: 'computer' },
     { name: 'Culinary', icon: 'restaurant' }
   ]
-
-  const supabase = await createClient()
-  const { data: authData } = await supabase.auth.getUser()
-  const currentUserId = authData.user?.id
 
   return (
     <>
