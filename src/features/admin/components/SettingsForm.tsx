@@ -19,7 +19,12 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
 
   const handleAddZone = (e: React.FormEvent) => {
     e.preventDefault()
-    const trimmed = newZone.trim()
+    const trimmed = newZone
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ')
     if (!trimmed) return
     if (zones.some(z => z.toLowerCase() === trimmed.toLowerCase())) {
       setError('Zone already exists.')
@@ -154,21 +159,21 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
         </div>
 
         {/* Add Zone */}
-        <div className="flex gap-2 max-w-md w-full">
+        <div className="flex flex-col sm:flex-row gap-2.5 max-w-md w-full">
           <input
             type="text"
             value={newZone}
             onChange={(e) => setNewZone(e.target.value)}
             placeholder="New neighborhood zone name..."
-            className="flex-1 px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary placeholder:text-outline shadow-sm font-semibold"
+            className="w-full sm:flex-1 px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary placeholder:text-outline shadow-sm font-semibold"
           />
           <button
             type="button"
             onClick={handleAddZone}
-            className="px-6 py-3 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-xs rounded-xl shadow-sm flex items-center gap-1 transition-all"
+            className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all shrink-0"
           >
             <Plus className="w-4 h-4" />
-            Add
+            <span>Add Zone</span>
           </button>
         </div>
 
