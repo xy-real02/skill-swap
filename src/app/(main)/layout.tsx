@@ -52,7 +52,7 @@ export default async function MainLayout({
         </div>
       </nav>
 
-      <Sidebar navItems={mainNavItems} baseRoute="/explore" />
+      <Sidebar navItems={mainNavItems} profile={profile} />
 
       {/* Main Content Canvas */}
       <main className="flex-1 mt-16 md:mt-0 md:ml-[240px] p-margin-mobile md:p-lg max-w-[1200px] mx-auto w-full">
