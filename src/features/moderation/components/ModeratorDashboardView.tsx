@@ -209,7 +209,7 @@ export function ModeratorDashboardView({
                       </button>
                       <button
                         onClick={() => handleAction(report, 'Dismiss', 'Member warned for minor violation')}
-                        className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-[#b45309] dark:text-[#fbbf24] border-[1.5px] border-[#b45309] dark:border-[#fbbf24] hover:bg-[#fef3c7]/50 transition-colors text-center cursor-pointer bg-amber-50/50 dark:bg-amber-950/20"
+                        className="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:text-amber-950 dark:hover:bg-amber-400 transition-colors shadow-sm text-center cursor-pointer"
                       >
                         Warn Member
                       </button>
