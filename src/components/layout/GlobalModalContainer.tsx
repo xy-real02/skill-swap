@@ -7,6 +7,7 @@ import { CreateRequestForm } from '@/features/requests/components/CreateRequestF
 import { EditProfileForm } from '@/features/profiles/components/EditProfileForm'
 import { ReviewForm } from '@/features/reviews/components/ReviewForm'
 import { ProposeExchangeForm } from '@/features/exchanges/components/ProposeExchangeForm'
+import { ReportForm } from '@/features/moderation/components/ReportForm'
 import type { Profile } from '@/features/profiles/queries/getProfile'
 
 export function GlobalModalContainer({
@@ -34,6 +35,7 @@ export function GlobalModalContainer({
       newParams.delete('exchangeId')
       newParams.delete('providerId')
       newParams.delete('targetId')
+      newParams.delete('targetType')
       newParams.delete('targetName')
       newParams.delete('title')
       newParams.delete('name')
@@ -105,6 +107,14 @@ export function GlobalModalContainer({
         content = <ProposeExchangeForm sourceRequestId={requestId} providerId={providerId} />
       } else {
         content = <div className="p-8 text-center text-error">Missing request details.</div>
+      }
+      break
+    case 'report':
+      modalTitle = `Report ${searchParams.get('targetType') || 'Content'}`
+      if (targetId && searchParams.get('targetType')) {
+        content = <ReportForm targetId={targetId} targetType={searchParams.get('targetType') as any} targetTitle={titleText} />
+      } else {
+        content = <div className="p-8 text-center text-error">Missing report target details.</div>
       }
       break
     default:
