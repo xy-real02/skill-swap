@@ -29,7 +29,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background text-on-background flex font-body-md antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+    <div className="min-h-screen bg-background text-on-background flex flex-col lg:flex-row font-body-md antialiased selection:bg-secondary-container selection:text-on-secondary-container">
       {/* Admin SideNavBar */}
       <nav className="hidden lg:flex flex-col h-full p-6 border-r border-outline-variant/30 bg-surface shadow-[4px_0_24px_rgba(45,106,79,0.06)] w-64 fixed left-0 top-0 z-40 justify-between">
         <div>

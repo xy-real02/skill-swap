@@ -94,7 +94,7 @@ export function MemberTable({ members, currentAdminId }: MemberTableProps) {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="hidden md:flex items-center gap-2">
           <div className="bg-surface-container-low p-1 rounded-xl border border-outline-variant/30 flex items-center gap-1">
             <button
               onClick={() => setViewMode('table')}
@@ -134,10 +134,19 @@ export function MemberTable({ members, currentAdminId }: MemberTableProps) {
         </div>
       ) : (
         /* Executive Table View (Light Material 3 Theme) */
-        <div className="bg-surface rounded-3xl border border-outline-variant/40 shadow-[0_8px_30px_rgba(45,106,79,0.06)] overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
+        <>
+          {/* Mobile Phone Screen: Auto Responsive Card Grid */}
+          <div className="md:hidden grid grid-cols-1 gap-5">
+            {filteredMembers.map((member) => (
+              <MemberCard key={member.id} member={member} currentAdminId={currentAdminId} />
+            ))}
+          </div>
+
+          {/* Desktop & Tablet Executive Data Table */}
+          <div className="hidden md:block bg-surface rounded-3xl border border-outline-variant/40 shadow-[0_8px_30px_rgba(45,106,79,0.06)] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
                 <tr className="bg-surface-container-low border-b border-outline-variant/30 text-[11px] uppercase tracking-wider text-on-surface-variant font-extrabold">
                   <th className="p-4 pl-6">Member</th>
                   <th className="p-4">Status</th>
@@ -280,6 +289,7 @@ export function MemberTable({ members, currentAdminId }: MemberTableProps) {
             </span>
           </div>
         </div>
+        </>
       )}
     </div>
   )
