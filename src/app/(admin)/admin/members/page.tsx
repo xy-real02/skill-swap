@@ -1,7 +1,8 @@
 import { getMembers } from '@/features/admin/queries/getMembers'
-import { MemberCard } from '@/features/admin/components/MemberCard'
+import { getAnalytics } from '@/features/admin/queries/getAnalytics'
+import { MemberTable } from '@/features/admin/components/MemberTable'
 import { createClient } from '@/lib/supabase/server'
-import { Users } from 'lucide-react'
+import { Users, TrendingUp, ArrowRightLeft, AlertTriangle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,61 +13,104 @@ export default async function AdminMembersPage({
 }) {
   const resolvedParams = await searchParams
   const q = resolvedParams?.q || ''
-  const members = await getMembers(q)
+
+  const [members, analytics] = await Promise.all([
+    getMembers(q),
+    getAnalytics(),
+  ])
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const currentAdminId = user?.id || ''
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-fade-in pb-12">
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div>
-          <h1 className="text-2xl font-bold text-white font-headline-md tracking-tight">
-            User Directory & Role Assignment
+          <h1 className="text-3xl font-extrabold text-white font-headline-md tracking-tight">
+            Members Dashboard
           </h1>
           <p className="text-sm text-slate-400 mt-1">
-            Search platform members, promote community moderators, and enforce platform safety.
+            Review community roster, manage executive roles, and enforce neighborhood guidelines.
           </p>
-        </div>
-        <div className="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-slate-300 font-bold text-sm flex items-center gap-2">
-          <Users className="w-4 h-4 text-amber-400" />
-          <span>{members.length} Members Loaded</span>
         </div>
       </div>
 
-      {/* Search Bar */}
-      <form method="GET" className="max-w-md">
-        <div className="relative">
-          <input
-            type="text"
-            name="q"
-            defaultValue={q}
-            placeholder="Search members by full name..."
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-500 shadow-inner"
-          />
-          <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-500 text-[20px]">
-            search
-          </span>
-        </div>
-      </form>
-
-      {members.length === 0 ? (
-        <div className="relative isolate overflow-hidden flex flex-col items-center justify-center w-full min-h-[320px] bg-slate-900/60 rounded-3xl border border-slate-800 p-8 text-center shadow-2xl">
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
-          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4 shadow-inner">
-            <Users className="w-8 h-8" />
+      {/* Analytics Overview (Bento Grid Style) */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Stat Card 1 */}
+        <div className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden group hover:border-slate-700 transition-all">
+          <div className="absolute -top-6 -right-6 p-4 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
+            <Users className="w-40 h-40 text-emerald-400" />
           </div>
-          <h3 className="text-lg font-bold text-white font-headline-sm mb-1">No Members Matching Query</h3>
-          <p className="text-sm text-slate-400 max-w-md w-full">We couldn't find any community members matching "{q}". Try searching for another name or clear the search input.</p>
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Total Members</h3>
+          <div className="flex items-baseline gap-3">
+            <span className="text-4xl font-extrabold text-white font-headline-md tracking-tight">
+              {analytics.totalMembers.toLocaleString()}
+            </span>
+            <span className="text-xs font-bold text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1 shadow-inner">
+              <TrendingUp className="w-3.5 h-3.5" /> +{analytics.recentJoinsCount} new
+            </span>
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {members.map((member) => (
-            <MemberCard key={member.id} member={member} currentAdminId={currentAdminId} />
-          ))}
+
+        {/* Stat Card 2 */}
+        <div className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden group hover:border-slate-700 transition-all">
+          <div className="absolute -top-6 -right-6 p-4 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
+            <ArrowRightLeft className="w-40 h-40 text-emerald-400" />
+          </div>
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Completed Swaps</h3>
+          <div className="flex items-baseline gap-3">
+            <span className="text-4xl font-extrabold text-emerald-400 font-headline-md tracking-tight">
+              {analytics.completedExchanges.toLocaleString()}
+            </span>
+            <span className="text-xs font-bold text-slate-300 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-full">
+              Verified exchanges
+            </span>
+          </div>
         </div>
-      )}
+
+        {/* Stat Card 3 */}
+        <div className="bg-slate-900/60 backdrop-blur-md border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden group hover:border-slate-700 transition-all border-l-4 border-l-amber-500">
+          <div className="absolute -top-6 -right-6 p-4 opacity-5 pointer-events-none group-hover:scale-110 transition-transform">
+            <AlertTriangle className="w-40 h-40 text-amber-500" />
+          </div>
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">Pending Safety Reports</h3>
+          <div className="flex items-baseline gap-3">
+            <span className={`text-4xl font-extrabold font-headline-md tracking-tight ${analytics.pendingReports > 0 ? 'text-amber-400' : 'text-white'}`}>
+              {analytics.pendingReports}
+            </span>
+            <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${
+              analytics.pendingReports > 0
+                ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+            }`}>
+              {analytics.pendingReports > 0 ? 'Requires attention' : 'Clean queue'}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Search Filter Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <form method="GET" className="max-w-md w-full">
+          <div className="relative">
+            <input
+              type="text"
+              name="q"
+              defaultValue={q}
+              placeholder="Search community members by name..."
+              className="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-800 rounded-2xl text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 shadow-xl transition-all"
+            />
+            <span className="material-symbols-outlined absolute left-3.5 top-3 text-slate-500 text-[20px]">
+              search
+            </span>
+          </div>
+        </form>
+      </div>
+
+      {/* Coherent Member Table Complete with Grid Switcher */}
+      <MemberTable members={members} currentAdminId={currentAdminId} />
     </div>
   )
 }
