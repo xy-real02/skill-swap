@@ -53,7 +53,7 @@ export default async function AdminMembersPage({
 
       {members.length === 0 ? (
         <div className="flex flex-col items-center justify-center w-full min-h-[240px] text-center text-slate-500 bg-slate-900/40 rounded-3xl border border-slate-800 p-8">
-          No members matching query "{q}".
+          <p className="w-full text-center">No members matching query "{q}".</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
