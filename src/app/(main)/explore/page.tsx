@@ -4,6 +4,7 @@ import { ListingCard, type ListingWithProfile } from '@/features/listings/compon
 import { RequestCard } from '@/features/requests/components/RequestCard'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { TopBar } from '@/components/layout/TopBar'
 
 export default async function ExplorePage({
   searchParams,
@@ -37,12 +38,10 @@ export default async function ExplorePage({
   return (
     <>
       {/* Header & Search */}
-      <header className="mb-lg sticky top-16 md:top-0 bg-surface/90 backdrop-blur-md z-30 pt-4 pb-4 -mx-margin-mobile px-margin-mobile md:-mx-lg md:px-lg">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 className="font-headline-md text-headline-md text-primary mb-1">Explore Community Skills</h1>
-            <p className="text-on-surface-variant font-body-md text-body-md">Discover what your neighbors are sharing today.</p>
-          </div>
+      <TopBar 
+        title="Explore Community Skills"
+        description="Discover what your neighbors are sharing today."
+        action={
           <div className="relative w-full md:w-96 group">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
             <input 
@@ -51,7 +50,9 @@ export default async function ExplorePage({
               type="text" 
             />
           </div>
-        </div>
+        }
+      />
+      <div className="sticky top-[148px] md:top-[104px] bg-surface/90 backdrop-blur-md z-20 pt-2 -mx-margin-mobile px-margin-mobile md:-mx-lg md:px-lg mb-6">
         
         {/* Tabs */}
         <div className="flex gap-6 border-b border-surface-variant mb-6 relative">
@@ -102,7 +103,7 @@ export default async function ExplorePage({
             )
           })}
         </div>
-      </header>
+      </div>
 
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter pb-24">

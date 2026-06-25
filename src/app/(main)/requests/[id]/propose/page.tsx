@@ -2,6 +2,7 @@ import { getRequestById } from '@/features/requests/queries/getRequestById'
 import { ProposeExchangeForm } from '@/features/exchanges/components/ProposeExchangeForm'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { TopBar } from '@/components/layout/TopBar'
 
 export default async function ProposeToRequestPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
@@ -24,13 +25,13 @@ export default async function ProposeToRequestPage({ params }: { params: Promise
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <div className="mb-8">
-        <h1 className="font-headline-md text-headline-md text-primary mb-2">I Can Help!</h1>
-        <p className="text-on-surface-variant font-body-md text-body-md">
-          Propose an exchange to help <strong>{request.profiles.full_name}</strong>.
-        </p>
-      </div>
+    <>
+      <TopBar 
+        title="I Can Help!"
+        description={<span>Propose an exchange to help <strong>{request.profiles.full_name}</strong>.</span>}
+        backHref="/explore?tab=requests"
+      />
+      <div className="max-w-2xl mx-auto py-8 px-margin-mobile md:px-0">
 
       {/* Request Summary Card */}
       <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 mb-8">
@@ -51,6 +52,7 @@ export default async function ProposeToRequestPage({ params }: { params: Promise
           sourceRequestId={request.id}
         />
       </div>
-    </div>
+      </div>
+    </>
   )
 }

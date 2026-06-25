@@ -5,6 +5,7 @@ import { markNotificationRead } from '@/features/notifications/actions/markNotif
 import { markAllNotificationsRead } from '@/features/notifications/actions/markAllNotificationsRead'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { TopBar } from '@/components/layout/TopBar'
 
 export function NotificationList({ notifications }: { notifications: Notification[] }) {
   const router = useRouter()
@@ -34,22 +35,23 @@ export function NotificationList({ notifications }: { notifications: Notificatio
   const unreadCount = notifications.filter(n => !n.is_read).length
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="font-display-lg-mobile md:font-display-lg text-primary mb-1">Notifications</h1>
-          <p className="font-body-md text-on-surface-variant">You have {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}.</p>
-        </div>
-        {unreadCount > 0 && (
-          <button 
-            onClick={handleMarkAllRead}
-            disabled={isMarkingAll}
-            className="text-primary hover:bg-secondary-container/50 px-4 py-2 rounded-lg font-label-md transition-colors disabled:opacity-50"
-          >
-            {isMarkingAll ? 'Marking...' : 'Mark all as read'}
-          </button>
-        )}
-      </div>
+    <>
+      <TopBar 
+        title="Notifications"
+        description={`You have ${unreadCount} unread message${unreadCount !== 1 ? 's' : ''}.`}
+        action={
+          unreadCount > 0 ? (
+            <button 
+              onClick={handleMarkAllRead}
+              disabled={isMarkingAll}
+              className="bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 px-4 py-2 rounded-lg font-label-md transition-colors disabled:opacity-50"
+            >
+              {isMarkingAll ? 'Marking...' : 'Mark all as read'}
+            </button>
+          ) : undefined
+        }
+      />
+      <div className="w-full pt-6">
 
       {notifications.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-4 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm mt-8">
@@ -130,6 +132,7 @@ export function NotificationList({ notifications }: { notifications: Notificatio
           })}
         </div>
       )}
-    </div>
+      </div>
+    </>
   )
 }
