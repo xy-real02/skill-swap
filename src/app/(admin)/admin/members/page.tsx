@@ -52,7 +52,7 @@ export default async function AdminMembersPage({
       </form>
 
       {members.length === 0 ? (
-        <div className="py-16 text-center text-slate-500 bg-slate-900/40 rounded-3xl border border-slate-800 w-full max-w-lg mx-auto block">
+        <div className="flex flex-col items-center justify-center w-full min-h-[240px] text-center text-slate-500 bg-slate-900/40 rounded-3xl border border-slate-800 p-8">
           No members matching query "{q}".
         </div>
       ) : (

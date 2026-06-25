@@ -135,10 +135,10 @@ export function ModeratorDashboardView({
 
       {/* Report Cards List */}
       {displayedReports.length === 0 ? (
-        <div className="bg-surface-container-lowest rounded-2xl p-12 text-center border border-surface-container-highest shadow-sm w-full max-w-lg mx-auto block my-8">
-          <ShieldCheck className="w-16 h-16 mx-auto text-primary mb-4 animate-bounce" />
-          <h3 className="text-xl font-bold text-on-surface mb-2 block w-full">All Clear!</h3>
-          <p className="text-sm text-on-surface-variant block w-full max-w-md mx-auto leading-relaxed">
+        <div className="flex flex-col items-center justify-center w-full min-h-[320px] bg-surface-container-lowest dark:bg-surface-container rounded-2xl border border-surface-container-highest p-8 my-8 text-center shadow-sm">
+          <ShieldCheck className="w-16 h-16 text-primary dark:text-primary-fixed-dim mb-4 animate-bounce" />
+          <h3 className="text-2xl font-bold text-on-surface mb-2">All Clear!</h3>
+          <p className="text-base text-on-surface-variant max-w-lg text-center leading-relaxed">
             {activeTab === 'Open'
               ? 'There are currently no open reports matching this filter. Great job keeping SkillSwap safe!'
               : 'No resolved reports match this filter yet.'}
