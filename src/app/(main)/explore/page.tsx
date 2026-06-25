@@ -2,6 +2,9 @@ import { getActiveListings } from '@/features/listings/queries/getActiveListings
 import { getActiveRequests, type RequestWithProfile } from '@/features/requests/queries/getActiveRequests'
 import { ListingCard, type ListingWithProfile } from '@/features/listings/components/ListingCard'
 import { RequestCard } from '@/features/requests/components/RequestCard'
+import { ListingTableView } from '@/features/listings/components/ListingTableView'
+import { RequestTableView } from '@/features/requests/components/RequestTableView'
+import { ViewModeToggle } from '@/components/ui/ViewModeToggle'
 import { createClient } from '@/lib/supabase/server'
 import { SearchBar } from '@/components/ui/SearchBar'
 import Link from 'next/link'
@@ -10,11 +13,12 @@ import { Suspense } from 'react'
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; q?: string; tab?: string }>
+  searchParams: Promise<{ category?: string; q?: string; tab?: string; view?: string }>
 }) {
   const resolvedSearchParams = await searchParams
   const category = resolvedSearchParams.category || 'All Categories'
   const activeTab = resolvedSearchParams.tab === 'requests' ? 'requests' : 'listings'
+  const view = resolvedSearchParams.view === 'table' ? 'table' : 'grid'
   const q = resolvedSearchParams.q
   
   const supabase = await createClient()
@@ -47,6 +51,8 @@ export default async function ExplorePage({
     { name: 'Culinary', icon: 'restaurant' }
   ]
 
+  const viewParam = view === 'table' ? '&view=table' : ''
+
   return (
     <>
       {/* Search Bar (Not sticky, scrolls away) */}
@@ -59,23 +65,23 @@ export default async function ExplorePage({
       {/* Sticky Section: Tabs & Categories */}
       <div className="sticky top-[72px] md:top-[80px] bg-surface/95 backdrop-blur-xl z-20 pt-2 -mx-margin-mobile px-margin-mobile md:-mx-lg md:px-lg mb-6 border-b border-surface-variant/50">
         
-        {/* Action Row: Segmented Control & Button */}
+        {/* Action Row: Segmented Control & Buttons */}
         <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
           
           {/* Segmented Control */}
           <div className="bg-surface-container rounded-full p-1 flex w-full md:w-auto relative isolate shadow-inner">
             <Link 
-              href={`/explore?tab=listings&category=${category}`}
+              href={`/explore?tab=listings&category=${encodeURIComponent(category)}${viewParam}`}
               className={`flex-1 md:w-48 py-2 px-4 rounded-full text-center font-label-md transition-all duration-300 z-10 ${
-                activeTab === 'listings' ? 'text-on-primary' : 'text-on-surface-variant hover:text-on-surface'
+                activeTab === 'listings' ? 'text-on-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
               }`}
             >
               Skills Offered
             </Link>
             <Link 
-              href={`/explore?tab=requests&category=${category}`}
+              href={`/explore?tab=requests&category=${encodeURIComponent(category)}${viewParam}`}
               className={`flex-1 md:w-48 py-2 px-4 rounded-full text-center font-label-md transition-all duration-300 z-10 ${
-                activeTab === 'requests' ? 'text-on-primary' : 'text-on-surface-variant hover:text-on-surface'
+                activeTab === 'requests' ? 'text-on-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
               }`}
             >
               Skill Requests
@@ -89,14 +95,17 @@ export default async function ExplorePage({
             ></div>
           </div>
 
-          {/* Action Button */}
-          <Link 
-            href={activeTab === 'listings' ? '?tab=listings&modal=create-listing' : '?tab=requests&modal=create-request'} 
-            className="flex w-full md:w-auto justify-center items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
-          >
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            {activeTab === 'listings' ? 'Share a Skill' : 'Post a Request'}
-          </Link>
+          {/* Action Row Right: View Mode Toggle & Button */}
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <ViewModeToggle />
+            <Link 
+              href={activeTab === 'listings' ? '?tab=listings&modal=create-listing' : '?tab=requests&modal=create-request'} 
+              className="flex flex-1 md:flex-none justify-center items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow whitespace-nowrap"
+            >
+              <span className="material-symbols-outlined text-[20px]">add</span>
+              {activeTab === 'listings' ? 'Share a Skill' : 'Post a Request'}
+            </Link>
+          </div>
 
         </div>
         
@@ -107,7 +116,7 @@ export default async function ExplorePage({
             return (
               <a 
                 key={cat.name}
-                href={`/explore?tab=${activeTab}&category=${cat.name}`}
+                href={`/explore?tab=${activeTab}&category=${encodeURIComponent(cat.name)}${viewParam}`}
                 className={`flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm transition-all duration-200 border ${
                   isActive 
                     ? 'bg-primary text-on-primary border-primary shadow-sm font-bold' 
@@ -122,13 +131,17 @@ export default async function ExplorePage({
         </div>
       </div>
 
-      {/* Content Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+      {/* Content Area */}
+      <div className={view === 'table' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter'}>
         {activeTab === 'listings' && (
           listings && listings.length > 0 ? (
-            listings.map(listing => (
-              <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
-            ))
+            view === 'table' ? (
+              <ListingTableView listings={listings} currentUserId={currentUserId} />
+            ) : (
+              listings.map(listing => (
+                <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
+              ))
+            )
           ) : (
             <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -151,9 +164,13 @@ export default async function ExplorePage({
 
         {activeTab === 'requests' && (
           requests && requests.length > 0 ? (
-            requests.map(request => (
-              <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
-            ))
+            view === 'table' ? (
+              <RequestTableView requests={requests} currentUserId={currentUserId} />
+            ) : (
+              requests.map(request => (
+                <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
+              ))
+            )
           ) : (
             <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>

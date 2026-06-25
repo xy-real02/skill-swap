@@ -1,10 +1,19 @@
 import { getUserListings } from '@/features/listings/queries/getUserListings'
 import { ListingCard } from '@/features/listings/components/ListingCard'
+import { MyListingTableView } from '@/features/listings/components/MyListingTableView'
+import { ViewModeToggle } from '@/components/ui/ViewModeToggle'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-export default async function MyListingsPage() {
+export default async function MyListingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>
+}) {
+  const resolvedSearchParams = await searchParams
+  const view = resolvedSearchParams.view === 'table' ? 'table' : 'grid'
+
   const supabase = await createClient()
   const { data: authData } = await supabase.auth.getUser()
   
@@ -27,13 +36,16 @@ export default async function MyListingsPage() {
             </p>
           </div>
           
-          <Link 
-            href="?modal=create-listing"
-            className="w-full sm:w-auto bg-primary text-on-primary font-label-md py-2.5 px-6 rounded-full font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow"
-          >
-            <span className="material-symbols-outlined text-[20px]">add</span>
-            New Listing
-          </Link>
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <ViewModeToggle />
+            <Link 
+              href="?modal=create-listing"
+              className="w-full sm:w-auto bg-primary text-on-primary font-label-md py-2.5 px-6 rounded-full font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow whitespace-nowrap"
+            >
+              <span className="material-symbols-outlined text-[20px]">add</span>
+              New Listing
+            </Link>
+          </div>
         </div>
 
         {listings.length === 0 ? (
@@ -54,6 +66,8 @@ export default async function MyListingsPage() {
               Create a Listing
             </Link>
           </div>
+        ) : view === 'table' ? (
+          <MyListingTableView listings={listings} />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
             {listings.map(listing => (
