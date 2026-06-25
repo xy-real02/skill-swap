@@ -67,11 +67,13 @@ export default async function MainLayout({
       <Sidebar navItems={mainNavItems} profile={profile} />
 
       {/* Main Content Canvas */}
-      <main className="flex-1 mt-16 md:mt-0 md:ml-[240px] p-margin-mobile pb-24 md:p-lg max-w-[1200px] mx-auto w-full relative">
-        <GlobalTopBar />
-        <GlobalModalContainer profile={profile} zones={zones} />
-        {children}
-      </main>
+      <div className="flex-1 md:pl-[240px] flex flex-col w-full min-h-screen">
+        <main className="flex-1 mt-16 md:mt-0 p-margin-mobile pb-24 md:p-lg max-w-[1200px] mx-auto w-full relative">
+          <GlobalTopBar />
+          <GlobalModalContainer profile={profile} zones={zones} />
+          {children}
+        </main>
+      </div>
 
       <MobileNav navItems={mainNavItems} currentUserId={user.id} />
     </div>
