@@ -9,6 +9,7 @@ export function AdminSidebarLinks({ isMobile = false }: { isMobile?: boolean }) 
   const navItems = [
     { href: '/admin/members', label: 'Members Directory', mobileLabel: 'Members', icon: 'groups' },
     { href: '/admin/analytics', label: 'Platform Analytics', mobileLabel: 'Analytics', icon: 'analytics' },
+    { href: '/admin/moderation-log', label: 'Moderation Log', mobileLabel: 'Mod Log', icon: 'shield' },
     { href: '/admin/config', label: 'Community Settings', mobileLabel: 'Settings', icon: 'settings' },
   ]
 
