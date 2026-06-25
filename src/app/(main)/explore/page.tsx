@@ -128,9 +128,15 @@ export default async function ExplorePage({
               <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
             ))
           ) : (
-            <div className="col-span-full py-12 text-center text-on-surface-variant">
-              <p className="font-body-lg">No listings found for this category yet.</p>
-              <p className="mt-2">Be the first to share a skill!</p>
+            <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                <span className="material-symbols-outlined text-[40px]">explore_off</span>
+              </div>
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No listings found</h3>
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10">
+                We couldn't find any listings for this category. Be the first to share a skill!
+              </p>
             </div>
           )
         )}
@@ -141,9 +147,15 @@ export default async function ExplorePage({
               <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
             ))
           ) : (
-            <div className="col-span-full py-12 text-center text-on-surface-variant">
-              <p className="font-body-lg">No skill requests found for this category.</p>
-              <p className="mt-2">Need help with something? Post a request!</p>
+            <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                <span className="material-symbols-outlined text-[40px]">post_add</span>
+              </div>
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No requests found</h3>
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10">
+                There are no skill requests for this category yet. Need help with something? Post a request!
+              </p>
             </div>
           )
         )}
