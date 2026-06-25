@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ReportItem } from '../queries/getReports'
 import { resolveReport } from '../actions/resolveReport'
 import Link from 'next/link'
-import { ShieldCheck, AlertTriangle, ExternalLink, Link as LinkIcon } from 'lucide-react'
+import { ShieldCheck, AlertTriangle, ExternalLink, Link as LinkIcon, Search, CheckCircle2, Clock, ShieldAlert, FileText, HelpCircle, User, Sparkles } from 'lucide-react'
 
 function timeAgo(dateString: string) {
   try {
@@ -47,15 +47,31 @@ export function ModeratorDashboardView({
   const [reports, setReports] = useState<ReportItem[]>(initialReports)
   const [activeTab, setActiveTab] = useState<'Open' | 'Resolved'>(defaultTab)
   const [selectedType, setSelectedType] = useState<string>('All')
+  const [searchQuery, setSearchQuery] = useState<string>('')
   const [resolvingId, setResolvingId] = useState<string | null>(null)
 
   const filterTypes = ['All', 'Listing', 'Request', 'Profile']
+
+  const pendingReports = reports.filter((r) => r.status === 'Pending')
+  const urgentCount = pendingReports.filter((r) => {
+    const reason = r.reason.toLowerCase()
+    return reason.includes('spam') || reason.includes('scam') || reason.includes('harass') || reason.includes('hate') || reason.includes('fraud')
+  }).length
+  const resolvedCount = reports.filter((r) => r.status !== 'Pending').length
 
   const displayedReports = reports.filter((r) => {
     const isPending = r.status === 'Pending'
     if (activeTab === 'Open' && !isPending) return false
     if (activeTab === 'Resolved' && isPending) return false
     if (selectedType !== 'All' && r.target_type.toLowerCase() !== selectedType.toLowerCase()) return false
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      const matchName = r.reporter_name?.toLowerCase().includes(q)
+      const matchReason = r.reason?.toLowerCase().includes(q)
+      const matchDetails = r.details?.toLowerCase().includes(q)
+      const matchTitle = r.target_title?.toLowerCase().includes(q)
+      if (!matchName && !matchReason && !matchDetails && !matchTitle) return false
+    }
     return true
   })
 
@@ -80,63 +96,125 @@ export function ModeratorDashboardView({
   }
 
   return (
-    <div className="w-full pb-16 animate-fade-in pt-2">
-      {/* Sticky Top Filter & Tabs Area */}
-      <div className="sticky top-[72px] md:top-[80px] bg-surface/95 backdrop-blur-xl z-20 pt-3 pb-4 mb-8 border-b border-surface-variant/60 flex flex-col md:flex-row md:items-center justify-between gap-4 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0">
+    <div className="w-full pb-16 animate-fade-in pt-2 space-y-8">
+      {/* Mini Stats Banner */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-5 border border-outline-variant/60 shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-bold font-label-sm uppercase tracking-wider text-on-surface-variant">Urgent / High Risk</p>
+            <p className="text-2xl font-black font-headline-md text-error">{urgentCount}</p>
+          </div>
+          <div className="w-12 h-12 rounded-2xl bg-error/10 flex items-center justify-center text-error">
+            <ShieldAlert className="w-6 h-6" />
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-5 border border-outline-variant/60 shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-bold font-label-sm uppercase tracking-wider text-on-surface-variant">Pending Review</p>
+            <p className="text-2xl font-black font-headline-md text-amber-600 dark:text-amber-400">{pendingReports.length}</p>
+          </div>
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <Clock className="w-6 h-6" />
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest dark:bg-surface-container rounded-2xl p-5 border border-outline-variant/60 shadow-sm flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-xs font-bold font-label-sm uppercase tracking-wider text-on-surface-variant">Resolved Cases</p>
+            <p className="text-2xl font-black font-headline-md text-primary dark:text-primary-fixed-dim">{resolvedCount}</p>
+          </div>
+          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary-fixed-dim">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+        </div>
+      </div>
+
+      {/* Sticky Top Filter, Search & Tabs Area */}
+      <div className="sticky top-[72px] md:top-[80px] bg-surface/95 backdrop-blur-xl z-20 pt-3 pb-4 border-b border-surface-variant/60 flex flex-col xl:flex-row xl:items-center justify-between gap-4 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0">
         {/* Segmented Control Tabs */}
-        <div className="bg-surface-container rounded-full p-1 flex w-full md:w-auto min-w-[300px] shadow-inner border border-outline-variant/30 shrink-0">
+        <div className="bg-surface-container rounded-full p-1 flex w-full sm:w-auto min-w-[280px] shadow-inner border border-outline-variant/30 shrink-0">
           <button
             onClick={() => setActiveTab('Open')}
-            className={`flex-1 py-2 px-6 rounded-full text-center text-xs md:text-sm font-label-md transition-all duration-200 cursor-pointer ${
+            className={`flex-1 py-2 px-5 rounded-full text-center text-xs md:text-sm font-label-md transition-all duration-200 cursor-pointer ${
               activeTab === 'Open'
                 ? 'bg-primary text-on-primary font-bold shadow-md'
                 : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            Open Reports ({reports.filter((r) => r.status === 'Pending').length})
+            Open ({pendingReports.length})
           </button>
           <button
             onClick={() => setActiveTab('Resolved')}
-            className={`flex-1 py-2 px-6 rounded-full text-center text-xs md:text-sm font-label-md transition-all duration-200 cursor-pointer ${
+            className={`flex-1 py-2 px-5 rounded-full text-center text-xs md:text-sm font-label-md transition-all duration-200 cursor-pointer ${
               activeTab === 'Resolved'
                 ? 'bg-primary text-on-primary font-bold shadow-md'
                 : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
-            Resolved ({reports.filter((r) => r.status !== 'Pending').length})
+            Resolved ({resolvedCount})
           </button>
         </div>
 
-        {/* Filter Bar */}
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar items-center pb-1 md:pb-0">
-          {filterTypes.map((type) => {
-            const isActive = selectedType === type
-            return (
+        {/* Right Row: Search & Filter Pills */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 overflow-hidden w-full xl:w-auto">
+          {/* Search Bar */}
+          <div className="relative w-full sm:w-64 shrink-0">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant" />
+            <input
+              type="text"
+              placeholder="Search reports or ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-surface-container-low border border-outline-variant/60 rounded-full pl-10 pr-4 py-2 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container transition-all"
+            />
+            {searchQuery && (
               <button
-                key={type}
-                onClick={() => setSelectedType(type)}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 border cursor-pointer ${
-                  isActive
-                    ? 'bg-primary text-on-primary border-primary shadow-sm font-bold'
-                    : 'bg-surface-container-low text-on-surface hover:bg-surface-container border-outline-variant/40'
-                }`}
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold bg-surface-variant px-1.5 py-0.5 rounded-full text-on-surface-variant hover:text-on-surface"
               >
-                {type === 'All' ? 'All Types' : `${type}s`}
+                ✕
               </button>
-            )
-          })}
+            )}
+          </div>
+
+          {/* Filter Bar */}
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar items-center w-full sm:w-auto pb-1 sm:pb-0 shrink-0">
+            {filterTypes.map((type) => {
+              const isActive = selectedType === type
+              return (
+                <button
+                  key={type}
+                  onClick={() => setSelectedType(type)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 border cursor-pointer ${
+                    isActive
+                      ? 'bg-primary text-on-primary border-primary shadow-sm font-bold'
+                      : 'bg-surface-container-low text-on-surface hover:bg-surface-container border-outline-variant/40'
+                  }`}
+                >
+                  {type === 'All' ? 'All Types' : `${type}s`}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
 
       {/* Report Cards List */}
       {displayedReports.length === 0 ? (
-        <div className="flex flex-col items-center justify-center w-full min-h-[320px] bg-surface-container-lowest dark:bg-surface-container rounded-2xl border border-outline-variant/60 p-8 my-8 text-center shadow-sm">
-          <ShieldCheck className="w-16 h-16 text-primary dark:text-primary-fixed-dim mb-4 animate-bounce" />
-          <h3 className="text-2xl font-bold text-on-surface mb-2 w-full text-center">All Clear!</h3>
-          <p className="text-base text-on-surface-variant w-full text-center leading-relaxed">
-            {activeTab === 'Open'
-              ? 'There are currently no open reports matching this filter. Great job keeping SkillSwap safe!'
-              : 'No resolved reports match this filter yet.'}
+        <div className="relative isolate overflow-hidden flex flex-col items-center justify-center w-full min-h-[340px] bg-gradient-to-b from-surface-container-lowest to-surface-container-low dark:from-surface-container dark:to-surface-container-high rounded-3xl border border-outline-variant/60 p-8 my-8 text-center shadow-sm">
+          <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary dark:text-primary-fixed-dim mb-4 animate-bounce shadow-inner border border-primary/20">
+            {searchQuery ? <Search className="w-10 h-10" /> : <Sparkles className="w-10 h-10" />}
+          </div>
+          <h3 className="text-2xl font-bold text-on-surface mb-2 w-full text-center">
+            {searchQuery ? 'No Results Found' : 'Queue Complete!'}
+          </h3>
+          <p className="text-base text-on-surface-variant max-w-md mx-auto text-center leading-relaxed">
+            {searchQuery
+              ? `No reports matched "${searchQuery}". Try searching with different keywords.`
+              : activeTab === 'Open'
+                ? 'All community reports have been reviewed and resolved. Amazing work keeping SkillSwap safe!'
+                : 'No resolved reports match this category filter yet.'}
           </p>
         </div>
       ) : (
@@ -172,9 +250,14 @@ export function ModeratorDashboardView({
                     </span>
                   </div>
 
-                  <div className="text-base md:text-lg text-on-surface">
+                  <div className="text-base md:text-lg text-on-surface flex items-center gap-1.5 flex-wrap">
                     <span className="font-bold">{report.reporter_name || 'Member'}</span> reported this{' '}
-                    <span className="font-bold text-primary dark:text-primary-fixed-dim underline decoration-primary/30 underline-offset-4">{report.target_type}</span>
+                    <span className="inline-flex items-center gap-1 font-bold text-primary dark:text-primary-fixed-dim bg-primary/10 px-2.5 py-0.5 rounded-md border border-primary/20 text-sm">
+                      {report.target_type === 'Listing' && <FileText className="w-3.5 h-3.5 shrink-0" />}
+                      {report.target_type === 'Request' && <HelpCircle className="w-3.5 h-3.5 shrink-0" />}
+                      {report.target_type === 'Profile' && <User className="w-3.5 h-3.5 shrink-0" />}
+                      {report.target_type}
+                    </span>
                     {report.target_title && report.target_title !== 'Unknown Content' && (
                       <strong className="text-on-surface"> "{report.target_title}"</strong>
                     )}
