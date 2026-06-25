@@ -1,4 +1,4 @@
--- Trigger function to automatically maintain profiles.exchange_count
+-- Trigger function to automatically maintain profiles.exchange_count strictly for Completed exchanges
 CREATE OR REPLACE FUNCTION update_profile_exchange_counts()
 RETURNS TRIGGER AS $$
 DECLARE

@@ -20,13 +20,12 @@ export async function getProfile(profileId: string): Promise<Profile | null> {
     return null
   }
 
-  // Calculate live exchange count to guarantee accuracy even before migrations run
+  // Calculate live completed exchange count to guarantee accuracy even before migrations run
   const { count: liveExchangeCount } = await supabase
     .from('exchanges')
     .select('*', { count: 'exact', head: true })
     .or(`provider_id.eq.${profileId},requester_id.eq.${profileId}`)
-    .neq('status', 'Cancelled')
-    .neq('status', 'Declined')
+    .eq('status', 'Completed')
 
   if (liveExchangeCount !== null) {
     data.exchange_count = liveExchangeCount
