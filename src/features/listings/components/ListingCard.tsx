@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import type { Database } from '@/types/database.types'
 
@@ -11,54 +13,82 @@ export type ListingWithProfile = ListingRow & {
 export function ListingCard({ listing, currentUserId }: { listing: ListingWithProfile, currentUserId?: string }) {
   const profile = listing.profiles
   const avatar = profile?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + (profile?.id || 'default')
+  const isOwner = listing.owner_id === currentUserId
   
   return (
-    <Link href={`/listings/${listing.id}`} className="block h-full group">
-      <div className="bg-surface-container-lowest rounded-xl warm-shadow p-6 flex flex-col h-full border border-surface-variant group-hover:border-primary/30 transition-all">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-3">
-            <img alt={profile?.full_name || 'User'} src={avatar} className="w-12 h-12 rounded-full object-cover" />
-            <div>
-              <h3 className="font-label-md text-label-md text-on-surface">{profile?.full_name || 'Anonymous User'}</h3>
-              <div className="flex items-center gap-1 text-tertiary-fixed-dim">
-                <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                <span className="font-label-sm text-label-sm text-on-surface-variant">
-                  {profile?.reputation_score?.toFixed(1) || '0.0'} ({profile?.exchange_count || 0} exchanges)
-                </span>
-              </div>
-            </div>
-          </div>
-          <span className="px-3 py-1 bg-secondary-container text-primary rounded-full font-label-sm text-label-sm whitespace-nowrap overflow-hidden text-ellipsis max-w-[100px]">
-            {listing.category}
+    <article className="flex flex-col bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 hover:shadow-md transition-shadow group h-full">
+      <div className="flex justify-between items-start mb-4 gap-2">
+        <span className="bg-primary-container text-on-primary-container font-label-sm text-label-sm px-3 py-1 rounded-full font-bold">
+          {listing.category}
+        </span>
+        {listing.location_note ? (
+          <span className="font-label-sm text-label-sm px-3 py-1 rounded-full font-bold flex items-center gap-1 bg-surface-variant text-on-surface-variant max-w-[160px] truncate">
+            <span className="material-symbols-outlined text-[16px] shrink-0">location_on</span>
+            <span className="truncate">{listing.location_note}</span>
           </span>
-        </div>
+        ) : null}
+      </div>
+      
+      <Link href={`/listings/${listing.id}`} className="block mb-2">
+        <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold line-clamp-2 hover:text-primary transition-colors">
+          {listing.title}
+        </h3>
+      </Link>
+      
+      <p className="font-body-md text-body-md text-on-surface-variant mb-6 line-clamp-3 flex-grow">
+        {listing.description}
+      </p>
+      
+      <div className="bg-surface-container rounded-xl p-4 mb-6">
+        <h4 className="font-label-sm text-label-sm text-on-surface font-bold mb-1">Looking for in return:</h4>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">{listing.exchange_preference || 'Open to offers'}</p>
         
-        <h4 className="font-headline-sm text-headline-sm text-primary mb-2 line-clamp-1">{listing.title}</h4>
-        <p className="font-body-md text-body-md text-on-surface-variant mb-4 line-clamp-2 flex-grow">{listing.description}</p>
-        
-        <div className="flex gap-2 mb-6 flex-wrap">
-          {listing.availability && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 bg-surface-container text-on-surface-variant rounded-md font-label-sm text-[11px]">
-              <span className="material-symbols-outlined text-[14px]">calendar_today</span> {listing.availability}
-            </span>
-          )}
-          {listing.location_note && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 bg-surface-container text-on-surface-variant rounded-md font-label-sm text-[11px]">
-              <span className="material-symbols-outlined text-[14px]">location_on</span> {listing.location_note}
-            </span>
-          )}
-        </div>
-        
-        {listing.owner_id === currentUserId ? (
-          <button className="w-full py-2.5 bg-transparent border-[1.5px] border-tertiary text-tertiary font-label-md text-label-md rounded-lg group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex justify-center items-center gap-2">
-            View My Listing <span className="material-symbols-outlined text-[18px]">visibility</span>
-          </button>
-        ) : (
-          <button className="w-full py-2.5 bg-transparent border-[1.5px] border-primary text-primary font-label-md text-label-md rounded-lg group-hover:bg-primary group-hover:text-on-primary transition-colors flex justify-center items-center gap-2">
-            Propose Exchange <span className="material-symbols-outlined text-[18px]">sync</span>
-          </button>
+        {listing.availability && (
+          <div className="mt-3 pt-3 border-t border-outline-variant/30">
+            <h4 className="font-label-sm text-label-sm text-on-surface font-bold mb-1">Availability:</h4>
+            <p className="font-body-sm text-body-sm text-on-surface-variant">{listing.availability}</p>
+          </div>
         )}
       </div>
-    </Link>
+      
+      <div className="flex items-center justify-between mt-auto pt-4 border-t border-surface-variant gap-2">
+        <Link href={`/profile/${listing.owner_id}`} className="flex items-center gap-3 group/profile min-w-0">
+          <img 
+            src={avatar} 
+            alt={profile?.full_name || 'User'} 
+            className="w-10 h-10 rounded-full object-cover shrink-0 border-2 border-transparent group-hover/profile:border-primary transition-colors"
+          />
+          <div className="min-w-0 truncate">
+            <p className="font-label-md text-label-md text-on-surface font-bold group-hover/profile:text-primary transition-colors truncate">
+              {profile?.full_name || 'Anonymous User'}
+            </p>
+            <div className="flex items-center gap-1 text-on-surface-variant font-label-sm text-[11px] truncate">
+              <span className="material-symbols-outlined text-[14px] shrink-0">star</span>
+              <span>{profile?.reputation_score?.toFixed(1) || 'New'}</span>
+              <span className="mx-1">•</span>
+              <span className="truncate">{profile?.community_zone || 'Neighbor'}</span>
+            </div>
+          </div>
+        </Link>
+        
+        {!isOwner && currentUserId && (
+          <Link 
+            href={`?tab=listings&modal=propose-listing&listingId=${listing.id}&providerId=${listing.owner_id}&title=${encodeURIComponent(listing.title)}`}
+            className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0"
+          >
+            Propose Exchange
+          </Link>
+        )}
+        
+        {(!currentUserId || isOwner) && (
+          <Link 
+            href={`/listings/${listing.id}`}
+            className="text-primary hover:bg-primary-container font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0"
+          >
+            View Details
+          </Link>
+        )}
+      </div>
+    </article>
   )
 }

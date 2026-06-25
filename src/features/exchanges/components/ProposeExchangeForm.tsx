@@ -42,12 +42,18 @@ export function ProposeExchangeForm({
     router.back()
   }
 
+  const isRequest = Boolean(sourceRequestId)
+
   return (
     <div className="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_-4px_rgba(45,106,79,0.08)] overflow-hidden border border-outline-variant/30 w-full max-w-2xl mx-auto mt-8">
       <div className="p-6 border-b border-outline-variant/30 bg-surface-container-low/50">
-        <h2 className="font-headline-md text-headline-md text-on-surface">Propose an Exchange</h2>
+        <h2 className="font-headline-md text-headline-md text-on-surface">
+          {isRequest ? 'Offer Your Help' : 'Propose an Exchange'}
+        </h2>
         <p className="font-body-md text-body-md text-on-surface-variant mt-2">
-          Offer your skills to the neighbor in return for this listing.
+          {isRequest 
+            ? 'Let your neighbor know how you can assist them with this skill request.'
+            : 'Offer your skills to the neighbor in return for this listing.'}
         </p>
       </div>
 
@@ -61,14 +67,14 @@ export function ProposeExchangeForm({
 
         <div className="space-y-3">
           <label htmlFor="offered_skill" className="block font-label-md text-label-md text-on-surface font-bold">
-            What skill are you offering in return? <span className="text-error">*</span>
+            {isRequest ? 'How can you help or what skill are you offering?' : 'What skill are you offering in return?'} <span className="text-error">*</span>
           </label>
           <input
             type="text"
             id="offered_skill"
             name="offered_skill"
             required
-            placeholder="e.g. 2 hours of Web Design"
+            placeholder={isRequest ? 'e.g. I can help with Web Design this weekend' : 'e.g. 2 hours of Web Design'}
             className="w-full bg-surface-container rounded-lg border-outline-variant/50 focus:border-primary focus:ring-1 focus:ring-primary p-4 text-body-md font-body-md"
           />
         </div>
@@ -81,7 +87,7 @@ export function ProposeExchangeForm({
             id="initial_message"
             name="initial_message"
             rows={4}
-            placeholder="Say hi, introduce yourself, and explain why this would be a great trade!"
+            placeholder={isRequest ? 'Say hi, introduce yourself, and share your experience or availability!' : 'Say hi, introduce yourself, and explain why this would be a great trade!'}
             className="w-full bg-surface-container rounded-lg border-outline-variant/50 focus:border-primary focus:ring-1 focus:ring-primary p-4 text-body-md font-body-md"
           ></textarea>
         </div>
@@ -100,10 +106,10 @@ export function ProposeExchangeForm({
             className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-on-primary px-8 py-3 rounded-lg font-label-md text-label-md font-bold transition-colors flex items-center justify-center gap-2"
           >
             {isLoading ? (
-              'Sending Proposal...'
+              isRequest ? 'Sending Help Offer...' : 'Sending Proposal...'
             ) : (
               <>
-                <span className="material-symbols-outlined text-[18px]">send</span> Send Proposal
+                <span className="material-symbols-outlined text-[18px]">send</span> {isRequest ? 'Offer Help' : 'Send Proposal'}
               </>
             )}
           </button>

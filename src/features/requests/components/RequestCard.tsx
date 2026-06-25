@@ -65,7 +65,7 @@ export function RequestCard({ request, currentUserId }: { request: RequestWithPr
         
         {!isOwner && currentUserId && daysLeft > 0 && (
           <Link 
-            href={`?modal=propose-request&requestId=${request.id}&providerId=${request.owner_id}&title=${encodeURIComponent(request.title)}`}
+            href={`?tab=requests&modal=propose-request&requestId=${request.id}&providerId=${request.owner_id}&title=${encodeURIComponent(request.title)}`}
             className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap"
           >
             I Can Help

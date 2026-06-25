@@ -89,7 +89,7 @@ export default async function ExplorePage({
 
           {/* Action Button */}
           <Link 
-            href={activeTab === 'listings' ? '?modal=create-listing' : '?modal=create-request'} 
+            href={activeTab === 'listings' ? '?tab=listings&modal=create-listing' : '?tab=requests&modal=create-request'} 
             className="flex w-full md:w-auto justify-center items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
@@ -138,7 +138,7 @@ export default async function ExplorePage({
                 We couldn't find any listings for this category. Be the first to share a skill!
               </p>
               <Link 
-                href="?modal=create-listing"
+                href="?tab=listings&modal=create-listing"
                 className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
               >
                 <span className="material-symbols-outlined text-[18px]">add</span> Share a Skill
@@ -163,7 +163,7 @@ export default async function ExplorePage({
                 There are no skill requests for this category yet. Need help with something? Post a request!
               </p>
               <Link 
-                href="?modal=create-request"
+                href="?tab=requests&modal=create-request"
                 className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
               >
                 <span className="material-symbols-outlined text-[18px]">add</span> Post a Request
