@@ -159,21 +159,21 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
         </div>
 
         {/* Add Zone */}
-        <div className="flex flex-col sm:flex-row gap-2.5 max-w-md w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 max-w-md w-full">
           <input
             type="text"
             value={newZone}
             onChange={(e) => setNewZone(e.target.value)}
             placeholder="New neighborhood zone name..."
-            className="w-full sm:flex-1 px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary placeholder:text-outline shadow-sm font-semibold"
+            className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary placeholder:text-on-surface-variant/60 shadow-sm font-semibold"
           />
           <button
             type="button"
             onClick={handleAddZone}
-            className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all shrink-0"
+            className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all"
           >
-            <Plus className="w-4 h-4" />
-            <span>Add Zone</span>
+            <Plus className="w-4 h-4 shrink-0" />
+            <span className="whitespace-nowrap">Add Zone</span>
           </button>
         </div>
 
@@ -202,7 +202,7 @@ export function SettingsForm({ initialSettings }: { initialSettings: CommunitySe
         <button
           type="submit"
           disabled={loading}
-          className="px-8 py-3.5 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-sm rounded-2xl shadow-md transition-all flex items-center gap-2 disabled:opacity-50 hover:-translate-y-0.5"
+          className="w-full sm:w-auto px-8 py-3.5 bg-primary hover:bg-primary-container text-on-primary font-extrabold text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 hover:-translate-y-0.5"
         >
           <Save className="w-5 h-5" />
           <span>{loading ? 'Saving Changes...' : 'Save Configuration'}</span>
