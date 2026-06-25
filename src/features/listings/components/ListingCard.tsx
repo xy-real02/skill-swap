@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { deleteListing } from '@/features/listings/actions/deleteListing'
+import { ReportModal } from '@/features/moderation/components/ReportModal'
 import type { Database } from '@/types/database.types'
 
 type ListingRow = Database['public']['Tables']['listings']['Row']
@@ -93,12 +94,15 @@ export function ListingCard({ listing, currentUserId }: { listing: ListingWithPr
             {isDeleting ? 'Deleting...' : 'Delete'}
           </button>
         ) : currentUserId ? (
-          <Link 
-            href={`?tab=listings&modal=propose-listing&listingId=${listing.id}&providerId=${listing.owner_id}&title=${encodeURIComponent(listing.title)}`}
-            className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0 shadow-sm"
-          >
-            Propose Exchange
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link 
+              href={`?tab=listings&modal=propose-listing&listingId=${listing.id}&providerId=${listing.owner_id}&title=${encodeURIComponent(listing.title)}`}
+              className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap shrink-0 shadow-sm"
+            >
+              Propose Exchange
+            </Link>
+            <ReportModal targetId={listing.id} targetType="Listing" targetTitle={listing.title} />
+          </div>
         ) : (
           <Link 
             href="/login"

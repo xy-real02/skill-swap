@@ -1,4 +1,5 @@
 import { Profile } from '@/features/profiles/queries/getProfile'
+import { ReportModal } from '@/features/moderation/components/ReportModal'
 import Link from 'next/link'
 
 export function ProfileBento({
@@ -81,8 +82,8 @@ export function ProfileBento({
           </div>
 
           {/* Actions */}
-          {isOwner && (
-            <div className="shrink-0 flex justify-center md:justify-end">
+          <div className="shrink-0 flex items-center justify-center md:justify-end gap-3">
+            {isOwner ? (
               <Link 
                 href="?modal=edit-profile"
                 className="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 border-[1.5px] border-primary rounded-lg hover:bg-secondary-container/50 transition-colors flex items-center gap-2 h-fit whitespace-nowrap"
@@ -90,8 +91,10 @@ export function ProfileBento({
                 <span className="material-symbols-outlined text-[18px]">edit</span>
                 Edit Profile
               </Link>
-            </div>
-          )}
+            ) : (
+              <ReportModal targetId={profile.id} targetType="Profile" targetTitle={profile.full_name} iconOnly={false} className="border border-outline-variant px-3 py-1.5 rounded-lg hover:bg-error/10 text-on-surface-variant" />
+            )}
+          </div>
         </div>
       </div>
 

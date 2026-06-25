@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { ReportModal } from '@/features/moderation/components/ReportModal'
 import { RequestWithProfile } from '../queries/getActiveRequests'
 
 export function RequestCard({ request, currentUserId }: { request: RequestWithProfile, currentUserId?: string }) {
@@ -64,12 +65,15 @@ export function RequestCard({ request, currentUserId }: { request: RequestWithPr
         </Link>
         
         {!isOwner && currentUserId && daysLeft > 0 && (
-          <Link 
-            href={`?tab=requests&modal=propose-request&requestId=${request.id}&providerId=${request.owner_id}&title=${encodeURIComponent(request.title)}`}
-            className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap"
-          >
-            I Can Help
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link 
+              href={`?tab=requests&modal=propose-request&requestId=${request.id}&providerId=${request.owner_id}&title=${encodeURIComponent(request.title)}`}
+              className="bg-primary text-on-primary hover:bg-primary/90 font-label-md text-label-md py-2 px-4 rounded-full transition-colors whitespace-nowrap"
+            >
+              I Can Help
+            </Link>
+            <ReportModal targetId={request.id} targetType="Request" targetTitle={request.title} />
+          </div>
         )}
         
         {(!currentUserId || isOwner || daysLeft <= 0) && (
