@@ -22,7 +22,7 @@ export async function manageMember({
   // Verify caller is admin
   const { data: caller } = await adminClient.from('profiles').select('role').eq('id', user.id).single()
   const callerRole = caller?.role?.toLowerCase()
-  const isAuthorized = callerRole === 'admin' || callerRole === 'moderator' || process.env.NODE_ENV === 'development'
+  const isAuthorized = callerRole === 'admin'
   if (!isAuthorized) {
     return { error: 'Only platform administrators can modify user roles or status.' }
   }
