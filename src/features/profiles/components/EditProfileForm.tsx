@@ -29,7 +29,7 @@ export function EditProfileForm({
       setError(result.error)
       setIsPending(false)
     } else {
-      router.push(`/profile/${profile.id}`)
+      router.replace(`/profile/${profile.id}`)
     }
   }
 

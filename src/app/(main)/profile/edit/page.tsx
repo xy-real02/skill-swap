@@ -30,14 +30,13 @@ export default async function EditProfilePage() {
 
   return (
     <>
-      <div className="max-w-3xl mx-auto pt-6 pb-24">
-
-      <div className="max-w-2xl">
-        <EditProfileForm profile={profile} zones={zones} />
+      <div className="w-full max-w-3xl mx-auto pt-6 pb-24 px-margin-mobile md:px-0">
+        <div className="w-full max-w-2xl bg-surface-container-lowest rounded-3xl p-6 md:p-8 border border-outline-variant/30 shadow-sm relative overflow-hidden">
+          <EditProfileForm profile={profile} zones={zones} />
+        </div>
       </div>
 
       <div className="h-xl"></div>
-      </div>
     </>
   )
 }

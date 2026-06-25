@@ -25,8 +25,8 @@ export default async function ProposePage({
 
   return (
     <>
-      <div className="pb-24 pt-6 px-margin-mobile md:px-0">
-        <div className="max-w-3xl mx-auto space-y-6">
+      <div className="w-full pb-24 pt-6 px-margin-mobile md:px-0">
+        <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* Context Header */}
         <div className="flex items-center gap-4 bg-secondary-container/30 border border-secondary-fixed-dim/50 rounded-xl p-6">
           <div className="bg-primary/10 text-primary p-3 rounded-full flex shrink-0">

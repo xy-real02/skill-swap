@@ -89,7 +89,7 @@ export default async function ExplorePage({
 
           {/* Action Button */}
           <Link 
-            href={activeTab === 'listings' ? '/listings/create' : '/requests/create'} 
+            href={activeTab === 'listings' ? '?modal=create-listing' : '?modal=create-request'} 
             className="flex w-full md:w-auto justify-center items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
@@ -108,11 +108,11 @@ export default async function ExplorePage({
                 href={`/explore?tab=${activeTab}&category=${cat.name}`}
                 className={`flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm transition-all duration-200 border ${
                   isActive 
-                    ? 'bg-secondary-container text-on-secondary-container border-transparent shadow-sm' 
-                    : 'bg-surface text-on-surface-variant border-outline-variant/30 hover:bg-surface-container hover:text-on-surface'
+                    ? 'bg-primary text-on-primary border-primary shadow-sm font-bold' 
+                    : 'bg-surface-container-low text-on-surface hover:bg-surface-container border-outline-variant/30'
                 }`}
               >
-                <span className="material-symbols-outlined text-[18px]">{cat.icon}</span>
+                <span className="material-symbols-outlined text-[16px]">{cat.icon}</span>
                 {cat.name}
               </a>
             )
@@ -120,11 +120,11 @@ export default async function ExplorePage({
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter pb-24">
+      {/* Content Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
         {activeTab === 'listings' && (
           listings && listings.length > 0 ? (
-            listings.map((listing: ListingWithProfile) => (
+            listings.map(listing => (
               <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
             ))
           ) : (
@@ -134,9 +134,15 @@ export default async function ExplorePage({
                 <span className="material-symbols-outlined text-[40px]">explore_off</span>
               </div>
               <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No listings found</h3>
-              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10">
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
                 We couldn't find any listings for this category. Be the first to share a skill!
               </p>
+              <Link 
+                href="?modal=create-listing"
+                className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
+              >
+                <span className="material-symbols-outlined text-[18px]">add</span> Share a Skill
+              </Link>
             </div>
           )
         )}
@@ -153,9 +159,15 @@ export default async function ExplorePage({
                 <span className="material-symbols-outlined text-[40px]">post_add</span>
               </div>
               <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No requests found</h3>
-              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10">
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
                 There are no skill requests for this category yet. Need help with something? Post a request!
               </p>
+              <Link 
+                href="?modal=create-request"
+                className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
+              >
+                <span className="material-symbols-outlined text-[18px]">add</span> Post a Request
+              </Link>
             </div>
           )
         )}

@@ -82,7 +82,7 @@ export function ProfileHeader({
       {isOwner && (
         <div className="mt-4 md:mt-0 self-start md:self-center">
           <Link 
-            href="/profile/edit"
+            href="?modal=edit-profile"
             className="inline-flex items-center gap-2 bg-surface text-on-surface font-label-md text-label-md font-bold py-2.5 px-4 rounded-lg border-[1.5px] border-outline hover:bg-surface-container-highest transition-colors shadow-sm"
           >
             <span className="material-symbols-outlined text-[20px]">edit</span>

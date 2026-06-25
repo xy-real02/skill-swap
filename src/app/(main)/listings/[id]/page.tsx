@@ -157,7 +157,7 @@ export default async function ListingDetailsPage({
                 ) : (
                   <>
                     <Link 
-                      href={`/listings/${listing.id}/propose`}
+                      href={`?modal=propose-listing&listingId=${listing.id}&providerId=${listing.owner_id}&title=${encodeURIComponent(listing.title)}`}
                       className="w-full bg-[#2D6A4F] text-on-primary font-label-md text-label-md font-bold py-3 px-4 rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 shadow-sm"
                     >
                       <span className="material-symbols-outlined">handshake</span> Propose Exchange

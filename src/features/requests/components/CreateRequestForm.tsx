@@ -23,7 +23,7 @@ export function CreateRequestForm() {
       if (result.error) {
         setError(result.error)
       } else {
-        router.push('/explore?tab=requests')
+        router.replace('/explore?tab=requests')
       }
     })
   }

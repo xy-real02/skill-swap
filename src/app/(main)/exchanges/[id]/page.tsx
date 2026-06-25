@@ -100,7 +100,7 @@ export default async function ExchangeDetailPage({
             </div>
           </div>
 
-          <ExchangeActions exchangeId={exchange.id} status={exchange.status} isProvider={isProvider} hasReviewed={hasReviewed} />
+          <ExchangeActions exchangeId={exchange.id} status={exchange.status} isProvider={isProvider} hasReviewed={hasReviewed} targetId={otherUser?.id} targetName={otherUser?.full_name} />
         </div>
 
         {/* Right Column: Messaging Thread */}

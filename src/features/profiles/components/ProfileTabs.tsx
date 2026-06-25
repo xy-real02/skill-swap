@@ -83,7 +83,7 @@ export function ProfileTabs({
           
           {/* New Listing Ghost Card */}
           {isOwner && (
-            <Link href="/listings/create" className="block h-full group">
+            <Link href="?modal=create-listing" className="block h-full group">
               <div className="bg-surface/50 border-2 border-dashed border-outline-variant rounded-xl p-6 flex flex-col items-center justify-center h-full min-h-[300px] hover:bg-surface-container-low hover:border-primary transition-all cursor-pointer">
                 <div className="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center mb-4 group-hover:bg-primary-container transition-colors">
                   <span className="material-symbols-outlined text-[32px] text-primary group-hover:text-on-primary transition-colors">add</span>

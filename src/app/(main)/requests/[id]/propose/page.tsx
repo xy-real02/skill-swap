@@ -25,7 +25,7 @@ export default async function ProposeToRequestPage({ params }: { params: Promise
 
   return (
     <>
-      <div className="max-w-2xl mx-auto py-8 px-margin-mobile md:px-0">
+      <div className="w-full max-w-2xl mx-auto py-8 px-margin-mobile md:px-0">
 
       {/* Request Summary Card */}
       <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 mb-8">

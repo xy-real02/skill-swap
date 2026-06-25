@@ -32,7 +32,7 @@ export function CreateListingForm() {
       if (result.error) {
         setError(result.error)
       } else {
-        router.push(`/listings/${result.data?.id}`)
+        router.replace(`/listings/${result.data?.id}`)
       }
     } catch (err) {
       setError('An unexpected error occurred.')
@@ -44,48 +44,49 @@ export function CreateListingForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-error-container text-on-error-container p-4 rounded-lg text-sm">
+        <div className="p-3 text-sm bg-error/10 border border-error/20 text-error rounded-lg">
           {error}
         </div>
       )}
 
       <div>
         <label htmlFor="title" className="block font-label-md text-label-md text-on-surface mb-2">
-          Skill Title <span className="text-error">*</span>
+          Skill Title
         </label>
         <input
           id="title"
           name="title"
           type="text"
           required
-          maxLength={80}
+          maxLength={100}
           className="input-field"
-          placeholder="e.g. Urban Balcony Gardening"
+          placeholder="e.g. Italian Cooking, Guitar Lessons, Gardening Tips"
         />
-        <p className="mt-1 text-xs text-on-surface-variant text-right">Max 80 characters</p>
       </div>
 
       <div>
         <label htmlFor="category" className="block font-label-md text-label-md text-on-surface mb-2">
-          Category <span className="text-error">*</span>
+          Category
         </label>
         <select
           id="category"
           name="category"
           required
-          defaultValue=""
           className="input-field"
         >
-          <option value="" disabled>Select a category...</option>
-          {CATEGORIES.map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
+          <option value="">Select a category</option>
+          <option value="Home Services">Home Services</option>
+          <option value="Creative Arts">Creative Arts</option>
+          <option value="Academics">Academics</option>
+          <option value="Culinary">Culinary</option>
+          <option value="Wellness">Wellness</option>
+          <option value="Technology">Technology</option>
         </select>
       </div>
 
       <div>
         <label htmlFor="description" className="block font-label-md text-label-md text-on-surface mb-2">
-          Description <span className="text-error">*</span>
+          Description
         </label>
         <textarea
           id="description"
@@ -141,11 +142,19 @@ export function CreateListingForm() {
         </p>
       </div>
 
-      <div className="pt-4 border-t border-surface-variant">
+      <div className="pt-6 border-t border-outline-variant/30 flex justify-end gap-4">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          disabled={loading}
+          className="px-6 py-2.5 rounded-full font-label-md font-bold text-on-surface-variant hover:bg-surface-container transition-all"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
           disabled={loading}
-          className="w-full btn-primary"
+          className="btn-primary"
         >
           {loading ? 'Posting...' : 'Share Skill'}
         </button>

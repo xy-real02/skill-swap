@@ -34,16 +34,12 @@ export function ProposeExchangeForm({
       setIsLoading(false)
     } else {
       setIsLoading(false)
-      router.push(`/exchanges/${result.exchangeId}`)
+      router.replace(`/exchanges/${result.exchangeId}`)
     }
   }
 
   const handleCancel = () => {
-    if (listingId) {
-      router.push(`/listings/${listingId}`)
-    } else {
-      router.push('/explore?tab=requests')
-    }
+    router.back()
   }
 
   return (

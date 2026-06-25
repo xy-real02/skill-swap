@@ -28,7 +28,7 @@ export default async function MyListingsPage() {
           </div>
           
           <Link 
-            href="/listings/create"
+            href="?modal=create-listing"
             className="w-full sm:w-auto bg-primary text-on-primary font-label-md py-2.5 px-6 rounded-full font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow"
           >
             <span className="material-symbols-outlined text-[20px]">add</span>
@@ -47,7 +47,7 @@ export default async function MyListingsPage() {
               Your community is waiting. Create your first listing and start exchanging your expertise today.
             </p>
             <Link 
-              href="/listings/create"
+              href="?modal=create-listing"
               className="bg-primary text-on-primary font-label-lg py-3 px-8 rounded-full font-bold hover:bg-primary/90 transition-all shadow-sm hover:shadow flex items-center gap-2 relative z-10"
             >
               <span className="material-symbols-outlined">add</span>

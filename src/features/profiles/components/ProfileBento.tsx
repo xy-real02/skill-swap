@@ -84,7 +84,7 @@ export function ProfileBento({
           {isOwner && (
             <div className="shrink-0 flex justify-center md:justify-end">
               <Link 
-                href="/profile/edit"
+                href="?modal=edit-profile"
                 className="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 border-[1.5px] border-primary rounded-lg hover:bg-secondary-container/50 transition-colors flex items-center gap-2 h-fit whitespace-nowrap"
               >
                 <span className="material-symbols-outlined text-[18px]">edit</span>

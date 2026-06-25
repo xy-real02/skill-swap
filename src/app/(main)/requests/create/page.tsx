@@ -12,8 +12,8 @@ export default async function CreateRequestPage() {
 
   return (
     <>
-      <div className="max-w-3xl mx-auto pt-6 pb-24 px-margin-mobile md:px-0">
-        <div className="bg-surface border border-surface-variant rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div className="w-full max-w-3xl mx-auto pt-6 pb-24 px-margin-mobile md:px-0">
+        <div className="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
           <CreateRequestForm />
         </div>
       </div>

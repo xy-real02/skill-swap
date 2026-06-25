@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { GlobalTopBar } from '@/components/layout/GlobalTopBar'
+import { GlobalModalContainer } from '@/components/layout/GlobalModalContainer'
 
 export default async function MainLayout({
   children,
@@ -19,12 +20,18 @@ export default async function MainLayout({
     redirect('/login')
   }
 
-  // Fetch profile for sidebar
+  // Fetch profile for sidebar & modals
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
+
+  // Fetch dynamic zones from community_settings
+  const { data: settings } = await supabase.from('community_settings').select('community_zone_list').maybeSingle()
+  const zones = settings?.community_zone_list?.length 
+    ? settings.community_zone_list 
+    : ['Northside Hub', 'South Market', 'East Village', 'West End']
 
   const mainNavItems = [
     { href: '/explore', icon: 'explore', label: 'Explore', matchPattern: '/explore' },
@@ -55,8 +62,9 @@ export default async function MainLayout({
       <Sidebar navItems={mainNavItems} profile={profile} />
 
       {/* Main Content Canvas */}
-      <main className="flex-1 mt-16 md:mt-0 md:ml-[240px] p-margin-mobile md:p-lg max-w-[1200px] mx-auto w-full">
+      <main className="flex-1 mt-16 md:mt-0 md:ml-[240px] p-margin-mobile md:p-lg max-w-[1200px] mx-auto w-full relative">
         <GlobalTopBar />
+        <GlobalModalContainer profile={profile} zones={zones} />
         {children}
       </main>
 
