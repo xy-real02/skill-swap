@@ -283,9 +283,13 @@ export function ModeratorDashboardView({
                   </div>
 
                   {report.target_url && (
-                    <div className="text-sm font-semibold text-on-surface-variant flex items-center gap-1.5 pt-1">
-                      <LinkIcon className="w-4 h-4 text-primary dark:text-primary-fixed-dim" />
-                      <Link href={report.target_url} className="text-primary dark:text-primary-fixed-dim hover:underline flex items-center gap-1">
+                    <div className="pt-2">
+                      <Link
+                        href={report.target_url}
+                        target="_blank"
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-indigo-900 bg-indigo-100 border border-indigo-300 hover:bg-indigo-200 dark:bg-indigo-950 dark:text-indigo-200 dark:border-indigo-700 transition-all shadow-sm cursor-pointer group"
+                      >
+                        <ExternalLink className="w-4 h-4 text-indigo-700 dark:text-indigo-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         View Original Context
                       </Link>
                     </div>
