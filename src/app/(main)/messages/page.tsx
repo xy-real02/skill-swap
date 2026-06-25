@@ -19,21 +19,15 @@ export default async function MessagesPage() {
   const conversations = await getInboxConversations()
 
   return (
-    <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full flex-1">
-      <div className="mb-lg">
-        <h1 className="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2">
-          Messages
-        </h1>
-        <p className="font-body-lg text-body-lg text-on-surface-variant">
-          Stay connected with your neighbors and manage your exchanges.
-        </p>
-      </div>
+    <>
+      <div className="max-w-container-max mx-auto w-full pt-6 h-[calc(100vh-140px)] flex flex-col">
 
       <div className="max-w-3xl">
         <InboxList conversations={conversations} currentUserId={authData.user.id} />
       </div>
 
       <div className="h-xl"></div>
-    </div>
+      </div>
+    </>
   )
 }

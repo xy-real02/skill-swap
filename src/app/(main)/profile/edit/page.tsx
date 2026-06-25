@@ -29,28 +29,14 @@ export default async function EditProfilePage() {
     : ['Northside Hub', 'South Market', 'East Village', 'West End']
 
   return (
-    <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full flex-1">
-      <div className="mb-8">
-        <Link 
-          href={`/profile/${profile.id}`} 
-          className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md mb-4"
-        >
-          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-          Back to Profile
-        </Link>
-        <h1 className="font-display-lg-mobile md:font-display-lg text-primary mb-2">
-          Edit Profile
-        </h1>
-        <p className="font-body-lg text-on-surface-variant">
-          Update your public identity and contact information.
-        </p>
-      </div>
-
-      <div className="max-w-2xl">
-        <EditProfileForm profile={profile} zones={zones} />
+    <>
+      <div className="w-full max-w-3xl mx-auto pt-6 pb-24 px-margin-mobile md:px-0">
+        <div className="w-full max-w-2xl bg-surface-container-lowest rounded-3xl p-6 md:p-8 border border-outline-variant/30 shadow-sm relative overflow-hidden">
+          <EditProfileForm profile={profile} zones={zones} />
+        </div>
       </div>
 
       <div className="h-xl"></div>
-    </div>
+    </>
   )
 }

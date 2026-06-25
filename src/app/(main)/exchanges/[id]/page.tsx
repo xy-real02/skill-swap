@@ -34,7 +34,7 @@ export default async function ExchangeDetailPage({
 
   // Status mapping for stepper
   const steps = [
-    { id: 'Proposed', label: 'Proposed', icon: 'check', past: true, current: exchange.status === 'Proposed' },
+    { id: 'Proposed', label: 'Proposed', icon: 'check', past: true, current: exchange.status === 'Proposed' || exchange.status === 'Pending' },
     { id: 'Accepted', label: 'Accepted', icon: 'handshake', past: exchange.status === 'Completed' || exchange.status === 'Accepted', current: exchange.status === 'Accepted' },
     { id: 'Completed', label: 'Completed', icon: 'task_alt', past: exchange.status === 'Completed', current: exchange.status === 'Completed' }
   ]
@@ -54,23 +54,8 @@ export default async function ExchangeDetailPage({
   const hasReviewed = !!existingReview
 
   return (
-    <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full">
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-8">
-        <Link href="/exchanges" className="text-on-surface-variant hover:bg-secondary-container/50 p-2 rounded-full transition-colors flex items-center justify-center">
-          <span className="material-symbols-outlined">arrow_back</span>
-        </Link>
-        <div>
-          <h1 className="font-headline-md text-headline-md font-bold text-on-surface">Exchange with {otherUser?.full_name}</h1>
-          <p className="font-body-md text-body-md text-on-surface-variant mt-1 flex items-center gap-2">
-            <span className="inline-flex items-center justify-center bg-secondary-container text-primary rounded-full px-2 py-0.5 font-label-sm text-label-sm">
-              {isProvider ? exchange.listing?.title : exchange.offered_skill} 
-              <span className="material-symbols-outlined text-[14px] mx-1">sync_alt</span> 
-              {isProvider ? exchange.offered_skill : exchange.listing?.title}
-            </span>
-          </p>
-        </div>
-      </div>
+    <>
+      <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full">
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter pb-24">
         {/* Left Column: Tracker & Actions */}
@@ -115,7 +100,7 @@ export default async function ExchangeDetailPage({
             </div>
           </div>
 
-          <ExchangeActions exchangeId={exchange.id} status={exchange.status} isProvider={isProvider} hasReviewed={hasReviewed} />
+          <ExchangeActions exchangeId={exchange.id} status={exchange.status} isProvider={isProvider} hasReviewed={hasReviewed} targetId={otherUser?.id} targetName={otherUser?.full_name} />
         </div>
 
         {/* Right Column: Messaging Thread */}
@@ -127,6 +112,7 @@ export default async function ExchangeDetailPage({
           exchangeStatus={exchange.status}
         />
       </div>
-    </div>
+      </div>
+    </>
   )
 }

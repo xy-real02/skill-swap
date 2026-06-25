@@ -22,7 +22,6 @@ export async function getPublishedReviews(targetId: string): Promise<ReviewWithR
       )
     `)
     .eq('target_id', targetId)
-    .eq('is_published', true)
     .order('created_at', { ascending: false })
 
   if (error) {

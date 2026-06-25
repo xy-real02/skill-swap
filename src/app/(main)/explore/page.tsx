@@ -2,132 +2,191 @@ import { getActiveListings } from '@/features/listings/queries/getActiveListings
 import { getActiveRequests, type RequestWithProfile } from '@/features/requests/queries/getActiveRequests'
 import { ListingCard, type ListingWithProfile } from '@/features/listings/components/ListingCard'
 import { RequestCard } from '@/features/requests/components/RequestCard'
+import { ListingTableView } from '@/features/listings/components/ListingTableView'
+import { RequestTableView } from '@/features/requests/components/RequestTableView'
+import { ViewModeToggle } from '@/components/ui/ViewModeToggle'
 import { createClient } from '@/lib/supabase/server'
+import { SearchBar } from '@/components/ui/SearchBar'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 export default async function ExplorePage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; q?: string; tab?: string }>
+  searchParams: Promise<{ category?: string; q?: string; tab?: string; view?: string }>
 }) {
   const resolvedSearchParams = await searchParams
   const category = resolvedSearchParams.category || 'All Categories'
   const activeTab = resolvedSearchParams.tab === 'requests' ? 'requests' : 'listings'
+  const view = resolvedSearchParams.view === 'table' ? 'table' : 'grid'
+  const q = resolvedSearchParams.q
   
+  const supabase = await createClient()
+  const { data: authData } = await supabase.auth.getUser()
+  const currentUserId = authData.user?.id
+
   let listings: ListingWithProfile[] = []
   let requests: RequestWithProfile[] = []
   
   if (activeTab === 'listings') {
     listings = await getActiveListings({ 
-      category: category === 'All Categories' ? undefined : category 
+      category: category === 'All Categories' ? undefined : category,
+      q,
+      excludeOwnerId: currentUserId
     })
   } else {
     requests = await getActiveRequests({ 
-      category: category === 'All Categories' ? undefined : category 
+      category: category === 'All Categories' ? undefined : category,
+      q,
+      excludeOwnerId: currentUserId
     })
   }
 
-  // Static list for now
-  const categories = ['All Categories', 'Home Repair', 'Education', 'Gardening', 'Tech Support', 'Culinary']
+  const categories = [
+    { name: 'All Categories', icon: 'grid_view' },
+    { name: 'Home Repair', icon: 'handyman' },
+    { name: 'Education', icon: 'school' },
+    { name: 'Gardening', icon: 'yard' },
+    { name: 'Tech Support', icon: 'computer' },
+    { name: 'Culinary', icon: 'restaurant' }
+  ]
 
-  const supabase = await createClient()
-  const { data: authData } = await supabase.auth.getUser()
-  const currentUserId = authData.user?.id
+  const viewParam = view === 'table' ? '&view=table' : ''
 
   return (
     <>
-      {/* Header & Search */}
-      <header className="mb-lg sticky top-16 md:top-0 bg-surface/90 backdrop-blur-md z-30 pt-4 pb-4 -mx-margin-mobile px-margin-mobile md:-mx-lg md:px-lg">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 className="font-headline-md text-headline-md text-primary mb-1">Explore Community Skills</h1>
-            <p className="text-on-surface-variant font-body-md text-body-md">Discover what your neighbors are sharing today.</p>
-          </div>
-          <div className="relative w-full md:w-96 group">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
-            <input 
-              className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-tertiary-fixed-dim/20 transition-all font-body-md text-body-md placeholder:text-outline-variant" 
-              placeholder="Search skills, people, or topics..." 
-              type="text" 
-            />
-          </div>
-        </div>
+      {/* Search Bar (Not sticky, scrolls away) */}
+      <div className="pt-2 pb-6 w-full">
+        <Suspense fallback={<div className="h-14 bg-surface-container-lowest animate-pulse rounded-2xl w-full"></div>}>
+          <SearchBar />
+        </Suspense>
+      </div>
+
+      {/* Sticky Section: Tabs & Categories */}
+      <div className="sticky top-[72px] md:top-[80px] bg-surface/95 backdrop-blur-xl z-20 pt-2 -mx-margin-mobile px-margin-mobile md:-mx-lg md:px-lg mb-6 border-b border-surface-variant/50">
         
-        {/* Tabs */}
-        <div className="flex gap-6 border-b border-surface-variant mb-6 relative">
-          <Link 
-            href={`/explore?tab=listings&category=${category}`}
-            className={`pb-3 border-b-2 font-label-md text-label-md transition-colors ${
-              activeTab === 'listings' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'
-            }`}
-          >
-            Skills Offered
-          </Link>
-          <Link 
-            href={`/explore?tab=requests&category=${category}`}
-            className={`pb-3 border-b-2 font-label-md text-label-md transition-colors ${
-              activeTab === 'requests' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'
-            }`}
-          >
-            Skill Requests
-          </Link>
+        {/* Action Row: Segmented Control & Buttons */}
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
           
-          <div className="ml-auto flex items-center mb-2">
-             <Link 
-              href={activeTab === 'listings' ? '/listings/create' : '/requests/create'} 
-              className="hidden md:flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-4 py-2 rounded-full font-label-sm font-bold transition-colors"
+          {/* Segmented Control */}
+          <div className="bg-surface-container rounded-full p-1 flex w-full md:w-auto relative isolate shadow-inner">
+            <Link 
+              href={`/explore?tab=listings&category=${encodeURIComponent(category)}${viewParam}`}
+              className={`flex-1 md:w-48 py-2 px-4 rounded-full text-center font-label-md transition-all duration-300 z-10 ${
+                activeTab === 'listings' ? 'text-on-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
+              }`}
             >
-              <span className="material-symbols-outlined text-[18px]">add</span>
+              Skills Offered
+            </Link>
+            <Link 
+              href={`/explore?tab=requests&category=${encodeURIComponent(category)}${viewParam}`}
+              className={`flex-1 md:w-48 py-2 px-4 rounded-full text-center font-label-md transition-all duration-300 z-10 ${
+                activeTab === 'requests' ? 'text-on-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
+              }`}
+            >
+              Skill Requests
+            </Link>
+
+            {/* Sliding Background */}
+            <div 
+              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-full -z-10 transition-transform duration-300 ease-out shadow-sm ${
+                activeTab === 'requests' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'
+              }`}
+            ></div>
+          </div>
+
+          {/* Action Row Right: View Mode Toggle & Button */}
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            <ViewModeToggle />
+            <Link 
+              href={activeTab === 'listings' ? '?tab=listings&modal=create-listing' : '?tab=requests&modal=create-request'} 
+              className="flex flex-1 md:flex-none justify-center items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow whitespace-nowrap"
+            >
+              <span className="material-symbols-outlined text-[20px]">add</span>
               {activeTab === 'listings' ? 'Share a Skill' : 'Post a Request'}
             </Link>
           </div>
+
         </div>
         
-        {/* Categories */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {/* Categories Row */}
+        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0">
           {categories.map((cat) => {
-            const isActive = category === cat
+            const isActive = category === cat.name
             return (
               <a 
-                key={cat}
-                href={`/explore?tab=${activeTab}&category=${cat}`}
-                className={`whitespace-nowrap px-4 py-2 rounded-full font-label-sm text-label-sm transition-colors ${
+                key={cat.name}
+                href={`/explore?tab=${activeTab}&category=${encodeURIComponent(cat.name)}${viewParam}`}
+                className={`flex items-center gap-2 whitespace-nowrap px-4 py-2 rounded-full font-label-sm transition-all duration-200 border ${
                   isActive 
-                    ? 'bg-primary text-on-primary' 
-                    : 'bg-secondary-container text-primary hover:bg-secondary-container/80 border border-transparent'
+                    ? 'bg-primary text-on-primary border-primary shadow-sm font-bold' 
+                    : 'bg-surface-container-low text-on-surface hover:bg-surface-container border-outline-variant/30'
                 }`}
               >
-                {cat}
+                <span className="material-symbols-outlined text-[16px]">{cat.icon}</span>
+                {cat.name}
               </a>
             )
           })}
         </div>
-      </header>
+      </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter pb-24">
+      {/* Content Area */}
+      <div className={view === 'table' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter'}>
         {activeTab === 'listings' && (
           listings && listings.length > 0 ? (
-            listings.map((listing: ListingWithProfile) => (
-              <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
-            ))
+            view === 'table' ? (
+              <ListingTableView listings={listings} currentUserId={currentUserId} />
+            ) : (
+              listings.map(listing => (
+                <ListingCard key={listing.id} listing={listing} currentUserId={currentUserId} />
+              ))
+            )
           ) : (
-            <div className="col-span-full py-12 text-center text-on-surface-variant">
-              <p className="font-body-lg">No listings found for this category yet.</p>
-              <p className="mt-2">Be the first to share a skill!</p>
+            <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                <span className="material-symbols-outlined text-[40px]">explore_off</span>
+              </div>
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No listings found</h3>
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
+                We couldn't find any listings for this category. Be the first to share a skill!
+              </p>
+              <Link 
+                href="?tab=listings&modal=create-listing"
+                className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
+              >
+                <span className="material-symbols-outlined text-[18px]">add</span> Share a Skill
+              </Link>
             </div>
           )
         )}
 
         {activeTab === 'requests' && (
           requests && requests.length > 0 ? (
-            requests.map(request => (
-              <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
-            ))
+            view === 'table' ? (
+              <RequestTableView requests={requests} currentUserId={currentUserId} />
+            ) : (
+              requests.map(request => (
+                <RequestCard key={request.id} request={request} currentUserId={currentUserId} />
+              ))
+            )
           ) : (
-            <div className="col-span-full py-12 text-center text-on-surface-variant">
-              <p className="font-body-lg">No skill requests found for this category.</p>
-              <p className="mt-2">Need help with something? Post a request!</p>
+            <div className="col-span-full bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+              <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+                <span className="material-symbols-outlined text-[40px]">post_add</span>
+              </div>
+              <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No requests found</h3>
+              <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10 mb-6">
+                There are no skill requests for this category yet. Need help with something? Post a request!
+              </p>
+              <Link 
+                href="?tab=requests&modal=create-request"
+                className="relative z-10 inline-flex items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow"
+              >
+                <span className="material-symbols-outlined text-[18px]">add</span> Post a Request
+              </Link>
             </div>
           )
         )}

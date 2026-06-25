@@ -9,12 +9,13 @@ function formatDate(dateStr: string | null) {
 export function ReviewList({ reviews }: { reviews: ReviewWithReviewer[] }) {
   if (reviews.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm">
-        <div className="bg-secondary-container/50 text-primary w-16 h-16 rounded-full flex items-center justify-center mb-4">
-          <span className="material-symbols-outlined text-[32px]">reviews</span>
+      <div className="bg-surface-container-lowest rounded-[24px] p-12 text-center border border-outline-variant/20 flex flex-col items-center justify-center relative overflow-hidden shadow-sm">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="w-20 h-20 bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-sm relative z-10">
+          <span className="material-symbols-outlined text-[40px]">reviews</span>
         </div>
-        <h3 className="font-headline-sm text-on-surface mb-2 font-bold text-center">No reviews yet</h3>
-        <p className="font-body-md text-on-surface-variant text-center max-w-md">
+        <h3 className="font-headline-md text-headline-md text-on-surface mb-2 relative z-10">No reviews yet</h3>
+        <p className="text-on-surface-variant font-body-lg w-full max-w-[400px] mx-auto relative z-10">
           This member hasn't received any published reviews from exchanges yet.
         </p>
       </div>

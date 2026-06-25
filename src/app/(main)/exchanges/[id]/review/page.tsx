@@ -52,22 +52,8 @@ export default async function LeaveReviewPage({
   if (!targetUser) notFound()
 
   return (
-    <div className="pt-6 px-margin-mobile md:px-lg max-w-[600px] mx-auto w-full flex-1">
-      <div className="mb-8">
-        <Link 
-          href={`/exchanges/${exchange.id}`} 
-          className="inline-flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md mb-4"
-        >
-          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-          Back to Exchange
-        </Link>
-        <h1 className="font-display-lg-mobile md:font-display-lg text-primary mb-2">
-          Leave a Review
-        </h1>
-        <p className="font-body-lg text-on-surface-variant">
-          Your feedback helps build trust within the Skill Swap community.
-        </p>
-      </div>
+    <>
+      <div className="pt-6 px-margin-mobile md:px-lg max-w-[600px] mx-auto w-full flex-1">
 
       <ReviewForm 
         exchangeId={exchange.id}
@@ -76,6 +62,7 @@ export default async function LeaveReviewPage({
       />
       
       <div className="h-xl"></div>
-    </div>
+      </div>
+    </>
   )
 }

@@ -84,7 +84,7 @@ export function ProfileBento({
           {isOwner && (
             <div className="shrink-0 flex justify-center md:justify-end">
               <Link 
-                href="/profile/edit"
+                href="?modal=edit-profile"
                 className="bg-surface-container-lowest text-primary font-label-md text-label-md px-4 py-2 border-[1.5px] border-primary rounded-lg hover:bg-secondary-container/50 transition-colors flex items-center gap-2 h-fit whitespace-nowrap"
               >
                 <span className="material-symbols-outlined text-[18px]">edit</span>
@@ -105,8 +105,8 @@ export function ProfileBento({
           {profile.bio || "This member hasn't added a bio yet."}
         </p>
         <div className="mt-4 flex items-center gap-2 text-primary font-label-sm text-label-sm">
-          <span className="material-symbols-outlined text-[16px]">cycle</span>
-          <span>Active recently</span>
+          <span className="material-symbols-outlined text-[16px]">calendar_today</span>
+          <span>Joined {profile.created_at ? new Date(profile.created_at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'recently'}</span>
         </div>
       </div>
     </section>

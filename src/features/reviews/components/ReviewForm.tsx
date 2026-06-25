@@ -42,7 +42,7 @@ export function ReviewForm({
       setError(result.error)
       setIsPending(false)
     } else {
-      router.push(`/exchanges/${exchangeId}`)
+      router.replace(`/exchanges/${exchangeId}`)
     }
   }
 

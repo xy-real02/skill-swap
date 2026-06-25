@@ -46,6 +46,7 @@ export async function updateExchangeStatus(exchangeId: string, newStatus: string
   }
 
   // 3. Revalidate
+  revalidatePath('/', 'layout')
   revalidatePath('/exchanges')
   revalidatePath(`/exchanges/${exchangeId}`)
   

@@ -45,6 +45,7 @@ export async function submitReview(formData: FormData) {
       reviewer_id: authData.user.id,
       rating,
       comment: comment ? comment.trim() : null,
+      is_published: true,
     })
 
   if (error) {
@@ -52,6 +53,13 @@ export async function submitReview(formData: FormData) {
     return { error: 'Failed to submit review. Please try again.' }
   }
 
+  // Automatically mark exchange as Completed when reviewed
+  await supabase
+    .from('exchanges')
+    .update({ status: 'Completed' })
+    .eq('id', exchange_id)
+
+  revalidatePath('/', 'layout')
   revalidatePath(`/exchanges/${exchange_id}`)
   revalidatePath(`/profile/${target_id}`)
   

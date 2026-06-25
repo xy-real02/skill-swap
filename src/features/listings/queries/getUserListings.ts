@@ -18,6 +18,7 @@ export async function getUserListings(userId: string): Promise<ListingWithProfil
       )
     `)
     .eq('owner_id', userId)
+    .neq('status', 'Archived')
     .order('created_at', { ascending: false })
 
   if (error) {

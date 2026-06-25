@@ -60,6 +60,7 @@ export default async function ProfilePage({
         history={history}
         isOwner={isOwner}
         currentUserId={authData.user.id}
+        profileId={targetId}
       />
 
       <div className="h-xl"></div>

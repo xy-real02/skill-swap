@@ -24,16 +24,9 @@ export default async function ProposePage({
   }
 
   return (
-    <div className="pb-24">
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-lg">
-        <Link href="/explore" className="hover:text-primary transition-colors">Explore</Link>
-        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-        <Link href={`/listings/${listing.id}`} className="hover:text-primary transition-colors truncate max-w-[200px]">{listing.title}</Link>
-        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-        <span className="text-on-surface font-bold">Propose Exchange</span>
-      </nav>
-
-      <div className="max-w-3xl mx-auto space-y-6">
+    <>
+      <div className="w-full pb-24 pt-6 px-margin-mobile md:px-0">
+        <div className="w-full max-w-3xl mx-auto space-y-6">
         {/* Context Header */}
         <div className="flex items-center gap-4 bg-secondary-container/30 border border-secondary-fixed-dim/50 rounded-xl p-6">
           <div className="bg-primary/10 text-primary p-3 rounded-full flex shrink-0">
@@ -50,6 +43,7 @@ export default async function ProposePage({
 
         <ProposeExchangeForm listingId={listing.id} providerId={listing.owner_id} />
       </div>
-    </div>
+      </div>
+    </>
   )
 }

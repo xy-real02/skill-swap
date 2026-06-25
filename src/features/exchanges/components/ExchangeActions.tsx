@@ -7,12 +7,16 @@ export function ExchangeActions({
   exchangeId,
   status,
   isProvider,
-  hasReviewed
+  hasReviewed,
+  targetId,
+  targetName
 }: {
   exchangeId: string
   status: string | null
   isProvider: boolean
   hasReviewed?: boolean
+  targetId?: string
+  targetName?: string
 }) {
   const [isLoading, setIsLoading] = useState(false)
 
@@ -23,19 +27,19 @@ export function ExchangeActions({
   }
 
   // Determine what actions are available
-  let actions = null
+  let actions: React.ReactNode = null
 
   // Pending Status (Provider sees Accept/Decline, Requester sees Waiting)
-  if (status === 'Pending') {
+  if (status === 'Proposed' || status === 'Pending') {
     if (isProvider) {
       actions = (
         <>
           <button 
             onClick={() => handleUpdateStatus('Accepted')}
             disabled={isLoading}
-            className="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg font-bold hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 shadow-sm"
           >
-            <span className="material-symbols-outlined text-[18px]">handshake</span>
+            <span className="material-symbols-outlined text-[18px]">check</span>
             Accept Proposal
           </button>
           <button 
@@ -43,7 +47,7 @@ export function ExchangeActions({
             disabled={isLoading}
             className="w-full bg-transparent text-error font-label-md text-label-md py-3 rounded-lg border-[1.5px] border-outline-variant hover:border-error hover:bg-error-container/20 transition-colors flex items-center justify-center gap-2"
           >
-            <span className="material-symbols-outlined text-[18px]">cancel</span>
+            <span className="material-symbols-outlined text-[18px]">close</span>
             Decline
           </button>
         </>
@@ -66,7 +70,7 @@ export function ExchangeActions({
         <button 
           onClick={() => handleUpdateStatus('Completed')}
           disabled={isLoading}
-          className="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg font-bold hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 shadow-sm"
         >
           <span className="material-symbols-outlined text-[18px]">task_alt</span>
           Mark as Completed
@@ -84,7 +88,7 @@ export function ExchangeActions({
   } else if (status === 'Completed' && !hasReviewed) {
     actions = (
       <a 
-        href={`/exchanges/${exchangeId}/review`}
+        href={`?modal=review&exchangeId=${exchangeId}&targetId=${targetId || ''}&targetName=${encodeURIComponent(targetName || 'Neighbor')}`}
         className="w-full bg-tertiary text-on-tertiary font-label-md text-label-md py-3 rounded-lg font-bold hover:bg-tertiary-container hover:text-on-tertiary-container transition-colors flex items-center justify-center gap-2"
       >
         <span className="material-symbols-outlined text-[18px]">rate_review</span>
