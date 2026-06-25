@@ -26,15 +26,25 @@ export async function getMembers(searchQuery?: string): Promise<AdminMemberItem[
     return []
   }
 
-  return data.map(p => ({
-    id: p.id,
-    full_name: p.full_name || 'Anonymous User',
-    avatar_url: p.avatar_url,
-    community_zone: p.community_zone || 'Neighbor',
-    reputation_score: p.reputation_score,
-    exchange_count: p.exchange_count,
-    role: p.role || 'Member',
-    status: p.status || 'Active',
-    created_at: p.created_at,
-  }))
+  return data.map(p => {
+    const rawZone = p.community_zone || 'Neighbor'
+    const formattedZone = rawZone
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ') || 'Neighbor'
+
+    return {
+      id: p.id,
+      full_name: p.full_name || 'Anonymous User',
+      avatar_url: p.avatar_url,
+      community_zone: formattedZone,
+      reputation_score: p.reputation_score,
+      exchange_count: p.exchange_count,
+      role: p.role || 'Member',
+      status: p.status || 'Active',
+      created_at: p.created_at,
+    }
+  })
 }

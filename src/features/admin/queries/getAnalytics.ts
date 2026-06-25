@@ -35,7 +35,13 @@ export async function getAnalytics(): Promise<PlatformAnalytics> {
   const zoneCounts: Record<string, number> = {}
   if (allProfilesRes.data) {
     for (const row of allProfilesRes.data) {
-      const z = row.community_zone || 'Unspecified'
+      const raw = row.community_zone || 'Unspecified'
+      const z = raw
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(' ') || 'Unspecified'
       zoneCounts[z] = (zoneCounts[z] || 0) + 1
     }
   }

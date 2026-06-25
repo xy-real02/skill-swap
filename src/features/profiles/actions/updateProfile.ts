@@ -13,7 +13,13 @@ export async function updateProfile(formData: FormData) {
 
   const full_name = formData.get('full_name') as string
   const bio = formData.get('bio') as string | null
-  const community_zone = formData.get('community_zone') as string
+  const rawZone = (formData.get('community_zone') as string) || ''
+  const community_zone = rawZone
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
   const phone_number = formData.get('phone_number') as string | null
 
   if (!full_name || full_name.trim().length < 2) {
