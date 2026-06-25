@@ -5,7 +5,6 @@ import { markNotificationRead } from '@/features/notifications/actions/markNotif
 import { markAllNotificationsRead } from '@/features/notifications/actions/markAllNotificationsRead'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { TopBar } from '@/components/layout/TopBar'
 
 export function NotificationList({ notifications }: { notifications: Notification[] }) {
   const router = useRouter()
@@ -36,11 +35,10 @@ export function NotificationList({ notifications }: { notifications: Notificatio
 
   return (
     <>
-      <TopBar 
-        title="Notifications"
-        description={`You have ${unreadCount} unread message${unreadCount !== 1 ? 's' : ''}.`}
-        action={
-          unreadCount > 0 ? (
+      <div className="w-full pt-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="font-headline-md text-on-surface">Notifications</h1>
+          {unreadCount > 0 && (
             <button 
               onClick={handleMarkAllRead}
               disabled={isMarkingAll}
@@ -48,11 +46,8 @@ export function NotificationList({ notifications }: { notifications: Notificatio
             >
               {isMarkingAll ? 'Marking...' : 'Mark all as read'}
             </button>
-          ) : undefined
-        }
-      />
-      <div className="w-full pt-6">
-
+          )}
+        </div>
       {notifications.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-4 bg-surface-container-lowest rounded-2xl border border-outline-variant/30 shadow-sm mt-8">
           <div className="bg-secondary-container/50 text-primary w-20 h-20 rounded-full flex items-center justify-center mb-6">

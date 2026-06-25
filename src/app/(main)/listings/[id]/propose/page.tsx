@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ProposeExchangeForm } from '@/features/exchanges/components/ProposeExchangeForm'
-import { TopBar } from '@/components/layout/TopBar'
 
 export default async function ProposePage({
   params,
@@ -26,10 +25,6 @@ export default async function ProposePage({
 
   return (
     <>
-      <TopBar 
-        title="Propose Exchange"
-        backHref={`/listings/${listing.id}`}
-      />
       <div className="pb-24 pt-6 px-margin-mobile md:px-0">
         <div className="max-w-3xl mx-auto space-y-6">
         {/* Context Header */}

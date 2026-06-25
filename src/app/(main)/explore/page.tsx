@@ -4,7 +4,6 @@ import { ListingCard, type ListingWithProfile } from '@/features/listings/compon
 import { RequestCard } from '@/features/requests/components/RequestCard'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { TopBar } from '@/components/layout/TopBar'
 
 export default async function ExplorePage({
   searchParams,
@@ -37,23 +36,18 @@ export default async function ExplorePage({
 
   return (
     <>
-      {/* Header & Search */}
-      <TopBar 
-        title="Explore Community Skills"
-        description="Discover what your neighbors are sharing today."
-        action={
-          <div className="relative w-full md:w-96 group">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
-            <input 
-              className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-tertiary-fixed-dim/20 transition-all font-body-md text-body-md placeholder:text-outline-variant" 
-              placeholder="Search skills, people, or topics..." 
-              type="text" 
-            />
-          </div>
-        }
-      />
       <div className="sticky top-[148px] md:top-[104px] bg-surface/90 backdrop-blur-md z-20 pt-2 -mx-margin-mobile px-margin-mobile md:-mx-lg md:px-lg mb-6">
         
+        {/* Search */}
+        <div className="mb-6 relative w-full md:w-96 group">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline group-focus-within:text-primary transition-colors">search</span>
+          <input 
+            className="w-full bg-surface-container-lowest border border-outline-variant rounded-lg py-3 pl-10 pr-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-tertiary-fixed-dim/20 transition-all font-body-md text-body-md placeholder:text-outline-variant" 
+            placeholder="Search skills, people, or topics..." 
+            type="text" 
+          />
+        </div>
+
         {/* Tabs */}
         <div className="flex gap-6 border-b border-surface-variant mb-6 relative">
           <Link 

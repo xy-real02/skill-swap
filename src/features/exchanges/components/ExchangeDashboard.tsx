@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { UserExchange } from '@/features/exchanges/queries/getUserExchanges'
 import Link from 'next/link'
-import { TopBar } from '@/components/layout/TopBar'
 
 export function ExchangeDashboard({
   exchanges,
@@ -26,10 +25,6 @@ export function ExchangeDashboard({
 
   return (
     <>
-      <TopBar 
-        title="My Exchanges"
-        description="Manage your active, pending, and past skill swaps."
-      />
       <div className="max-w-container-max mx-auto w-full flex-1 pt-6">
 
       {/* Status Tabs */}

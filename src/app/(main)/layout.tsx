@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
+import { GlobalTopBar } from '@/components/layout/GlobalTopBar'
 
 export default async function MainLayout({
   children,
@@ -55,6 +56,7 @@ export default async function MainLayout({
 
       {/* Main Content Canvas */}
       <main className="flex-1 mt-16 md:mt-0 md:ml-[240px] p-margin-mobile md:p-lg max-w-[1200px] mx-auto w-full">
+        <GlobalTopBar />
         {children}
       </main>
 

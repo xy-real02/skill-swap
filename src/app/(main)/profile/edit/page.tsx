@@ -3,7 +3,6 @@ import { EditProfileForm } from '@/features/profiles/components/EditProfileForm'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { TopBar } from '@/components/layout/TopBar'
 
 export const metadata = {
   title: 'Edit Profile | Skill Swap',
@@ -31,12 +30,7 @@ export default async function EditProfilePage() {
 
   return (
     <>
-      <TopBar 
-        title="Edit Profile"
-        description="Update your public identity and contact information."
-        backHref={`/profile/me`}
-      />
-      <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full flex-1">
+      <div className="max-w-3xl mx-auto pt-6 pb-24">
 
       <div className="max-w-2xl">
         <EditProfileForm profile={profile} zones={zones} />

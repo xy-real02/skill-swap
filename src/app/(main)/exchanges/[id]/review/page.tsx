@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import { ReviewForm } from '@/features/reviews/components/ReviewForm'
 import Link from 'next/link'
-import { TopBar } from '@/components/layout/TopBar'
 
 export const metadata = {
   title: 'Leave a Review | Skill Swap',
@@ -54,11 +53,6 @@ export default async function LeaveReviewPage({
 
   return (
     <>
-      <TopBar 
-        title="Leave a Review"
-        description="Your feedback helps build trust within the Skill Swap community."
-        backHref={`/exchanges/${exchange.id}`}
-      />
       <div className="pt-6 px-margin-mobile md:px-lg max-w-[600px] mx-auto w-full flex-1">
 
       <ReviewForm 

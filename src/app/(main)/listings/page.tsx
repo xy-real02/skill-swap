@@ -3,7 +3,6 @@ import { ListingCard } from '@/features/listings/components/ListingCard'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { TopBar } from '@/components/layout/TopBar'
 
 export default async function MyListingsPage() {
   const supabase = await createClient()
@@ -17,20 +16,17 @@ export default async function MyListingsPage() {
 
   return (
     <>
-      <TopBar 
-        title="My Listings" 
-        description="Manage the skills you are offering."
-        action={
-          <Link 
-            href="/listings/create"
-            className="bg-primary text-on-primary font-label-md text-label-md py-2 px-4 md:py-3 md:px-6 rounded-lg font-bold hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2"
-          >
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            New Listing
-          </Link>
-        }
-      />
       <div className="max-w-container-max mx-auto w-full pt-4">
+        
+      <div className="flex justify-end mb-6">
+        <Link 
+          href="/listings/create"
+          className="bg-primary text-on-primary font-label-md text-label-md py-2 px-4 md:py-3 md:px-6 rounded-lg font-bold hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2"
+        >
+          <span className="material-symbols-outlined text-[18px]">add</span>
+          New Listing
+        </Link>
+      </div>
 
       {listings.length === 0 ? (
         <div className="bg-surface-container-lowest rounded-xl p-8 text-center border border-outline-variant/20">
