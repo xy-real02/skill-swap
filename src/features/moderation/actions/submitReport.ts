@@ -28,13 +28,14 @@ export async function submitReport({
     return { error: 'Missing required report fields.' }
   }
 
-  const trimmedDetails = details ? details.trim().slice(0, 500) : null
+  const normalizedType = targetType.toLowerCase()
+  const trimmedDetails = details ? details.trim().slice(0, 300) : null
 
   // 3. Prevent self-reporting
-  if (targetType === 'Profile' && targetId === reporterId) {
+  if (normalizedType === 'profile' && targetId === reporterId) {
     return { error: 'You cannot report your own profile.' }
   }
-  if (targetType === 'Listing') {
+  if (normalizedType === 'listing') {
     const { data: item } = await supabase
       .from('listings')
       .select('owner_id')
@@ -44,7 +45,7 @@ export async function submitReport({
       return { error: 'You cannot report your own listing.' }
     }
   }
-  if (targetType === 'Request') {
+  if (normalizedType === 'request') {
     const { data: item } = await supabase
       .from('requests')
       .select('owner_id')
@@ -61,8 +62,8 @@ export async function submitReport({
     .select('id')
     .eq('reporter_id', reporterId)
     .eq('target_id', targetId)
-    .or('status.is.null,status.eq.Pending')
-    .single()
+    .eq('status', 'open')
+    .maybeSingle()
 
   if (existing) {
     return { error: 'You already have an open report pending for this content.' }
@@ -72,15 +73,15 @@ export async function submitReport({
   const { error: insertError } = await supabase.from('reports').insert({
     reporter_id: reporterId,
     target_id: targetId,
-    target_type: targetType,
+    target_type: normalizedType,
     reason,
     details: trimmedDetails,
-    status: 'Pending',
+    status: 'open',
   })
 
   if (insertError) {
     console.error('Submit report error:', insertError)
-    return { error: 'Failed to submit report. Please try again later.' }
+    return { error: insertError.message || 'Failed to submit report.' }
   }
 
   return { success: true }

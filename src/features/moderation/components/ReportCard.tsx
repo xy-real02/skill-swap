@@ -34,6 +34,16 @@ export function ReportCard({ report }: { report: ReportItem }) {
     }
   }
 
+  const formatReason = (val: string) => {
+    switch (val) {
+      case 'spam': return 'Spam or Misleading'
+      case 'harassment': return 'Harassment or Hate Speech'
+      case 'inappropriate_content': return 'Inappropriate Content'
+      case 'fraudulent_claim': return 'Fraudulent Claim or Scam'
+      default: return 'Other Violation'
+    }
+  }
+
   return (
     <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-5 md:p-6 shadow-xl hover:border-slate-700 transition-all flex flex-col justify-between gap-4">
       <div>
@@ -73,7 +83,7 @@ export function ReportCard({ report }: { report: ReportItem }) {
         <div className="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/80 mb-4">
           <div className="text-xs font-bold text-red-400 mb-1 flex items-center gap-1.5">
             <AlertTriangle className="w-3.5 h-3.5" />
-            <span>Reason: {report.reason}</span>
+            <span>Reason: {formatReason(report.reason)}</span>
           </div>
           {report.details && (
             <p className="text-xs text-slate-300 italic mt-1.5 pt-1.5 border-t border-slate-800/80">
@@ -98,45 +108,44 @@ export function ReportCard({ report }: { report: ReportItem }) {
               <button
                 type="button"
                 onClick={() => setAction('Dismiss')}
-                className={`py-2 px-2 rounded-lg text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
-                  action === 'Dismiss' ? 'bg-slate-800 text-white border-slate-500 shadow' : 'bg-slate-900 text-slate-400 border-slate-800'
+                className={`p-2 rounded-lg text-xs font-bold transition-all border flex flex-col items-center gap-1 ${
+                  action === 'Dismiss' ? 'bg-slate-800 border-amber-500 text-amber-400 shadow' : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800'
                 }`}
               >
-                <CheckCircle className="w-3.5 h-3.5 text-slate-400" />
-                Dismiss
+                <CheckCircle className="w-4 h-4" />
+                <span>Dismiss</span>
               </button>
               <button
                 type="button"
                 onClick={() => setAction('DeleteContent')}
-                className={`py-2 px-2 rounded-lg text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
-                  action === 'DeleteContent' ? 'bg-red-950 text-red-200 border-red-600 shadow' : 'bg-slate-900 text-slate-400 border-slate-800'
+                className={`p-2 rounded-lg text-xs font-bold transition-all border flex flex-col items-center gap-1 ${
+                  action === 'DeleteContent' ? 'bg-slate-800 border-red-500 text-red-400 shadow' : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800'
                 }`}
               >
-                <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                Delete
+                <Trash2 className="w-4 h-4" />
+                <span>Delete Content</span>
               </button>
               <button
                 type="button"
                 onClick={() => setAction('BanUser')}
-                className={`py-2 px-2 rounded-lg text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
-                  action === 'BanUser' ? 'bg-amber-950 text-amber-200 border-amber-600 shadow' : 'bg-slate-900 text-slate-400 border-slate-800'
+                className={`p-2 rounded-lg text-xs font-bold transition-all border flex flex-col items-center gap-1 ${
+                  action === 'BanUser' ? 'bg-slate-800 border-red-600 text-red-500 shadow' : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800'
                 }`}
               >
-                <Ban className="w-3.5 h-3.5 text-amber-400" />
-                Ban User
+                <Ban className="w-4 h-4" />
+                <span>Ban Author</span>
               </button>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Moderator Note</label>
             <input
               type="text"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Explain rationale for audit log..."
+              placeholder="Resolution note for audit log..."
               required
-              className="w-full px-3 py-1.5 text-xs bg-slate-900 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-emerald-500"
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-primary"
             />
           </div>
 
@@ -144,14 +153,15 @@ export function ReportCard({ report }: { report: ReportItem }) {
             <button
               type="button"
               onClick={() => setIsResolving(false)}
-              className="px-3 py-1.5 text-xs font-semibold text-slate-400 hover:text-white"
+              disabled={loading}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:bg-slate-900"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg transition-all shadow-md disabled:opacity-50"
+              className="px-4 py-1.5 bg-error hover:bg-error/90 text-on-error rounded-lg text-xs font-bold shadow transition-all disabled:opacity-50"
             >
               {loading ? 'Processing...' : 'Confirm'}
             </button>
@@ -159,11 +169,12 @@ export function ReportCard({ report }: { report: ReportItem }) {
         </form>
       ) : (
         <button
+          type="button"
           onClick={() => setIsResolving(true)}
-          className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white rounded-xl font-bold text-xs transition-all border border-slate-700/80 flex items-center justify-center gap-2 shadow"
+          className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 transition-all shadow-md group"
         >
-          <ShieldAlert className="w-4 h-4 text-emerald-400" />
-          Take Action
+          <ShieldAlert className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+          <span>Review Report</span>
         </button>
       )}
     </div>

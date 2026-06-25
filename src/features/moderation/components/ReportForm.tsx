@@ -6,11 +6,11 @@ import { submitReport } from '../actions/submitReport'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 
 const REASONS = [
-  'Spam or misleading',
-  'Harassment or hate speech',
-  'Inappropriate content',
-  'Potential scam or fraud',
-  'Other violation',
+  { label: 'Spam or misleading', value: 'spam' },
+  { label: 'Harassment or hate speech', value: 'harassment' },
+  { label: 'Inappropriate content', value: 'inappropriate_content' },
+  { label: 'Potential scam or fraud', value: 'fraudulent_claim' },
+  { label: 'Other violation', value: 'other' },
 ]
 
 export function ReportForm({
@@ -22,7 +22,7 @@ export function ReportForm({
   targetType: 'Listing' | 'Request' | 'Profile' | 'Review' | 'Exchange'
   targetTitle?: string
 }) {
-  const [reason, setReason] = useState(REASONS[0])
+  const [reason, setReason] = useState('spam')
   const [details, setDetails] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -102,8 +102,8 @@ export function ReportForm({
           className="w-full px-4 py-3 bg-surface-container-low border border-outline-variant/30 rounded-xl text-sm text-on-surface focus:outline-none focus:border-primary font-medium"
         >
           {REASONS.map((r) => (
-            <option key={r} value={r}>
-              {r}
+            <option key={r.value} value={r.value}>
+              {r.label}
             </option>
           ))}
         </select>

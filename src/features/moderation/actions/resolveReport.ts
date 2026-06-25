@@ -15,7 +15,6 @@ export async function resolveReport({
 }) {
   const supabase = await createClient()
 
-  // 1. Authenticate & Verify Role
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Unauthorized' }
 
@@ -32,7 +31,6 @@ export async function resolveReport({
     return { error: 'You do not have permission to moderate reports.' }
   }
 
-  // 2. Fetch Report
   const { data: report, error: reportError } = await adminClient
     .from('reports')
     .select('*')
@@ -43,34 +41,33 @@ export async function resolveReport({
     return { error: 'Report not found.' }
   }
 
-  // Determine target user ID
-  let targetUserId = report.reporter_id // fallback
-  if (report.target_type === 'Profile') {
+  const normType = report.target_type?.toLowerCase()
+  let targetUserId = report.reporter_id
+
+  if (normType === 'profile') {
     targetUserId = report.target_id
-  } else if (report.target_type === 'Listing') {
+  } else if (normType === 'listing') {
     const { data: item } = await adminClient.from('listings').select('owner_id').eq('id', report.target_id).single()
     if (item?.owner_id) targetUserId = item.owner_id
-  } else if (report.target_type === 'Request') {
+  } else if (normType === 'request') {
     const { data: item } = await adminClient.from('requests').select('owner_id').eq('id', report.target_id).single()
     if (item?.owner_id) targetUserId = item.owner_id
   }
 
-  const trimmedNote = resolutionNote.trim() || `Action: ${action}`
-  let finalStatus = 'Resolved'
+  const trimmedNote = resolutionNote.trim() || `Action taken: ${action}`
+  let finalStatus = 'resolved'
 
-  // 3. Execute Action
   if (action === 'Dismiss') {
-    finalStatus = 'Dismissed'
+    finalStatus = 'dismissed'
   } else if (action === 'DeleteContent') {
-    finalStatus = 'Content Deleted'
-    if (report.target_type === 'Listing') {
+    finalStatus = 'resolved'
+    if (normType === 'listing') {
       await adminClient.from('listings').delete().eq('id', report.target_id)
-    } else if (report.target_type === 'Request') {
+    } else if (normType === 'request') {
       await adminClient.from('requests').delete().eq('id', report.target_id)
     }
   } else if (action === 'BanUser') {
-    finalStatus = 'User Banned'
-    // Prevent banning admins
+    finalStatus = 'resolved'
     const { data: targetProfile } = await adminClient.from('profiles').select('role').eq('id', targetUserId).single()
     if (targetProfile?.role?.toLowerCase() === 'admin') {
       return { error: 'Cannot ban platform administrator.' }
@@ -78,8 +75,7 @@ export async function resolveReport({
     await adminClient.from('profiles').update({ status: 'banned' }).eq('id', targetUserId)
   }
 
-  // 4. Update Report
-  await adminClient
+  const { error: updateErr } = await adminClient
     .from('reports')
     .update({
       status: finalStatus,
@@ -89,7 +85,11 @@ export async function resolveReport({
     })
     .eq('id', reportId)
 
-  // 5. Audit Log
+  if (updateErr) {
+    console.error('resolveReport updateErr:', updateErr)
+    return { error: 'Failed to update report status.' }
+  }
+
   await adminClient.from('moderation_log').insert({
     moderator_id: user.id,
     target_user_id: targetUserId,
