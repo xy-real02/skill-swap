@@ -12,7 +12,14 @@ export type RequestWithProfile = Database['public']['Tables']['requests']['Row']
   }
 }
 
-export async function getActiveRequests(options?: { category?: string; q?: string; limit?: number; excludeOwnerId?: string }) {
+export async function getActiveRequests(options?: {
+  category?: string
+  q?: string
+  limit?: number
+  excludeOwnerId?: string
+  zone?: string
+  minRep?: number
+}) {
   const supabase = await createClient()
 
   let query = supabase
@@ -35,7 +42,7 @@ export async function getActiveRequests(options?: { category?: string; q?: strin
     query = query.neq('owner_id', options.excludeOwnerId)
   }
 
-  if (options?.category && options.category !== 'All') {
+  if (options?.category && options.category !== 'All' && options.category !== 'All Categories') {
     query = query.eq('category', options.category)
   }
 
@@ -49,10 +56,20 @@ export async function getActiveRequests(options?: { category?: string; q?: strin
 
   const { data, error } = await query
 
-  if (error) {
+  if (error || !data) {
     console.error('Error fetching active requests:', error)
     return []
   }
 
-  return data as unknown as RequestWithProfile[]
+  let filtered = data as any[]
+
+  if (options?.zone && options.zone !== 'All Zones') {
+    filtered = filtered.filter((item) => item.profiles?.community_zone === options.zone)
+  }
+
+  if (options?.minRep && options.minRep > 0) {
+    filtered = filtered.filter((item) => (item.profiles?.reputation_score || 0) >= options.minRep!)
+  }
+
+  return filtered as unknown as RequestWithProfile[]
 }
