@@ -80,15 +80,9 @@ export function ModeratorDashboardView({
   }
 
   return (
-    <div className="w-full pb-16 animate-fade-in">
-      {/* Header & Tabs */}
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-primary dark:text-primary-fixed-dim font-headline-md tracking-tight mb-2">
-          Moderator Dashboard
-        </h2>
-        <p className="text-base text-on-surface-variant font-body-md mb-6">
-          Review and resolve community reports to maintain a safe environment.
-        </p>
+    <div className="w-full pb-16 animate-fade-in pt-4">
+      {/* Tabs */}
+      <div className="mb-6">
         <div className="flex border-b border-surface-container-highest">
           <button
             onClick={() => setActiveTab('Open')}
