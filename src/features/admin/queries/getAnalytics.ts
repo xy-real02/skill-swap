@@ -25,7 +25,7 @@ export async function getAnalytics(): Promise<PlatformAnalytics> {
   ] = await Promise.all([
     adminClient.from('profiles').select('*', { count: 'exact', head: true }),
     adminClient.from('listings').select('*', { count: 'exact', head: true }),
-    adminClient.from('exchanges').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+    adminClient.from('exchanges').select('*', { count: 'exact', head: true }).in('status', ['Completed', 'completed', 'Verified', 'verified']),
     adminClient.from('reports').select('*', { count: 'exact', head: true }).or('status.is.null,status.eq.Pending'),
     adminClient.from('profiles').select('*', { count: 'exact', head: true }).gte('created_at', sevenDaysAgo.toISOString()),
     adminClient.from('profiles').select('community_zone'),

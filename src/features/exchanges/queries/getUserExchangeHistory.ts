@@ -23,7 +23,7 @@ export async function getUserExchangeHistory(userId: string): Promise<ExchangeHi
       listing:listing_id(id, title, category)
     `)
     .or(`provider_id.eq.${userId},requester_id.eq.${userId}`)
-    .in('status', ['Completed', 'Disputed'])
+    .in('status', ['Completed', 'completed', 'Verified', 'verified', 'Disputed', 'disputed'])
     .order('updated_at', { ascending: false })
 
   if (error) {
