@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { DeleteListingButton } from '@/features/listings/components/DeleteListingButton'
+import { BackButton } from '@/components/ui/BackButton'
 export default async function ListingDetailsPage({
   params,
 }: {
@@ -25,14 +26,10 @@ export default async function ListingDetailsPage({
 
   return (
     <div className="pb-24">
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm mb-lg">
-        <Link href="/explore" className="hover:text-primary transition-colors">Explore</Link>
-        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-        <Link href={`/explore?category=${listing.category}`} className="hover:text-primary transition-colors">{listing.category}</Link>
-        <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-        <span className="text-on-surface font-bold truncate max-w-[200px]">{listing.title}</span>
-      </nav>
+      {/* Back Navigation */}
+      <div className="mb-lg">
+        <BackButton />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
         {/* Left Column: Details */}

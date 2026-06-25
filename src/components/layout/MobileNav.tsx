@@ -9,10 +9,17 @@ export function MobileNav({ navItems }: { navItems: NavItem[] }) {
 
   return (
     <nav className="md:hidden fixed bottom-0 w-full bg-surface-container-lowest border-t border-outline-variant/20 flex justify-around items-center h-16 px-4 z-50 shadow-[0_-4px_20px_-4px_rgba(45,106,79,0.08)]">
-      {navItems.map((item) => {
-        const isActive = item.matchPattern 
-          ? pathname?.startsWith(item.matchPattern)
-          : pathname === item.href
+      {navItems.slice(0, 5).map((item) => {
+        let isActive = false
+        if (item.matchPattern) {
+          isActive = pathname?.startsWith(item.matchPattern) || false
+          // Special case: don't highlight My Listings for global listing detail pages
+          if (item.href === '/listings' && pathname && pathname !== '/listings' && pathname !== '/listings/create') {
+            isActive = false
+          }
+        } else {
+          isActive = pathname === item.href
+        }
 
         return (
           <Link 

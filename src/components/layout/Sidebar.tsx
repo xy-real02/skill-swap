@@ -36,9 +36,16 @@ export function Sidebar({
       
       <nav className="flex-1 flex flex-col">
         {navItems.map((item) => {
-          const isActive = item.matchPattern 
-            ? pathname?.startsWith(item.matchPattern)
-            : pathname === item.href
+          let isActive = false
+          if (item.matchPattern) {
+            isActive = pathname?.startsWith(item.matchPattern) || false
+            // Special case: don't highlight My Listings for global listing detail pages
+            if (item.href === '/listings' && pathname && pathname !== '/listings' && pathname !== '/listings/create') {
+              isActive = false
+            }
+          } else {
+            isActive = pathname === item.href
+          }
 
           return (
             <Link 
