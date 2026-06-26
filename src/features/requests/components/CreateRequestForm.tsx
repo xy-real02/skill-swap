@@ -4,16 +4,12 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createRequest } from '../actions/createRequest'
 import { Button } from '@/components/ui/Button'
+import { PLATFORM_CATEGORIES } from '@/lib/categories'
 
 export function CreateRequestForm() {
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
-
-  const categories = [
-    'Home Repair', 'Education', 'Gardening', 'Tech Support', 'Culinary',
-    'Arts & Crafts', 'Fitness', 'Pet Care', 'Language', 'Other'
-  ]
 
   async function onSubmit(formData: FormData) {
     setError(null)
@@ -63,8 +59,8 @@ export function CreateRequestForm() {
             className="w-full bg-surface-container-lowest border border-outline-variant rounded-xl py-3 px-4 appearance-none focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-body-md text-on-surface"
           >
             <option value="" disabled>Select a category</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
+            {PLATFORM_CATEGORIES.map((cat) => (
+              <option key={cat.name} value={cat.name}>{cat.name}</option>
             ))}
           </select>
           <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
