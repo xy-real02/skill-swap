@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateListing } from '@/features/listings/actions/updateListing'
+import { PLATFORM_CATEGORIES } from '@/lib/categories'
 
 export interface ListingEditData {
   id: string
@@ -75,20 +76,11 @@ export function EditListingForm({ listing }: { listing: ListingEditData }) {
           className="input-field"
         >
           <option value="">Select a category</option>
-          <option value="Home Services">Home Services</option>
-          <option value="Creative Arts">Creative Arts</option>
-          <option value="Academics">Academics</option>
-          <option value="Culinary">Culinary</option>
-          <option value="Wellness">Wellness</option>
-          <option value="Technology">Technology</option>
-          <option value="Home Repair">Home Repair</option>
-          <option value="Education">Education</option>
-          <option value="Gardening">Gardening</option>
-          <option value="Tech Support">Tech Support</option>
-          <option value="Arts & Crafts">Arts & Crafts</option>
-          <option value="Fitness">Fitness</option>
-          <option value="Language">Language</option>
-          <option value="Other">Other</option>
+          {PLATFORM_CATEGORIES.map((cat) => (
+            <option key={cat.name} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
         </select>
       </div>
 

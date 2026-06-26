@@ -3,18 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createListing } from '@/features/listings/actions/createListing'
-
-const CATEGORIES = [
-  'Home Repair',
-  'Education',
-  'Gardening',
-  'Tech Support',
-  'Culinary',
-  'Arts & Crafts',
-  'Fitness',
-  'Language',
-  'Other'
-]
+import { PLATFORM_CATEGORIES } from '@/lib/categories'
 
 export function CreateListingForm() {
   const router = useRouter()
@@ -31,27 +20,28 @@ export function CreateListingForm() {
       const result = await createListing(formData)
       if (result.error) {
         setError(result.error)
+        setLoading(false)
       } else {
-        router.replace('/listings')
+        router.push('/listings')
+        router.refresh()
       }
     } catch (err) {
       setError('An unexpected error occurred.')
-    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl bg-surface-container-lowest p-6 sm:p-8 rounded-xl border border-outline-variant/30 shadow-sm">
       {error && (
-        <div className="p-3 text-sm bg-error/10 border border-error/20 text-error rounded-lg">
+        <div className="p-4 bg-error-container text-on-error-container rounded-lg font-body-md text-sm">
           {error}
         </div>
       )}
 
       <div>
         <label htmlFor="title" className="block font-label-md text-label-md text-on-surface mb-2">
-          Skill Title
+          Listing Title
         </label>
         <input
           id="title"
@@ -60,7 +50,7 @@ export function CreateListingForm() {
           required
           maxLength={100}
           className="input-field"
-          placeholder="e.g. Italian Cooking, Guitar Lessons, Gardening Tips"
+          placeholder="e.g., Professional Plumbing & Leak Repair"
         />
       </div>
 
@@ -75,12 +65,11 @@ export function CreateListingForm() {
           className="input-field"
         >
           <option value="">Select a category</option>
-          <option value="Home Services">Home Services</option>
-          <option value="Creative Arts">Creative Arts</option>
-          <option value="Academics">Academics</option>
-          <option value="Culinary">Culinary</option>
-          <option value="Wellness">Wellness</option>
-          <option value="Technology">Technology</option>
+          {PLATFORM_CATEGORIES.map((cat) => (
+            <option key={cat.name} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
         </select>
       </div>
 

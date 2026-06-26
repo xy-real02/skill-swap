@@ -1,5 +1,6 @@
 import { getActiveListings } from '@/features/listings/queries/getActiveListings'
 import { getActiveRequests, type RequestWithProfile } from '@/features/requests/queries/getActiveRequests'
+import { PLATFORM_CATEGORIES } from '@/lib/categories'
 import { ListingCard, type ListingWithProfile } from '@/features/listings/components/ListingCard'
 import { RequestCard } from '@/features/requests/components/RequestCard'
 import { ListingTableView } from '@/features/listings/components/ListingTableView'
@@ -60,15 +61,12 @@ export default async function ExplorePage({
     })
   }
 
-  const categories = [
+  const categories: { name: string; icon: string }[] = [
     { name: 'All Categories', icon: 'grid_view' },
-    { name: 'Home Repair', icon: 'handyman' },
-    { name: 'Education', icon: 'school' },
-    { name: 'Gardening', icon: 'yard' },
-    { name: 'Tech Support', icon: 'computer' },
-    { name: 'Culinary', icon: 'restaurant' }
+    ...PLATFORM_CATEGORIES
   ]
 
+  const categoryParam = category !== 'All Categories' ? `&category=${encodeURIComponent(category)}` : ''
   const viewParam = view === 'table' ? '&view=table' : ''
 
   return (
@@ -81,52 +79,44 @@ export default async function ExplorePage({
       </div>
 
       {/* Sticky Section: Tabs & Categories */}
-      <div className="sticky top-[72px] md:top-[80px] bg-surface/95 backdrop-blur-xl z-20 pt-2 -mx-margin-mobile px-margin-mobile md:-mx-lg md:px-lg mb-6 border-b border-surface-variant/50">
-        
-        {/* Action Row: Segmented Control & Buttons */}
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
-          
-          {/* Segmented Control */}
-          <div className="bg-surface-container rounded-full p-1 flex w-full md:w-auto relative isolate shadow-inner">
-            <Link 
-              href={`/explore?tab=listings&category=${encodeURIComponent(category)}${viewParam}`}
-              className={`flex-1 md:w-48 py-2 px-4 rounded-full text-center font-label-md transition-all duration-300 z-10 ${
-                activeTab === 'listings' ? 'text-on-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
+      <div className="sticky top-16 z-20 bg-background/95 backdrop-blur py-3 border-b border-outline-variant/20 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 mb-6 flex flex-col gap-4">
+        {/* Top Row: Tabs & View Toggle */}
+        <div className="flex flex-wrap justify-between items-center gap-3">
+          <div className="flex w-full sm:w-auto gap-1 bg-surface-container-low p-1 rounded-full border border-outline-variant/30">
+            <a 
+              href={`/explore?tab=listings${categoryParam}${viewParam}`}
+              className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2 rounded-full font-label-md text-center transition-all duration-200 whitespace-nowrap ${
+                activeTab === 'listings' 
+                  ? 'bg-primary text-on-primary font-bold shadow-sm' 
+                  : 'text-on-surface-variant hover:text-on-surface'
               }`}
             >
-              Skills Offered
-            </Link>
-            <Link 
-              href={`/explore?tab=requests&category=${encodeURIComponent(category)}${viewParam}`}
-              className={`flex-1 md:w-48 py-2 px-4 rounded-full text-center font-label-md transition-all duration-300 z-10 ${
-                activeTab === 'requests' ? 'text-on-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
+              Skill Offers
+            </a>
+            <a 
+              href={`/explore?tab=requests${categoryParam}${viewParam}`}
+              className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2 rounded-full font-label-md text-center transition-all duration-200 whitespace-nowrap ${
+                activeTab === 'requests' 
+                  ? 'bg-primary text-on-primary font-bold shadow-sm' 
+                  : 'text-on-surface-variant hover:text-on-surface'
               }`}
             >
               Skill Requests
-            </Link>
-
-            {/* Sliding Background */}
-            <div 
-              className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-primary rounded-full -z-10 transition-transform duration-300 ease-out shadow-sm ${
-                activeTab === 'requests' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'
-              }`}
-            ></div>
+            </a>
           </div>
 
-          {/* Action Row Right: View Mode Toggle & Button */}
-          <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
             <ViewModeToggle />
             <Link 
-              href={activeTab === 'listings' ? '?tab=listings&modal=create-listing' : '?tab=requests&modal=create-request'} 
-              className="flex flex-1 md:flex-none justify-center items-center gap-2 bg-primary text-on-primary hover:bg-primary/90 px-6 py-2.5 rounded-full font-label-md font-bold transition-all shadow-sm hover:shadow whitespace-nowrap"
+              href={activeTab === 'listings' ? "/listings/create" : "/requests/create"}
+              className="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-full font-bold hover:bg-surface-tint transition-all shadow-sm flex items-center gap-2 ml-auto sm:ml-0"
             >
-              <span className="material-symbols-outlined text-[20px]">add</span>
-              {activeTab === 'listings' ? 'Share a Skill' : 'Post a Request'}
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              <span>Post {activeTab === 'listings' ? 'Offer' : 'Request'}</span>
             </Link>
           </div>
-
         </div>
-        
+
         {/* Categories Row */}
         <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0">
           {categories.map((cat) => {

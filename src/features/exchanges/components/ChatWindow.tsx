@@ -77,7 +77,7 @@ export function ChatWindow({
   }
 
   return (
-    <div className="md:col-span-8 flex flex-col bg-surface-container-lowest rounded-xl shadow-[0_2px_10px_-2px_rgba(45,106,79,0.06)] overflow-hidden h-[700px] border border-outline-variant/20">
+    <div className="md:col-span-8 flex flex-col bg-surface-container-lowest rounded-xl shadow-[0_2px_10px_-2px_rgba(45,106,79,0.06)] overflow-hidden h-[60vh] md:h-[700px] border border-outline-variant/20 min-w-0">
       {/* Chat Header */}
       <div className="px-6 py-4 border-b border-surface-variant flex items-center justify-between bg-surface-container-lowest z-10 shadow-sm">
         <div className="flex items-center gap-4">

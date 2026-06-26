@@ -38,7 +38,7 @@ export function ExchangeDashboard({
 
   return (
     <>
-      <div className="max-w-container-max mx-auto w-full flex-1 pt-6">
+      <div className="w-full min-w-0">
 
       {/* Status Tabs */}
       <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-lg pb-2">
@@ -104,14 +104,14 @@ export function ExchangeDashboard({
             const otherUser = isProvider ? exchange.requester : exchange.provider
 
             return (
-              <div key={exchange.id} className="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_-4px_rgba(45,106,79,0.08)] p-6 flex flex-col gap-6 border border-outline-variant/20 relative overflow-hidden group">
+              <div key={exchange.id} className="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_-4px_rgba(45,106,79,0.08)] p-4 sm:p-6 flex flex-col gap-6 border border-outline-variant/20 relative overflow-hidden group min-w-0">
                 {/* Decorative Loop Background */}
                 <div className="absolute -right-12 -bottom-12 text-surface-container-high opacity-50 rotate-45 pointer-events-none">
                   <span className="material-symbols-outlined" style={{ fontSize: '180px' }}>loop</span>
                 </div>
 
                 {/* Header: Status & User */}
-                <div className="flex flex-wrap justify-between items-start gap-4 relative z-10">
+                <div className="flex flex-wrap justify-between items-start gap-3 relative z-10">
                   <div className="flex items-center gap-4">
                     <img 
                       src={otherUser?.avatar_url || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + (otherUser?.id || 'default')}

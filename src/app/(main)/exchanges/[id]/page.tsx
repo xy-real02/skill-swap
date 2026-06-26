@@ -55,11 +55,11 @@ export default async function ExchangeDetailPage({
 
   return (
     <>
-      <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full">
+      <div className="pt-6 px-margin-mobile md:px-lg max-w-container-max mx-auto w-full min-w-0">
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter pb-24">
         {/* Left Column: Tracker & Actions */}
-        <div className="md:col-span-4 flex flex-col gap-6">
+        <div className="md:col-span-4 flex flex-col gap-6 min-w-0">
           {/* Status Tracker Card */}
           <div className="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_-4px_rgba(45,106,79,0.08)] p-6 relative z-10 overflow-hidden border border-outline-variant/20">
             <h2 className="font-headline-sm text-headline-sm text-on-surface mb-6 flex items-center gap-2">
