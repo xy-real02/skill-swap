@@ -6,9 +6,8 @@ import { register } from './actions'
 export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isPending, setIsPending] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
-  const totalSteps = 3
+  const totalSteps = 2
 
   const handleNext = () => {
     if (formRef.current) {
@@ -51,9 +50,8 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
         {/* Progress Indicator */}
         <div className="mb-8 relative">
           <div className="flex justify-between font-label-sm text-label-sm mb-2 px-1">
-            <span className={currentStep >= 1 ? 'text-primary' : 'text-on-surface-variant'}>Account</span>
-            <span className={currentStep >= 2 ? 'text-primary' : 'text-on-surface-variant'}>Profile</span>
-            <span className={currentStep >= 3 ? 'text-primary' : 'text-on-surface-variant'}>Photo</span>
+            <span className={currentStep >= 1 ? 'text-primary font-bold' : 'text-on-surface-variant'}>1. Account</span>
+            <span className={currentStep >= 2 ? 'text-primary font-bold' : 'text-on-surface-variant'}>2. Profile & Zone</span>
           </div>
           <div className="h-3 w-full bg-secondary-fixed rounded-full overflow-hidden relative">
             <div
@@ -123,32 +121,7 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
             </div>
           </div>
 
-          {/* Step 3: Photo */}
-          <div id="step-3" className={`flex-col gap-6 items-center ${currentStep === 3 ? 'flex' : 'hidden'}`}>
-            <div className="text-center mb-4">
-              <h3 className="font-headline-sm text-headline-sm text-primary">Add a Face</h3>
-              <p className="font-body-md text-body-md text-on-surface-variant mt-1">Trust starts with a friendly face.</p>
-            </div>
-            <div className="w-40 h-40 rounded-full border-[2px] border-dashed border-primary flex flex-col items-center justify-center bg-surface-container hover:bg-secondary-container/50 transition-colors cursor-pointer relative group overflow-hidden">
-              <span className="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform relative z-10">add_a_photo</span>
-              <span className="font-label-sm text-label-sm text-primary mt-2 relative z-10">Upload Photo</span>
-              <input 
-                type="file" 
-                name="avatar_file"
-                accept="image/*" 
-                className="absolute inset-0 opacity-0 cursor-pointer z-20" 
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) {
-                    setPreviewUrl(URL.createObjectURL(file))
-                  }
-                }}
-              />
-              {previewUrl && (
-                <img src={previewUrl} alt="Preview" className="absolute inset-0 w-full h-full object-cover z-0" />
-              )}
-            </div>
-          </div>
+          {/* Step 3 removed for now */}
 
           {/* Actions */}
           <div className="flex justify-between items-center mt-10 pt-6 border-t border-surface-variant">
