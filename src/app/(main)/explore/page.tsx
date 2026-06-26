@@ -81,11 +81,11 @@ export default async function ExplorePage({
       {/* Sticky Section: Tabs & Categories */}
       <div className="sticky top-16 z-20 bg-background/95 backdrop-blur py-3 border-b border-outline-variant/20 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 mb-6 flex flex-col gap-4">
         {/* Top Row: Tabs & View Toggle */}
-        <div className="flex justify-between items-center gap-4">
-          <div className="flex gap-2 bg-surface-container-low p-1 rounded-full border border-outline-variant/30">
+        <div className="flex flex-wrap justify-between items-center gap-3">
+          <div className="flex w-full sm:w-auto gap-1 bg-surface-container-low p-1 rounded-full border border-outline-variant/30">
             <a 
               href={`/explore?tab=listings${categoryParam}${viewParam}`}
-              className={`px-6 py-2 rounded-full font-label-md transition-all duration-200 ${
+              className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2 rounded-full font-label-md text-center transition-all duration-200 whitespace-nowrap ${
                 activeTab === 'listings' 
                   ? 'bg-primary text-on-primary font-bold shadow-sm' 
                   : 'text-on-surface-variant hover:text-on-surface'
@@ -95,7 +95,7 @@ export default async function ExplorePage({
             </a>
             <a 
               href={`/explore?tab=requests${categoryParam}${viewParam}`}
-              className={`px-6 py-2 rounded-full font-label-md transition-all duration-200 ${
+              className={`flex-1 sm:flex-initial px-4 sm:px-6 py-2 rounded-full font-label-md text-center transition-all duration-200 whitespace-nowrap ${
                 activeTab === 'requests' 
                   ? 'bg-primary text-on-primary font-bold shadow-sm' 
                   : 'text-on-surface-variant hover:text-on-surface'
@@ -105,14 +105,14 @@ export default async function ExplorePage({
             </a>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
             <ViewModeToggle />
             <Link 
               href={activeTab === 'listings' ? "/listings/create" : "/requests/create"}
-              className="bg-primary text-on-primary font-label-md text-label-md px-4 py-2.5 rounded-full font-bold hover:bg-surface-tint transition-all shadow-sm flex items-center gap-2"
+              className="bg-primary text-on-primary font-label-md text-label-md px-4 py-2 rounded-full font-bold hover:bg-surface-tint transition-all shadow-sm flex items-center gap-2 ml-auto sm:ml-0"
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
-              <span className="hidden sm:inline">Post {activeTab === 'listings' ? 'Offer' : 'Request'}</span>
+              <span>Post {activeTab === 'listings' ? 'Offer' : 'Request'}</span>
             </Link>
           </div>
         </div>
