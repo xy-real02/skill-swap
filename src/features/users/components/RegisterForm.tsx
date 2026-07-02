@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { register } from './actions'
+import { register } from '@/features/users/actions/register'
 
 export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
   const [currentStep, setCurrentStep] = useState(1)
@@ -11,11 +11,10 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
 
   const handleNext = () => {
     if (formRef.current) {
-      // Validate only inputs in the current step
       const stepInputs = formRef.current.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
         `#step-${currentStep} input, #step-${currentStep} select, #step-${currentStep} textarea`
       )
-      
+
       let isValid = true
       stepInputs.forEach(input => {
         if (!input.checkValidity()) {
@@ -23,7 +22,7 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
           isValid = false
         }
       })
-      
+
       if (!isValid) return
     }
 
@@ -64,7 +63,7 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
         </div>
 
         {/* Form */}
-        <form 
+        <form
           ref={formRef}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -121,8 +120,6 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
             </div>
           </div>
 
-          {/* Step 3 removed for now */}
-
           {/* Actions */}
           <div className="flex justify-between items-center mt-10 pt-6 border-t border-surface-variant">
             {currentStep > 1 ? (
@@ -133,7 +130,7 @@ export default function RegisterForm({ zones = [] }: { zones?: string[] }) {
             ) : (
               <div className="w-24"></div>
             )}
-            
+
             {currentStep < totalSteps ? (
               <button type="button" onClick={handleNext} className="btn-primary w-full sm:w-auto">
                 Continue
