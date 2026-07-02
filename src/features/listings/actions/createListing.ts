@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { stripHtml } from '@/utils/sanitize'
 
 export async function createListing(formData: FormData) {
   const supabase = await createClient()
@@ -14,12 +15,12 @@ export async function createListing(formData: FormData) {
   const userId = authData.user.id
 
   // 2. Extract and validate input data
-  const title = formData.get('title') as string
-  const category = formData.get('category') as string
-  const description = formData.get('description') as string
-  const availability = formData.get('availability') as string | null
-  const exchange_preference = formData.get('exchange_preference') as string | null
-  const location_note = formData.get('location_note') as string | null
+  const title = stripHtml(formData.get('title'))
+  const category = stripHtml(formData.get('category'))
+  const description = stripHtml(formData.get('description'))
+  const availability = formData.get('availability') ? stripHtml(formData.get('availability')) || null : null
+  const exchange_preference = formData.get('exchange_preference') ? stripHtml(formData.get('exchange_preference')) || null : null
+  const location_note = formData.get('location_note') ? stripHtml(formData.get('location_note')) || null : null
 
   if (!title || title.length > 80) {
     return { error: 'Title must be between 1 and 80 characters.' }
