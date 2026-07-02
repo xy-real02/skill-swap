@@ -1,4 +1,4 @@
-import { login } from './actions'
+import { login } from '@/features/users/actions/auth'
 import Link from 'next/link'
 
 export default async function LoginPage({

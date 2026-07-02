@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { stripHtml } from '@/utils/sanitize'
 
 export async function submitReview(formData: FormData) {
   const supabase = await createClient()
@@ -14,7 +15,7 @@ export async function submitReview(formData: FormData) {
   const exchange_id = formData.get('exchange_id') as string
   const target_id = formData.get('target_id') as string
   const ratingStr = formData.get('rating') as string
-  const comment = formData.get('comment') as string | null
+  const comment = formData.get('comment') ? stripHtml(formData.get('comment')) || null : null
 
   if (!exchange_id || !target_id || !ratingStr) {
     return { error: 'Missing required fields.' }

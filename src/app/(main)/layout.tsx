@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { MobileNav } from '@/components/layout/MobileNav'
 import { GlobalTopBar } from '@/components/layout/GlobalTopBar'
-import { GlobalModalContainer } from '@/components/layout/GlobalModalContainer'
+import { GlobalModalContainer } from './_components/GlobalModalContainer'
+import { getCommunitySettings } from '@/features/users/queries/getCommunitySettings'
 
 export default async function MainLayout({
   children,
@@ -28,10 +29,7 @@ export default async function MainLayout({
     .single()
 
   // Fetch dynamic zones from community_settings
-  const { data: settings } = await supabase.from('community_settings').select('community_zone_list').maybeSingle()
-  const zones = settings?.community_zone_list?.length 
-    ? settings.community_zone_list 
-    : ['Northside Hub', 'South Market', 'East Village', 'West End']
+  const { zones } = await getCommunitySettings()
 
   const mainNavItems = [
     { href: '/explore', icon: 'explore', label: 'Explore', matchPattern: '/explore' },

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { stripHtml } from '@/utils/sanitize'
 import { revalidatePath } from 'next/cache'
 
 export async function sendMessage(formData: FormData) {
@@ -12,7 +13,7 @@ export async function sendMessage(formData: FormData) {
   }
 
   const exchange_id = formData.get('exchange_id') as string
-  const content = formData.get('content') as string
+  const content = stripHtml(formData.get('content'))
 
   if (!exchange_id || !content || content.trim() === '') {
     return { error: 'Message cannot be empty.' }
@@ -22,14 +23,13 @@ export async function sendMessage(formData: FormData) {
     return { error: 'Message exceeds the 1000 character limit.' }
   }
 
-  // Insert message
   const { error: insertError } = await supabase
     .from('messages')
     .insert({
       exchange_id,
       sender_id: authData.user.id,
       content: content.trim(),
-      is_read: false
+      is_read: false,
     })
 
   if (insertError) {
@@ -37,8 +37,6 @@ export async function sendMessage(formData: FormData) {
     return { error: 'Failed to send message.' }
   }
 
-  // Revalidate to show new message
   revalidatePath(`/exchanges/${exchange_id}`)
-  
   return { success: true }
 }

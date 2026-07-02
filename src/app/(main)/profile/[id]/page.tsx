@@ -5,15 +5,14 @@ import { getUserExchangeHistory } from '@/features/exchanges/queries/getUserExch
 import { ProfileBento } from '@/features/profiles/components/ProfileBento'
 import { ProfileTabs } from '@/features/profiles/components/ProfileTabs'
 import { createClient } from '@/lib/supabase/server'
+import { getProfileName } from '@/features/users/queries/getProfileName'
 import { notFound, redirect } from 'next/navigation'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
-  const supabase = await createClient()
-  const { data } = await supabase.from('profiles').select('full_name').eq('id', resolvedParams.id).single()
-  
+  const fullName = await getProfileName(resolvedParams.id)
   return {
-    title: `${data?.full_name || 'Member'} | Skill Swap Profile`,
+    title: `${fullName || 'Member'} | Skill Swap Profile`,
   }
 }
 

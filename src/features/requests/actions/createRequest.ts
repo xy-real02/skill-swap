@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { stripHtml } from '@/utils/sanitize'
 
 export async function createRequest(formData: FormData) {
   const supabase = await createClient()
@@ -13,11 +14,11 @@ export async function createRequest(formData: FormData) {
   }
 
   // 2. Extract and validate data
-  const title = formData.get('title') as string
-  const category = formData.get('category') as string
-  const description = formData.get('description') as string
-  const offered_in_return = formData.get('offered_in_return') as string
-  const desired_timeframe = formData.get('desired_timeframe') as string
+  const title = stripHtml(formData.get('title'))
+  const category = stripHtml(formData.get('category'))
+  const description = stripHtml(formData.get('description'))
+  const offered_in_return = stripHtml(formData.get('offered_in_return'))
+  const desired_timeframe = formData.get('desired_timeframe') ? stripHtml(formData.get('desired_timeframe')) : ''
 
   if (!title || !category || !description || !offered_in_return) {
     return { error: 'Missing required fields.' }

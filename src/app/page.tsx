@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { PLATFORM_CATEGORIES } from '@/lib/categories'
+import { PLATFORM_CATEGORIES } from '@/utils/constants'
 
 export default async function LandingPage() {
   // If a user is already logged in, bypass the landing page entirely

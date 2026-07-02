@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createListing } from '@/features/listings/actions/createListing'
-import { PLATFORM_CATEGORIES } from '@/lib/categories'
+import { PLATFORM_CATEGORIES } from '@/utils/constants'
 
 export function CreateListingForm() {
   const router = useRouter()

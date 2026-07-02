@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateListing } from '@/features/listings/actions/updateListing'
-import { PLATFORM_CATEGORIES } from '@/lib/categories'
+import { PLATFORM_CATEGORIES } from '@/utils/constants'
 
 export interface ListingEditData {
   id: string
