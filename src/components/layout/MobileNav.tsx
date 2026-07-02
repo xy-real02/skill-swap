@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from '@/app/actions/auth'
+import { signOut } from '@/features/users/actions/auth'
 import type { NavItem } from './Sidebar'
 
 export function MobileNav({ navItems, currentUserId }: { navItems: NavItem[], currentUserId?: string }) {
