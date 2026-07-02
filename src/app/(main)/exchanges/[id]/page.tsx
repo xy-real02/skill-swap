@@ -1,5 +1,6 @@
 import { getExchangeById } from '@/features/exchanges/queries/getExchangeById'
-import { getExchangeMessages } from '@/features/exchanges/queries/getExchangeMessages'
+import { getExchangeMessages } from '@/features/messages/queries/getExchangeMessages'
+import { checkHasReviewed } from '@/features/reviews/queries/checkHasReviewed'
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -43,15 +44,7 @@ export default async function ExchangeDetailPage({
     steps.push({ id: 'Cancelled', label: 'Cancelled', icon: 'cancel', past: true, current: true })
   }
 
-  // Check if they already reviewed
-  const { data: existingReview } = await supabase
-    .from('reviews')
-    .select('id')
-    .eq('exchange_id', exchange.id)
-    .eq('reviewer_id', currentUserId)
-    .single()
-
-  const hasReviewed = !!existingReview
+  const hasReviewed = await checkHasReviewed(exchange.id, currentUserId)
 
   return (
     <>
