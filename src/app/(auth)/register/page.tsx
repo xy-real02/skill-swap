@@ -1,6 +1,5 @@
-import RegisterForm from './RegisterForm'
-
-import { createClient } from '@/lib/supabase/server'
+import RegisterForm from '@/features/users/components/RegisterForm'
+import { getCommunitySettings } from '@/features/users/queries/getCommunitySettings'
 
 export default async function RegisterPage({
   searchParams,
@@ -8,13 +7,7 @@ export default async function RegisterPage({
   searchParams: Promise<{ error?: string; success?: string }>
 }) {
   const resolvedSearchParams = await searchParams
-  const supabase = await createClient()
-  
-  // Try to fetch zones from settings, fallback to defaults if table is empty or errored
-  const { data } = await supabase.from('community_settings').select('community_zone_list').maybeSingle()
-  const zones = data?.community_zone_list?.length 
-    ? data.community_zone_list 
-    : ['Northside Hub', 'South Market', 'East Village', 'West End']
+  const { zones } = await getCommunitySettings()
 
   return (
     <main className="min-h-screen bg-surface py-12 flex flex-col items-center justify-center relative overflow-hidden font-body-md text-body-md text-on-surface">

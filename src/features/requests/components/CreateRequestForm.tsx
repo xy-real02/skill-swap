@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createRequest } from '../actions/createRequest'
 import { Button } from '@/components/ui/Button'
-import { PLATFORM_CATEGORIES } from '@/lib/categories'
+import { PLATFORM_CATEGORIES } from '@/utils/constants'
 
 export function CreateRequestForm() {
   const [error, setError] = useState<string | null>(null)

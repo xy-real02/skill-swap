@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from '@/app/actions/auth'
+import { signOut } from '@/features/users/actions/auth'
 
 export type NavItem = {
   href: string

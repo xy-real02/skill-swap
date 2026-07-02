@@ -1,9 +1,9 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { Message } from '@/features/exchanges/queries/getExchangeMessages'
-import { sendMessage } from '@/features/exchanges/actions/sendMessage'
-import { markMessagesRead } from '@/features/exchanges/actions/markMessagesRead'
+import { Message } from '@/features/messages/queries/getExchangeMessages'
+import { sendMessage } from '@/features/messages/actions/sendMessage'
+import { markMessagesRead } from '@/features/messages/actions/markMessagesRead'
 import { createClient } from '@/lib/supabase/client'
 
 export function ChatWindow({

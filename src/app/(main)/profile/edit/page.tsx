@@ -1,6 +1,7 @@
 import { getProfile } from '@/features/profiles/queries/getProfile'
 import { EditProfileForm } from '@/features/profiles/components/EditProfileForm'
 import { createClient } from '@/lib/supabase/server'
+import { getCommunitySettings } from '@/features/users/queries/getCommunitySettings'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -23,10 +24,7 @@ export default async function EditProfilePage() {
   }
 
   // Fetch dynamic zones from community_settings
-  const { data: settings } = await supabase.from('community_settings').select('community_zone_list').maybeSingle()
-  const zones = settings?.community_zone_list?.length 
-    ? settings.community_zone_list 
-    : ['Northside Hub', 'South Market', 'East Village', 'West End']
+  const { zones } = await getCommunitySettings()
 
   return (
     <>

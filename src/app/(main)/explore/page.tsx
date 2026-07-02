@@ -1,6 +1,6 @@
 import { getActiveListings } from '@/features/listings/queries/getActiveListings'
 import { getActiveRequests, type RequestWithProfile } from '@/features/requests/queries/getActiveRequests'
-import { PLATFORM_CATEGORIES } from '@/lib/categories'
+import { PLATFORM_CATEGORIES } from '@/utils/constants'
 import { ListingCard, type ListingWithProfile } from '@/features/listings/components/ListingCard'
 import { RequestCard } from '@/features/requests/components/RequestCard'
 import { ListingTableView } from '@/features/listings/components/ListingTableView'
@@ -9,6 +9,8 @@ import { ExploreFilterSidebar } from '@/features/listings/components/ExploreFilt
 import { ViewModeToggle } from '@/components/ui/ViewModeToggle'
 import { createClient } from '@/lib/supabase/server'
 import { SearchBar } from '@/components/ui/SearchBar'
+import { getCommunitySettings } from '@/features/users/queries/getCommunitySettings'
+import { getUserZone } from '@/features/users/queries/getUserZone'
 import Link from 'next/link'
 import { Suspense } from 'react'
 
@@ -31,14 +33,10 @@ export default async function ExplorePage({
 
   let userZone = ''
   if (currentUserId) {
-    const { data: profile } = await supabase.from('profiles').select('community_zone').eq('id', currentUserId).maybeSingle()
-    if (profile?.community_zone) userZone = profile.community_zone
+    userZone = await getUserZone(currentUserId)
   }
 
-  const { data: settings } = await supabase.from('community_settings').select('community_zone_list').maybeSingle()
-  const availableZones = settings?.community_zone_list?.length
-    ? settings.community_zone_list
-    : ['Northside Hub', 'South Market', 'East Village', 'West End']
+  const { zones: availableZones } = await getCommunitySettings()
 
   let listings: ListingWithProfile[] = []
   let requests: RequestWithProfile[] = []

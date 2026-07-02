@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { stripHtml } from '@/utils/sanitize'
 
 export async function submitReport({
   targetId,
@@ -29,7 +30,7 @@ export async function submitReport({
   }
 
   const normalizedType = targetType.toLowerCase()
-  const trimmedDetails = details ? details.trim().slice(0, 300) : null
+  const trimmedDetails = details ? stripHtml(details).slice(0, 300) || null : null
 
   // 3. Prevent self-reporting
   if (normalizedType === 'profile' && targetId === reporterId) {
